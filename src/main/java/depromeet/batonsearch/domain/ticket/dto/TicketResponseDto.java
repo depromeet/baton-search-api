@@ -43,7 +43,7 @@ public class TicketResponseDto {
                     .location(ticket.getLocation())
                     .price(ticket.getPrice())
                     .createAt(ticket.getCreatedAt())
-                    .tags(ticket.getTags().stream().map(Tag::getContent).collect(Collectors.toList()))
+                    .tags(ticket.getTags().stream().map(Tag::getSubject).collect(Collectors.toList()))
                     .build();
         }
     }
