@@ -1,5 +1,6 @@
 package depromeet.batonsearch.domain.ticket.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import depromeet.batonsearch.domain.Tag.Tag;
 import depromeet.batonsearch.domain.ticket.Ticket;
 import io.swagger.annotations.ApiModel;
@@ -7,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TicketResponseDto {
@@ -16,13 +17,13 @@ public class TicketResponseDto {
     @Getter
     @Setter
     @NoArgsConstructor
-    @AllArgsConstructor
+    @ToString
     public static class Simple {
         @ApiModelProperty(name = "양도권 ID")
         private Integer id;
 
         @ApiModelProperty(name = "판매자 닉네임")
-        private String sellerNickname;
+        private Integer sellerId;
 
         @ApiModelProperty(name = "위치")
         private String location;
@@ -34,16 +35,26 @@ public class TicketResponseDto {
         private Date createAt;
 
         @ApiModelProperty(name = "소유 태그 리스트")
-        private List<String> tags;
+        private Set<Tag> tags;
+
+        @QueryProjection
+        public Simple(Integer id, Integer sellerId, String location, Integer price, Date createAt, Set<Tag> tags) {
+            this.id = id;
+            this.sellerId = sellerId;
+            this.location = location;
+            this.price = price;
+            this.createAt = createAt;
+            this.tags = tags;
+        }
 
         public static Simple of(Ticket ticket) {
             return Simple.builder()
                     .id(ticket.getId())
-                    .sellerNickname(ticket.getSeller().getNickname())
+                    .sellerId(ticket.getSeller().getId())
                     .location(ticket.getLocation())
                     .price(ticket.getPrice())
                     .createAt(ticket.getCreatedAt())
-                    .tags(ticket.getTags().stream().map(Tag::getSubject).collect(Collectors.toList()))
+                    .tags(ticket.getTags())
                     .build();
         }
     }

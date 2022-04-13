@@ -6,7 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Builder
@@ -37,5 +37,5 @@ public class Ticket {
 
     @ManyToMany
     @JoinTable(name = "TicketTag", joinColumns = @JoinColumn(name = "ticket_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private List<Tag> tags;
+    private Set<Tag> tags;
 }

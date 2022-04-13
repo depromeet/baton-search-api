@@ -7,6 +7,7 @@ import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
+import java.util.Set;
 
 public class TicketRequestDto {
 
@@ -16,7 +17,6 @@ public class TicketRequestDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Search {
-
         @ApiModelProperty(value = "페이지 번호")
         private Integer page;
 
@@ -27,7 +27,7 @@ public class TicketRequestDto {
         private String place;
 
         @ApiModelProperty(value = "해시 태그, 복수로 값을 받을 수 있음.")
-        private List<String> hashtag;
+        private Set<String> hashtag;
 
         @ApiModelProperty(value = "위도")
         private Double latitude;
