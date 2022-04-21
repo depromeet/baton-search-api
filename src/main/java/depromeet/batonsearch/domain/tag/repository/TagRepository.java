@@ -1,6 +1,6 @@
-package depromeet.batonsearch.domain.Tag.repository;
+package depromeet.batonsearch.domain.tag.repository;
 
-import depromeet.batonsearch.domain.Tag.Tag;
+import depromeet.batonsearch.domain.tag.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

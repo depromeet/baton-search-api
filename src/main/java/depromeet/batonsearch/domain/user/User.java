@@ -1,11 +1,13 @@
 package depromeet.batonsearch.domain.user;
 
-import depromeet.batonsearch.domain.Tag.Tag;
-import depromeet.batonsearch.domain.region.Region;
+import depromeet.batonsearch.domain.bookmark.Bookmark;
+import depromeet.batonsearch.domain.tag.Tag;
+import depromeet.batonsearch.domain.usertag.UserTag;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -15,24 +17,18 @@ import java.util.List;
 @Builder
 @Table(name = "User")
 public class User {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Integer id;
 
     @Column
-    private String name;
-
-    @Column
     private String nickname;
 
-    @Column(nullable = false, columnDefinition = "TINYINT", length = 1)
+    @Column(nullable = false)
     private Boolean gender;
 
-    @ManyToOne
-    @JoinColumn(name = "region_id")
-    private Region region;
+    @OneToMany(mappedBy = "id")
+    private Set<UserTag> userTags = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(name = "UserTag", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private List<Tag> tags;
+    @OneToMany(mappedBy = "id")
+    private Set<Bookmark> bookmarks = new HashSet<>();
 }

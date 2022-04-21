@@ -1,14 +1,11 @@
 package depromeet.batonsearch.domain.ticket;
 
-import depromeet.batonsearch.domain.Tag.Tag;
-import depromeet.batonsearch.domain.Tag.repository.TagRepository;
-import depromeet.batonsearch.domain.region.Region;
-import depromeet.batonsearch.domain.region.repository.RegionRepository;
+import depromeet.batonsearch.domain.tag.Tag;
+import depromeet.batonsearch.domain.tag.repository.TagRepository;
 import depromeet.batonsearch.domain.ticket.dto.TicketRequestDto;
 import depromeet.batonsearch.domain.ticket.dto.TicketResponseDto;
 import depromeet.batonsearch.domain.ticket.repository.TicketQueryRepository;
 import depromeet.batonsearch.domain.ticket.repository.TicketRepository;
-import depromeet.batonsearch.domain.ticket.service.TicketService;
 import depromeet.batonsearch.domain.user.User;
 import depromeet.batonsearch.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.*;
@@ -18,12 +15,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashSet;
+import java.util.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class TicketQueryDslTest {
+public class TicketQueryDslSpeedTest {
     @Autowired
     private TicketRepository ticketRepository;
 
@@ -34,24 +30,14 @@ public class TicketQueryDslTest {
     private UserRepository userRepository;
 
     @Autowired
-    private RegionRepository regionRepository;
-
-    @Autowired
     private TagRepository tagRepository;
 
     @BeforeAll
     @Transactional
     void DB_초기화() {
-        Region region = Region.builder()
-                .name("지역")
-                .build();
-
-        regionRepository.save(region);
-
         User user = User.builder()
-                .name("유저")
+                .id(1)
                 .nickname("유저")
-                .region(region)
                 .gender(true)
                 .build();
 
@@ -78,42 +64,38 @@ public class TicketQueryDslTest {
         tags3.add(tag1);
         tags3.add(tag3);
 
-        Ticket ticket1 = Ticket.builder()
-                .seller(user)
-                .location("지역1")
-                .price(10000)
-                .createdAt(new Date())
-                .tags(tags1)
-                .build();
+        List<HashSet<Tag>> tagsList = new ArrayList<>();
+        tagsList.add(tags1);
+        tagsList.add(tags2);
+        tagsList.add(tags3);
 
-        Ticket ticket2 = Ticket.builder()
-                .seller(user)
-                .location("지역2")
-                .price(15000)
-                .createdAt(new Date())
-                .tags(tags2)
-                .build();
+        List<Ticket> tickets = new ArrayList<>();
 
-        Ticket ticket3 = Ticket.builder()
-                .seller(user)
-                .location("지역3")
-                .price(20000)
-                .createdAt(new Date())
-                .tags(tags3)
-                .build();
+        Random random = new Random();
 
-        ticketRepository.save(ticket1);
-        ticketRepository.save(ticket2);
-        ticketRepository.save(ticket3);
+        for (int i = 0; i < 1000; i++) {
+            Ticket ticket = Ticket.builder()
+                    .seller(user)
+                    .location("반포동")
+                    .price(random.nextInt(8000) + 12000)
+                    .createdAt(new Date())
+                    .latitude(35.0)
+                    .longitude(35.0)
+                    .build();
+            tickets.add(ticket);
+        }
+
+        ticketRepository.saveAll(tickets);
+
+        System.out.println("DB 초기화 종료");
     }
 
     @AfterAll
     @Transactional
     void DB_삭제() {
-        ticketRepository.deleteAll();
         tagRepository.deleteAll();
         userRepository.deleteAll();
-        regionRepository.deleteAll();
+        ticketRepository.deleteAll();
     }
 
     @Test
@@ -123,7 +105,8 @@ public class TicketQueryDslTest {
         PageRequest request = PageRequest.of(0, 5);
 
         Page<TicketResponseDto.Simple> simples = ticketQueryRepository.searchAll(search, request);
-        simples.getContent().forEach(System.out::println);
+
+        System.out.println("simples.getContent().get(0).toString() = " + simples.getContent().get(0).toString());
     }
 
     @Test
@@ -136,10 +119,12 @@ public class TicketQueryDslTest {
         TicketRequestDto.Search search = TicketRequestDto.Search.builder()
                 .hashtag(hashSet)
                 .build();
+        System.out.println("search.getTagHash() = " + search.getTagHash());
         PageRequest request = PageRequest.of(0, 5);
 
         Page<TicketResponseDto.Simple> simples = ticketQueryRepository.searchAll(search, request);
-        simples.getContent().forEach(System.out::println);
+
+        System.out.println("simples.getContent().get(0).toString() = " + simples.getContent().get(0).toString());
     }
 
     @Test
@@ -152,7 +137,7 @@ public class TicketQueryDslTest {
         PageRequest request = PageRequest.of(0, 5);
 
         Page<TicketResponseDto.Simple> simples = ticketQueryRepository.searchAll(search, request);
-        simples.getContent().forEach(System.out::println);
+        System.out.println("simples.getContent().get(0).toString() = " + simples.getContent().get(0).toString());
     }
 
     @Test
@@ -165,7 +150,7 @@ public class TicketQueryDslTest {
         PageRequest request = PageRequest.of(0, 5);
 
         Page<TicketResponseDto.Simple> simples = ticketQueryRepository.searchAll(search, request);
-        simples.getContent().forEach(System.out::println);
+        System.out.println("simples.getContent().get(0).toString() = " + simples.getContent().get(0).toString());
     }
 
     @Test
@@ -179,6 +164,6 @@ public class TicketQueryDslTest {
         PageRequest request = PageRequest.of(0, 5);
 
         Page<TicketResponseDto.Simple> simples = ticketQueryRepository.searchAll(search, request);
-        simples.getContent().forEach(System.out::println);
+        System.out.println("simples.getContent().get(0).toString() = " + simples.getContent().get(0).toString());
     }
 }

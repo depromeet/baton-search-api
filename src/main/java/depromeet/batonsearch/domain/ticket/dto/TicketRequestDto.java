@@ -5,17 +5,14 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
-import java.util.List;
 import java.util.Set;
+
+import static depromeet.batonsearch.domain.tag.StaticTag.tagToKey;
 
 public class TicketRequestDto {
 
     @ApiModel(value = "검색 시 필요 파라미터")
-    @Builder
     @Getter @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class Search {
         @ApiModelProperty(value = "페이지 번호")
         private Integer page;
@@ -26,8 +23,7 @@ public class TicketRequestDto {
         @ApiModelProperty(value = "헬스장 이름")
         private String place;
 
-        @ApiModelProperty(value = "해시 태그, 복수로 값을 받을 수 있음.")
-        private Set<String> hashtag;
+        private Long tagHash;
 
         @ApiModelProperty(value = "위도")
         private Double latitude;
@@ -58,5 +54,29 @@ public class TicketRequestDto {
 
         @ApiModelProperty(value = "최대 거리 (km)")
         private Double maxDistance;
+
+        @Builder
+        public Search(Integer page, Integer size, String place, Set<String> hashtag, Double latitude, Double longitude, String town, Long minPrice, Long maxPrice, Integer minRemainDay, Integer maxRemainDay, Boolean clothes, Boolean locker, Double maxDistance) {
+            this.tagHash = 0L;
+
+            if (hashtag != null)
+                for (String key: hashtag) {
+                    this.tagHash += (1L << (tagToKey.get(key) - 1));
+                }
+
+            this.page = page;
+            this.size = size;
+            this.place = place;
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.town = town;
+            this.minPrice = minPrice;
+            this.maxPrice = maxPrice;
+            this.minRemainDay = minRemainDay;
+            this.maxRemainDay = maxRemainDay;
+            this.clothes = clothes;
+            this.locker = locker;
+            this.maxDistance = maxDistance;
+        }
     }
 }
