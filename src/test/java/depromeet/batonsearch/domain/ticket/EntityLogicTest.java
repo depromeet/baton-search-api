@@ -49,15 +49,19 @@ public class EntityLogicTest {
         TicketTag ticketTag1 = TicketTag.builder().tag(tag1).ticket(ticket).build();
         ticketTagRepository.save(ticketTag1);
         assertThat(ticket.getTagHash()).isEqualTo(1);
+        assertThat(ticket.getTicketTags()).contains(ticketTag1);
 
         TicketTag ticketTag2 = TicketTag.builder().tag(tag2).ticket(ticket).build();
         ticketTagRepository.save(ticketTag2);
         assertThat(ticket.getTagHash()).isEqualTo(3);
+        assertThat(ticket.getTicketTags()).contains(ticketTag2);
 
         ticketTagRepository.delete(ticketTag1);
         assertThat(ticket.getTagHash()).isEqualTo(2);
+        assertThat(ticket.getTicketTags()).doesNotContain(ticketTag1);
 
         ticketTagRepository.delete(ticketTag2);
         assertThat(ticket.getTagHash()).isEqualTo(0);
+        assertThat(ticket.getTicketTags()).doesNotContain(ticketTag2);
     }
 }

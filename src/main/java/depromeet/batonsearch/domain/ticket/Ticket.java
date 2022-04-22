@@ -49,7 +49,7 @@ public class Ticket {
     private Long tagHash;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ticket_id")
+    @JoinColumn(name = "ticket_id", updatable = false, insertable = false)
     private Set<TicketTag> ticketTags = new HashSet<>();
 
     @Builder
@@ -73,7 +73,6 @@ public class Ticket {
     public void removeTicketTag(TicketTag ticketTag) {
         if (this.ticketTags != null)
             this.ticketTags.remove(ticketTag);
-
         this.tagHash -= (1L << (ticketTag.getTag().getId() - 1)) & this.tagHash;
     }
 }

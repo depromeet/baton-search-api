@@ -26,12 +26,15 @@ public class TicketTag {
     public TicketTag(Ticket ticket, Tag tag) {
         this.ticket = ticket;
         this.tag = tag;
+    }
 
-        ticket.addTicketTag(this);
+    @PrePersist
+    private void onPrePersist() {
+        this.ticket.addTicketTag(this);
     }
 
     @PreRemove
-    private void onRemove() {
+    private void onPreRemove() {
         this.ticket.removeTicketTag(this);
     }
 }

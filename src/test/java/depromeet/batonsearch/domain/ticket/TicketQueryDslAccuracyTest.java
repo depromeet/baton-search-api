@@ -11,6 +11,7 @@ import depromeet.batonsearch.domain.tickettag.repository.TicketTagRepository;
 import depromeet.batonsearch.domain.user.User;
 import depromeet.batonsearch.domain.user.repository.UserRepository;
 import depromeet.batonsearch.domain.usertag.repository.UserTagRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -93,8 +94,6 @@ public class TicketQueryDslAccuracyTest {
         PageRequest request = PageRequest.of(0, 5);
 
         Page<TicketResponseDto.Simple> simples = ticketQueryRepository.searchAll(search, request);
-
-        System.out.println("simples.getContent().get(0).toString() = " + simples.getContent().get(0).toString());
     }
 
     @Test
@@ -109,12 +108,10 @@ public class TicketQueryDslAccuracyTest {
                 .hashtag(hashSet)
                 .build();
 
-        System.out.println("search.getTagHash() = " + search.getTagHash());
         PageRequest request = PageRequest.of(0, 5);
 
         Page<TicketResponseDto.Simple> simples = ticketQueryRepository.searchAll(search, request);
-
-        System.out.println("simples.getContent().get(0).toString() = " + simples.getContent().get(0).toString());
+        Assertions.assertThat(simples.getContent()).allMatch(x -> x.getTags().containsAll(hashSet));
     }
 
     @Test
@@ -128,7 +125,7 @@ public class TicketQueryDslAccuracyTest {
         PageRequest request = PageRequest.of(0, 5);
 
         Page<TicketResponseDto.Simple> simples = ticketQueryRepository.searchAll(search, request);
-        System.out.println("simples.getContent().get(0).toString() = " + simples.getContent().get(0).toString());
+        Assertions.assertThat(simples.getContent()).allMatch(x -> x.getPrice() >= 15000L);
     }
 
     @Test
@@ -142,7 +139,7 @@ public class TicketQueryDslAccuracyTest {
         PageRequest request = PageRequest.of(0, 5);
 
         Page<TicketResponseDto.Simple> simples = ticketQueryRepository.searchAll(search, request);
-        System.out.println("simples.getContent().get(0).toString() = " + simples.getContent().get(0).toString());
+        Assertions.assertThat(simples.getContent()).allMatch(x -> x.getPrice() <= 15000L);
     }
 
     @Test
@@ -157,7 +154,7 @@ public class TicketQueryDslAccuracyTest {
         PageRequest request = PageRequest.of(0, 5);
 
         Page<TicketResponseDto.Simple> simples = ticketQueryRepository.searchAll(search, request);
-        System.out.println("simples.getContent().get(0).toString() = " + simples.getContent().get(0).toString());
+        Assertions.assertThat(simples.getContent()).allMatch(x -> x.getPrice() >= 13000L && x.getPrice() <= 17000L);
     }
 
 
