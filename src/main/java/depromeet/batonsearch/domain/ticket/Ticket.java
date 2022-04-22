@@ -74,6 +74,6 @@ public class Ticket {
         if (this.ticketTags != null)
             this.ticketTags.remove(ticketTag);
 
-        this.tagHash -= 1L << (ticketTag.getTag().getId() - 1);
+        this.tagHash -= (1L << (ticketTag.getTag().getId() - 1)) & this.tagHash;
     }
 }

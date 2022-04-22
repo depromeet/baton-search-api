@@ -29,4 +29,9 @@ public class TicketTag {
 
         ticket.addTicketTag(this);
     }
+
+    @PreRemove
+    private void onRemove() {
+        this.ticket.removeTicketTag(this);
+    }
 }

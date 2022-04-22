@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static depromeet.batonsearch.domain.ticket.QTicket.ticket;
 
@@ -60,6 +59,4 @@ public class TicketQueryRepository {
     private BooleanExpression priceLoe(Long maxPrice) {
         return maxPrice != null ? ticket.price.loe(maxPrice) : null;
     }
-
-
 }
