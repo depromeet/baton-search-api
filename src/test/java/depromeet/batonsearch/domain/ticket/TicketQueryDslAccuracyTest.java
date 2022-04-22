@@ -52,13 +52,22 @@ public class TicketQueryDslAccuracyTest {
         User user = userRepository.save(User.builder().id(1).nickname("유저").gender(true).build());
 
         Ticket ticket1 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(12000)
-                .createdAt(new Date()).latitude(35.0).longitude(35.0).build());
+                .createdAt(new Date()).latitude(35.0).longitude(35.0).isMembership(false).expiryDate(new Date(2022, 10, 1)).build());
 
         Ticket ticket2 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(15000)
-                .createdAt(new Date()).latitude(35.0).longitude(35.0).build());
+                .createdAt(new Date()).latitude(35.0).longitude(35.0).isMembership(false).expiryDate(new Date(2022, 11, 1)).build());
 
         Ticket ticket3 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(18000)
-                .createdAt(new Date()).latitude(35.0).longitude(35.0).build());
+                .createdAt(new Date()).latitude(35.0).longitude(35.0).isMembership(false).expiryDate(new Date(2022, 12, 1)).build());
+
+        Ticket ticket4 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(12000)
+                .createdAt(new Date()).latitude(35.0).longitude(35.0).isMembership(true).remainingNumber(10).build());
+
+        Ticket ticket5 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(15000)
+                .createdAt(new Date()).latitude(35.0).longitude(35.0).isMembership(true).remainingNumber(20).build());
+
+        Ticket ticket6 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(18000)
+                .createdAt(new Date()).latitude(35.0).longitude(35.0).isMembership(true).remainingNumber(30).build());
 
         Tag tag1 = tagRepository.findById(1).orElseThrow(IllegalAccessError::new);
         Tag tag2 = tagRepository.findById(2).orElseThrow(IllegalAccessError::new);
@@ -70,6 +79,12 @@ public class TicketQueryDslAccuracyTest {
         ticketTagRepository.save(TicketTag.builder().tag(tag3).ticket(ticket2).build());
         ticketTagRepository.save(TicketTag.builder().tag(tag1).ticket(ticket3).build());
         ticketTagRepository.save(TicketTag.builder().tag(tag3).ticket(ticket3).build());
+        ticketTagRepository.save(TicketTag.builder().tag(tag1).ticket(ticket4).build());
+        ticketTagRepository.save(TicketTag.builder().tag(tag2).ticket(ticket4).build());
+        ticketTagRepository.save(TicketTag.builder().tag(tag2).ticket(ticket5).build());
+        ticketTagRepository.save(TicketTag.builder().tag(tag3).ticket(ticket5).build());
+        ticketTagRepository.save(TicketTag.builder().tag(tag1).ticket(ticket6).build());
+        ticketTagRepository.save(TicketTag.builder().tag(tag3).ticket(ticket6).build());
     }
 
     @Test

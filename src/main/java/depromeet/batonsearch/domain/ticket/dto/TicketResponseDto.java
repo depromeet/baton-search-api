@@ -34,13 +34,20 @@ public class TicketResponseDto {
         @ApiModelProperty(name = "소유 태그 리스트")
         private Set<String> tags;
 
+        private Boolean isMembership;
+        private Date expiryDate;
+        private Integer remainingNumber;
+
         @Builder
         @QueryProjection
-        public Simple(Integer id, String location, Integer price, Date createAt, Long tagHash) {
+        public Simple(Integer id, String location, Integer price, Date createAt, Boolean isMembership, Date expiryDate, Integer remainingNumber, Long tagHash) {
             this.id = id;
             this.location = location;
             this.price = price;
             this.createAt = createAt;
+            this.isMembership = isMembership;
+            this.expiryDate = expiryDate;
+            this.remainingNumber = remainingNumber;
             this.tags = new HashSet<>();
 
             for (int i = 1; i <= keyToTag.size(); i++) {
@@ -59,6 +66,9 @@ public class TicketResponseDto {
                 .price(ticket.getPrice())
                 .tagHash(ticket.getTagHash())
                 .createAt(ticket.getCreatedAt())
+                .isMembership(ticket.getIsMembership())
+                .expiryDate(ticket.getExpiryDate())
+                .remainingNumber(ticket.getRemainingNumber())
                 .build();
         }
     }

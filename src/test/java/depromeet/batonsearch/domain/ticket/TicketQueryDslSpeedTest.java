@@ -6,8 +6,10 @@ import depromeet.batonsearch.domain.ticket.dto.TicketRequestDto;
 import depromeet.batonsearch.domain.ticket.dto.TicketResponseDto;
 import depromeet.batonsearch.domain.ticket.repository.TicketQueryRepository;
 import depromeet.batonsearch.domain.ticket.repository.TicketRepository;
+import depromeet.batonsearch.domain.tickettag.repository.TicketTagRepository;
 import depromeet.batonsearch.domain.user.User;
 import depromeet.batonsearch.domain.user.repository.UserRepository;
+import depromeet.batonsearch.domain.usertag.repository.UserTagRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +33,12 @@ public class TicketQueryDslSpeedTest {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private TicketTagRepository ticketTagRepository;
+
+    @Autowired
+    private UserTagRepository userTagRepository;
 
     @BeforeAll
     @Transactional
@@ -93,9 +101,10 @@ public class TicketQueryDslSpeedTest {
     @AfterAll
     @Transactional
     void DB_삭제() {
-        tagRepository.deleteAll();
-        userRepository.deleteAll();
+        ticketTagRepository.deleteAll();
+        userTagRepository.deleteAll();
         ticketRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test

@@ -37,6 +37,8 @@ public class AllDtoTest {
                 .createdAt(new Date())
                 .latitude(35.0)
                 .longitude(35.0)
+                .isMembership(true)
+                .expiryDate(new Date(2022, 10, 01))
                 .build();
 
         TicketResponseDto.Simple ticketSimple = TicketResponseDto.Simple.of(ticket);

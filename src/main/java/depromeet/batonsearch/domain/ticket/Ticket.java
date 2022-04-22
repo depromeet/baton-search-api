@@ -48,12 +48,21 @@ public class Ticket {
     @Column(name = "tag_hash")
     private Long tagHash;
 
+    @Column(name = "is_membership")
+    private Boolean isMembership;
+
+    @Column(name = "expiry_date")
+    private Date expiryDate;
+
+    @Column(name = "remaining_number")
+    private Integer remainingNumber;
+
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ticket_id", updatable = false, insertable = false)
+    @JoinColumn(name = "ticket_id", updatable = false)
     private Set<TicketTag> ticketTags = new HashSet<>();
 
     @Builder
-    public Ticket(User seller, User buyer, String location, Integer price, Date createdAt, Double latitude, Double longitude) {
+    public Ticket(User seller, User buyer, String location, Integer price, Date createdAt, Double latitude, Double longitude, Boolean isMembership, Date expiryDate, Integer remainingNumber) {
         this.tagHash = 0L;
         this.seller = seller;
         this.buyer = buyer;
@@ -62,6 +71,9 @@ public class Ticket {
         this.createdAt = createdAt;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.isMembership = isMembership;
+        this.expiryDate = expiryDate;
+        this.remainingNumber = remainingNumber;
     }
 
     public void addTicketTag(TicketTag ticketTag) {

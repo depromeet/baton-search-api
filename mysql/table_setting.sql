@@ -22,7 +22,10 @@ CREATE TABLE `Ticket` (
   `created_at` timestamp NOT NULL,
   `latitude` double NOT NULL,
   `longitude` double NOT NULL,
-  `tag_hash` bigint NOT NULL
+  `tag_hash` bigint NOT NULL,
+  `is_membership` boolean NOT NULL,
+  `expiry_date` date,
+  `remaining_number` int
 );
 
 CREATE TABLE `Tag` (
