@@ -5,6 +5,8 @@ import depromeet.batonsearch.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,7 +39,7 @@ public class Ticket {
     private Integer price;
 
     @Column(name = "created_at")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Column
     private Double latitude;
@@ -52,7 +54,7 @@ public class Ticket {
     private Boolean isMembership;
 
     @Column(name = "expiry_date")
-    private Date expiryDate;
+    private LocalDate expiryDate;
 
     @Column(name = "remaining_number")
     private Integer remainingNumber;
@@ -62,7 +64,7 @@ public class Ticket {
     private Set<TicketTag> ticketTags = new HashSet<>();
 
     @Builder
-    public Ticket(User seller, User buyer, String location, Integer price, Date createdAt, Double latitude, Double longitude, Boolean isMembership, Date expiryDate, Integer remainingNumber) {
+    public Ticket(User seller, User buyer, String location, Integer price, LocalDateTime createdAt, Double latitude, Double longitude, Boolean isMembership, LocalDate expiryDate, Integer remainingNumber) {
         this.tagHash = 0L;
         this.seller = seller;
         this.buyer = buyer;

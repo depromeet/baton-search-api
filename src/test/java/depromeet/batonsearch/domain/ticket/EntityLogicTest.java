@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,8 +46,10 @@ public class EntityLogicTest {
         Tag tag2 = tagRepository.getById(2);
 
         Ticket ticket = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(12000)
-                .createdAt(new Date()).latitude(35.0).longitude(35.0).isMembership(false).expiryDate(new Date(2022, 10, 1)).build());
+                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).expiryDate(LocalDate.of(2022, 10, 1)).build());
 
+        System.out.println("ticket = " + ticket);
+        
         TicketTag ticketTag1 = TicketTag.builder().tag(tag1).ticket(ticket).build();
         ticketTagRepository.save(ticketTag1);
         assertThat(ticket.getTagHash()).isEqualTo(1);

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.Date;
 import java.util.List;
 
 import static depromeet.batonsearch.domain.ticket.QTicket.ticket;
@@ -35,6 +36,10 @@ public class TicketQueryRepository {
                     likePlace(search.getPlace()),
                     priceGoe(search.getMinPrice()),
                     priceLoe(search.getMaxPrice()),
+                    remainNumberGoe(search.getMinRemainNumber()),
+                    remainNumberLoe(search.getMaxRemainNumber()),
+                    remainDayGoe(search.getMinRemainDay()),
+                    remainDayLoe(search.getMaxRemainDay()),
                     hasTag(search.getTagHash())
                 )
                 .fetch();
@@ -57,5 +62,20 @@ public class TicketQueryRepository {
 
     private BooleanExpression priceLoe(Long maxPrice) {
         return maxPrice != null ? ticket.price.loe(maxPrice) : null;
+    }
+
+    private BooleanExpression remainNumberGoe(Integer minRemainNumber) {
+        return minRemainNumber != null ? ticket.remainingNumber.goe(minRemainNumber) : null;
+    }
+
+    private BooleanExpression remainNumberLoe(Integer minRemainNumber) {
+        return minRemainNumber != null ? ticket.remainingNumber.loe(minRemainNumber) : null;
+    }
+
+    private BooleanExpression remainDayGoe(Integer minRemainDay) {
+        return minRemainDay != null ? Expressions.numberTemplate(Integer.class, "function('datediff', {0}, {1})", new Date(), ticket.expiryDate).goe(minRemainDay) : null;
+    }
+    private BooleanExpression remainDayLoe(Integer maxRemainDay) {
+        return maxRemainDay != null ? Expressions.numberTemplate(Integer.class, "function('datediff', {0}, {1})", new Date(), ticket.expiryDate).loe(maxRemainDay) : null;
     }
 }

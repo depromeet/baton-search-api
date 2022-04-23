@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @SpringBootTest
@@ -86,9 +87,11 @@ public class TicketQueryDslSpeedTest {
                     .seller(user)
                     .location("반포동")
                     .price(random.nextInt(8000) + 12000)
-                    .createdAt(new Date())
+                    .createdAt(LocalDateTime.now())
                     .latitude(35.0)
                     .longitude(35.0)
+                    .isMembership(false)
+                    .remainingNumber(random.nextInt(100))
                     .build();
             tickets.add(ticket);
         }
