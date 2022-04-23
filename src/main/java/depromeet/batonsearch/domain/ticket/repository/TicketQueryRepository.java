@@ -14,8 +14,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static depromeet.batonsearch.domain.ticket.QTicket.ticket;
 
@@ -27,7 +27,7 @@ public class TicketQueryRepository {
     @Transactional(readOnly = true)
     public Page<TicketResponseDto.Simple> searchAll(TicketRequestDto.Search search, Pageable pageable) {
         List<TicketResponseDto.Simple> results = queryFactory.select(new QTicketResponseDto_Simple(
-                        ticket.id, ticket.location, ticket.price, ticket.createdAt, ticket.tagHash
+                        ticket.id, ticket.location, ticket.price, ticket.createdAt, ticket.isMembership, ticket.expiryDate, ticket.remainingNumber, ticket.tagHash
                 ))
                 .from(ticket)
                 .offset(pageable.getOffset())
@@ -36,10 +36,13 @@ public class TicketQueryRepository {
                     likePlace(search.getPlace()),
                     priceGoe(search.getMinPrice()),
                     priceLoe(search.getMaxPrice()),
+                    remainNumberGoe(search.getMinRemainNumber()),
+                    remainNumberLoe(search.getMaxRemainNumber()),
+                    remainDayGoe(search.getMinRemainDay()),
+                    remainDayLoe(search.getMaxRemainDay()),
                     hasTag(search.getTagHash())
                 )
                 .fetch();
-
         return new PageImpl<>(results, pageable, results.size());
     }
 
@@ -61,5 +64,18 @@ public class TicketQueryRepository {
         return maxPrice != null ? ticket.price.loe(maxPrice) : null;
     }
 
+    private BooleanExpression remainNumberGoe(Integer minRemainNumber) {
+        return minRemainNumber != null ? ticket.remainingNumber.goe(minRemainNumber) : null;
+    }
 
+    private BooleanExpression remainNumberLoe(Integer minRemainNumber) {
+        return minRemainNumber != null ? ticket.remainingNumber.loe(minRemainNumber) : null;
+    }
+
+    private BooleanExpression remainDayGoe(Integer minRemainDay) {
+        return minRemainDay != null ? Expressions.numberTemplate(Integer.class, "function('datediff', {0}, {1})", new Date(), ticket.expiryDate).goe(minRemainDay) : null;
+    }
+    private BooleanExpression remainDayLoe(Integer maxRemainDay) {
+        return maxRemainDay != null ? Expressions.numberTemplate(Integer.class, "function('datediff', {0}, {1})", new Date(), ticket.expiryDate).loe(maxRemainDay) : null;
+    }
 }

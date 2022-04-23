@@ -6,8 +6,10 @@ import depromeet.batonsearch.domain.ticket.dto.TicketRequestDto;
 import depromeet.batonsearch.domain.ticket.dto.TicketResponseDto;
 import depromeet.batonsearch.domain.ticket.repository.TicketQueryRepository;
 import depromeet.batonsearch.domain.ticket.repository.TicketRepository;
+import depromeet.batonsearch.domain.tickettag.repository.TicketTagRepository;
 import depromeet.batonsearch.domain.user.User;
 import depromeet.batonsearch.domain.user.repository.UserRepository;
+import depromeet.batonsearch.domain.usertag.repository.UserTagRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @SpringBootTest
@@ -31,6 +34,12 @@ public class TicketQueryDslSpeedTest {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private TicketTagRepository ticketTagRepository;
+
+    @Autowired
+    private UserTagRepository userTagRepository;
 
     @BeforeAll
     @Transactional
@@ -78,9 +87,11 @@ public class TicketQueryDslSpeedTest {
                     .seller(user)
                     .location("반포동")
                     .price(random.nextInt(8000) + 12000)
-                    .createdAt(new Date())
+                    .createdAt(LocalDateTime.now())
                     .latitude(35.0)
                     .longitude(35.0)
+                    .isMembership(false)
+                    .remainingNumber(random.nextInt(100))
                     .build();
             tickets.add(ticket);
         }
@@ -93,9 +104,10 @@ public class TicketQueryDslSpeedTest {
     @AfterAll
     @Transactional
     void DB_삭제() {
-        tagRepository.deleteAll();
-        userRepository.deleteAll();
+        ticketTagRepository.deleteAll();
+        userTagRepository.deleteAll();
         ticketRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test

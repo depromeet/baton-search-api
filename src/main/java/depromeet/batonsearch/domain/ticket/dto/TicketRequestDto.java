@@ -46,6 +46,12 @@ public class TicketRequestDto {
         @ApiModelProperty(value = "최대 남은 기간")
         private Integer maxRemainDay;
 
+        @ApiModelProperty(value = "최소 남은 횟수")
+        private Integer minRemainNumber;
+
+        @ApiModelProperty(value = "최대 남은 횟수")
+        private Integer maxRemainNumber;
+
         @ApiModelProperty(value = "헬스복 포함")
         private Boolean clothes;
 
@@ -56,7 +62,7 @@ public class TicketRequestDto {
         private Double maxDistance;
 
         @Builder
-        public Search(Integer page, Integer size, String place, Set<String> hashtag, Double latitude, Double longitude, String town, Long minPrice, Long maxPrice, Integer minRemainDay, Integer maxRemainDay, Boolean clothes, Boolean locker, Double maxDistance) {
+        public Search(Integer page, Integer size, String place, Set<String> hashtag, Double latitude, Double longitude, String town, Long minPrice, Long maxPrice, Integer minRemainDay, Integer maxRemainDay, Boolean clothes, Boolean locker, Double maxDistance, Integer minRemainNumber, Integer maxRemainNumber) {
             this.tagHash = 0L;
 
             if (hashtag != null)
@@ -74,6 +80,8 @@ public class TicketRequestDto {
             this.maxPrice = maxPrice;
             this.minRemainDay = minRemainDay;
             this.maxRemainDay = maxRemainDay;
+            this.minRemainNumber = minRemainNumber;
+            this.maxRemainNumber = maxRemainNumber;
             this.clothes = clothes;
             this.locker = locker;
             this.maxDistance = maxDistance;

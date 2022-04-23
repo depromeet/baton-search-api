@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,18 +31,25 @@ public class TicketResponseDto {
         private Integer price;
 
         @ApiModelProperty(name = "판매 정보 생성 일자")
-        private Date createAt;
+        private LocalDateTime createAt;
 
         @ApiModelProperty(name = "소유 태그 리스트")
         private Set<String> tags;
 
+        private Boolean isMembership;
+        private LocalDate expiryDate;
+        private Integer remainingNumber;
+
         @Builder
         @QueryProjection
-        public Simple(Integer id, String location, Integer price, Date createAt, Long tagHash) {
+        public Simple(Integer id, String location, Integer price, LocalDateTime createAt, Boolean isMembership, LocalDate expiryDate, Integer remainingNumber, Long tagHash) {
             this.id = id;
             this.location = location;
             this.price = price;
             this.createAt = createAt;
+            this.isMembership = isMembership;
+            this.expiryDate = expiryDate;
+            this.remainingNumber = remainingNumber;
             this.tags = new HashSet<>();
 
             for (int i = 1; i <= keyToTag.size(); i++) {
@@ -59,6 +68,9 @@ public class TicketResponseDto {
                 .price(ticket.getPrice())
                 .tagHash(ticket.getTagHash())
                 .createAt(ticket.getCreatedAt())
+                .isMembership(ticket.getIsMembership())
+                .expiryDate(ticket.getExpiryDate())
+                .remainingNumber(ticket.getRemainingNumber())
                 .build();
         }
     }

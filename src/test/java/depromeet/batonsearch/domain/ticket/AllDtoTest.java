@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import static depromeet.batonsearch.domain.tag.StaticTag.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -34,9 +34,11 @@ public class AllDtoTest {
                 .seller(user)
                 .location("반포동")
                 .price(random.nextInt(8000) + 12000)
-                .createdAt(new Date())
+                .createdAt(LocalDateTime.now())
                 .latitude(35.0)
                 .longitude(35.0)
+                .isMembership(true)
+                .remainingNumber(150)
                 .build();
 
         TicketResponseDto.Simple ticketSimple = TicketResponseDto.Simple.of(ticket);
