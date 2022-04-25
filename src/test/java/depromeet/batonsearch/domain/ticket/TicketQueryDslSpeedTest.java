@@ -91,6 +91,7 @@ public class TicketQueryDslSpeedTest {
                     .latitude(35.0)
                     .longitude(35.0)
                     .isMembership(false)
+                    .state(TicketState.SALE)
                     .remainingNumber(random.nextInt(100))
                     .build();
             tickets.add(ticket);

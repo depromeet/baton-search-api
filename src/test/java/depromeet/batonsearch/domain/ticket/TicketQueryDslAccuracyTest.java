@@ -53,22 +53,22 @@ public class TicketQueryDslAccuracyTest {
     void DB_초기화() {
         User user = userRepository.save(User.builder().id(1).nickname("유저").gender(true).build());
 
-        Ticket ticket1 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(12000)
+        Ticket ticket1 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(12000).state(TicketState.SALE)
                 .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).expiryDate(LocalDate.now().plusDays(80)).build());
 
-        Ticket ticket2 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(15000)
+        Ticket ticket2 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(15000).state(TicketState.SALE)
                 .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).expiryDate(LocalDate.now().plusDays(150)).build());
 
-        Ticket ticket3 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(18000)
+        Ticket ticket3 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(18000).state(TicketState.SALE)
                 .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).expiryDate(LocalDate.now().plusDays(220)).build());
 
-        Ticket ticket4 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(12000)
+        Ticket ticket4 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(12000).state(TicketState.SALE)
                 .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(true).remainingNumber(10).build());
 
-        Ticket ticket5 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(15000)
+        Ticket ticket5 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(15000).state(TicketState.SALE)
                 .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(true).remainingNumber(20).build());
 
-        Ticket ticket6 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(18000)
+        Ticket ticket6 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(18000).state(TicketState.SALE)
                 .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(true).remainingNumber(30).build());
 
         Tag tag1 = tagRepository.findById(1).orElseThrow(IllegalAccessError::new);

@@ -2,13 +2,13 @@ package depromeet.batonsearch.domain.ticket.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import depromeet.batonsearch.domain.ticket.Ticket;
+import depromeet.batonsearch.domain.ticket.TicketState;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,14 +39,16 @@ public class TicketResponseDto {
         private Boolean isMembership;
         private LocalDate expiryDate;
         private Integer remainingNumber;
+        private TicketState state;
 
         @Builder
         @QueryProjection
-        public Simple(Integer id, String location, Integer price, LocalDateTime createAt, Boolean isMembership, LocalDate expiryDate, Integer remainingNumber, Long tagHash) {
+        public Simple(Integer id, String location, Integer price, TicketState state, LocalDateTime createAt, Boolean isMembership, LocalDate expiryDate, Integer remainingNumber, Long tagHash) {
             this.id = id;
             this.location = location;
             this.price = price;
             this.createAt = createAt;
+            this.state = state;
             this.isMembership = isMembership;
             this.expiryDate = expiryDate;
             this.remainingNumber = remainingNumber;
@@ -66,6 +68,7 @@ public class TicketResponseDto {
                 .id(ticket.getId())
                 .location(ticket.getLocation())
                 .price(ticket.getPrice())
+                .state(ticket.getState())
                 .tagHash(ticket.getTagHash())
                 .createAt(ticket.getCreatedAt())
                 .isMembership(ticket.getIsMembership())
