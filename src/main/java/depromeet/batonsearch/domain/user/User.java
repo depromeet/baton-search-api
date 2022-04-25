@@ -1,7 +1,7 @@
 package depromeet.batonsearch.domain.user;
 
 import depromeet.batonsearch.domain.bookmark.Bookmark;
-import depromeet.batonsearch.domain.tag.Tag;
+import depromeet.batonsearch.domain.buy.Buy;
 import depromeet.batonsearch.domain.usertag.UserTag;
 import lombok.*;
 
@@ -31,4 +31,7 @@ public class User {
 
     @OneToMany(mappedBy = "id")
     private Set<Bookmark> bookmarks = new HashSet<>();
+
+    @OneToMany(mappedBy = "id")
+    private Set<Buy> buys = new HashSet<>();
 }

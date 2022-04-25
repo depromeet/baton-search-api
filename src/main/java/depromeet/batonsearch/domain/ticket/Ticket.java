@@ -1,5 +1,6 @@
 package depromeet.batonsearch.domain.ticket;
 
+import depromeet.batonsearch.domain.buy.Buy;
 import depromeet.batonsearch.domain.tickettag.TicketTag;
 import depromeet.batonsearch.domain.user.User;
 import lombok.*;
@@ -38,6 +39,9 @@ public class Ticket {
     @Column
     private Integer price;
 
+    @Column(nullable = false)
+    private TicketState state;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -63,13 +67,18 @@ public class Ticket {
     @JoinColumn(name = "ticket_id", updatable = false)
     private Set<TicketTag> ticketTags = new HashSet<>();
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ticket_id", updatable = false)
+    private Set<Buy> buys = new HashSet<>();
+
     @Builder
-    public Ticket(User seller, User buyer, String location, Integer price, LocalDateTime createdAt, Double latitude, Double longitude, Boolean isMembership, LocalDate expiryDate, Integer remainingNumber) {
+    public Ticket(User seller, User buyer, String location, Integer price, TicketState state, LocalDateTime createdAt, Double latitude, Double longitude, Boolean isMembership, LocalDate expiryDate, Integer remainingNumber) {
         this.tagHash = 0L;
         this.seller = seller;
         this.buyer = buyer;
         this.location = location;
         this.price = price;
+        this.state = state;
         this.createdAt = createdAt;
         this.latitude = latitude;
         this.longitude = longitude;

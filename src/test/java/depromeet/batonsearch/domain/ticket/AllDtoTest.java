@@ -37,6 +37,7 @@ public class AllDtoTest {
                 .createdAt(LocalDateTime.now())
                 .latitude(35.0)
                 .longitude(35.0)
+                .state(TicketState.SALE)
                 .isMembership(true)
                 .remainingNumber(150)
                 .build();

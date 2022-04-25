@@ -19,6 +19,7 @@ CREATE TABLE `Ticket` (
   `buyer_id` int,
   `location` varchar(255) NOT NULL,
   `price` int NOT NULL,
+  `state` int NOT NULL,
   `created_at` timestamp NOT NULL,
   `latitude` double NOT NULL,
   `longitude` double NOT NULL,
@@ -51,6 +52,17 @@ CREATE TABLE `TicketTag` (
   `ticket_id` int NOT NULL,
   `tag_id` int NOT NULL
 );
+
+CREATE TABLE `Buy` (
+   `id` int PRIMARY KEY AUTO_INCREMENT,
+   `user_id` int NOT NULL,
+   `ticket_id` int NOT NULL,
+   `date` datetime(0)
+);
+
+ALTER TABLE `Buy` ADD FOREIGN KEY (`user_id`) REFERENCES `User` (`id`);
+
+ALTER TABLE `Buy` ADD FOREIGN KEY (`ticket_id`) REFERENCES `Ticket` (`id`);
 
 INSERT INTO Tag (id, subject, content) VALUES (1, "태그1", "태그1"), (2, "태그2", "태그2"), (3, "태그3", "태그3");
 

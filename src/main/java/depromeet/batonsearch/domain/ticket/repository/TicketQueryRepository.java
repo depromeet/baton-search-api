@@ -27,7 +27,7 @@ public class TicketQueryRepository {
     @Transactional(readOnly = true)
     public Page<TicketResponseDto.Simple> searchAll(TicketRequestDto.Search search, Pageable pageable) {
         List<TicketResponseDto.Simple> results = queryFactory.select(new QTicketResponseDto_Simple(
-                        ticket.id, ticket.location, ticket.price, ticket.createdAt, ticket.isMembership, ticket.expiryDate, ticket.remainingNumber, ticket.tagHash
+                        ticket.id, ticket.location, ticket.price, ticket.state, ticket.createdAt, ticket.isMembership, ticket.expiryDate, ticket.remainingNumber, ticket.tagHash
                 ))
                 .from(ticket)
                 .offset(pageable.getOffset())
