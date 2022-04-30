@@ -46,7 +46,7 @@ public class EntityLogicTest {
         Tag tag2 = tagRepository.getById(2);
 
         Ticket ticket = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(12000).state(TicketState.SALE)
-                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).expiryDate(LocalDate.of(2022, 10, 1)).build());
+                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).remainingNumber(30).build());
 
         System.out.println("ticket = " + ticket);
         

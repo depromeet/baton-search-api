@@ -6,6 +6,7 @@ import depromeet.batonsearch.domain.ticket.TicketState;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,37 +22,29 @@ public class TicketResponseDto {
     @NoArgsConstructor
     @ToString
     public static class Simple {
-        @ApiModelProperty(name = "양도권 ID")
         private Integer id;
-
-        @ApiModelProperty(name = "위치")
         private String location;
-
-        @ApiModelProperty(name = "가격")
+        private String address;
         private Integer price;
-
-        @ApiModelProperty(name = "판매 정보 생성 일자")
         private LocalDateTime createAt;
-
-        @ApiModelProperty(name = "소유 태그 리스트")
         private Set<String> tags;
-
         private Boolean isMembership;
-        private LocalDate expiryDate;
         private Integer remainingNumber;
         private TicketState state;
+        private Point point;
 
         @Builder
         @QueryProjection
-        public Simple(Integer id, String location, Integer price, TicketState state, LocalDateTime createAt, Boolean isMembership, LocalDate expiryDate, Integer remainingNumber, Long tagHash) {
+        public Simple(Integer id, String location, String address, Integer price, TicketState state, LocalDateTime createAt, Boolean isMembership, Integer remainingNumber, Long tagHash, Point point) {
             this.id = id;
             this.location = location;
+            this.address = address;
             this.price = price;
             this.createAt = createAt;
             this.state = state;
             this.isMembership = isMembership;
-            this.expiryDate = expiryDate;
             this.remainingNumber = remainingNumber;
+            this.point = point;
             this.tags = new HashSet<>();
 
             for (int i = 1; i <= keyToTag.size(); i++) {
@@ -72,7 +65,6 @@ public class TicketResponseDto {
                 .tagHash(ticket.getTagHash())
                 .createAt(ticket.getCreatedAt())
                 .isMembership(ticket.getIsMembership())
-                .expiryDate(ticket.getExpiryDate())
                 .remainingNumber(ticket.getRemainingNumber())
                 .build();
         }

@@ -2,7 +2,6 @@ package depromeet.batonsearch.domain.user;
 
 import depromeet.batonsearch.domain.bookmark.Bookmark;
 import depromeet.batonsearch.domain.buy.Buy;
-import depromeet.batonsearch.domain.usertag.UserTag;
 import lombok.*;
 
 import javax.persistence.*;
@@ -25,9 +24,6 @@ public class User {
 
     @Column(nullable = false)
     private Boolean gender;
-
-    @OneToMany(mappedBy = "id")
-    private Set<UserTag> userTags = new HashSet<>();
 
     @OneToMany(mappedBy = "id")
     private Set<Bookmark> bookmarks = new HashSet<>();

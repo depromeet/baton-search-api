@@ -1,21 +1,21 @@
 package depromeet.batonsearch.domain.ticket;
 
 import depromeet.batonsearch.domain.buy.Buy;
+import depromeet.batonsearch.domain.ticketimage.TicketImage;
 import depromeet.batonsearch.domain.tickettag.TicketTag;
 import depromeet.batonsearch.domain.user.User;
+import depromeet.batonsearch.global.util.GeometryUtil;
 import lombok.*;
+import org.locationtech.jts.geom.Point;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Getter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "Ticket")
 public class Ticket {
@@ -29,38 +29,67 @@ public class Ticket {
     @JoinColumn(name = "seller_id")
     private User seller;
 
-    @ManyToOne
-    @JoinColumn(name = "buyer_id")
-    private User buyer;
-
     @Column
     private String location;
 
     @Column
-    private Integer price;
-
-    @Column(nullable = false)
-    private TicketState state;
+    private String address;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column
-    private Double latitude;
+    private Integer price;
 
-    @Column
-    private Double longitude;
+    @Column(nullable = false)
+    private TicketState state = TicketState.SALE;
+
+    @Column(nullable = false)
+    private TicketType type = TicketType.HEALTH;
+
+    @Column(nullable = false, name = "can_nego")
+    private Boolean canNego = false;
+
+    @Column(nullable = false, name = "trade_type")
+    private TicketTradeType tradeType = TicketTradeType.BOTH;
+
+    @Column(nullable = false, name = "has_shower")
+    private Boolean hasShower = false;
+
+    @Column(nullable = false, name = "has_locker")
+    private Boolean hasLocker = false;
+
+    @Column(nullable = false, name = "has_clothes")
+    private Boolean hasClothes = false;
+
+    @Column(nullable = false, name = "has_gx")
+    private Boolean hasGx = false;
+
+    @Column(nullable = false, name = "can_resell")
+    private Boolean canResell = false;
+
+    @Column(nullable = false, name = "can_refund")
+    private Boolean canRefund = false;
+
+    @Column(nullable = false)
+    private String description = "";
+
+    @Column(nullable = false, name = "transfer_fee")
+    private TicketTransferFee transferFee = TicketTransferFee.NONE;
+
+    @Column(nullable = false)
+    private Point point;
 
     @Column(name = "tag_hash")
     private Long tagHash;
 
-    @Column(name = "is_membership")
+    @Column(nullable = false, name = "is_membership")
     private Boolean isMembership;
 
-    @Column(name = "expiry_date")
-    private LocalDate expiryDate;
+    @Column(nullable = false, name = "is_holding")
+    private Boolean isHolding = false;
 
-    @Column(name = "remaining_number")
+    @Column(nullable = false, name = "remaining_number")
     private Integer remainingNumber;
 
     @OneToMany(fetch = FetchType.LAZY)
@@ -71,19 +100,33 @@ public class Ticket {
     @JoinColumn(name = "ticket_id", updatable = false)
     private Set<Buy> buys = new HashSet<>();
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ticket_id", updatable = false)
+    private Set<TicketImage> images = new HashSet<>();
+
     @Builder
-    public Ticket(User seller, User buyer, String location, Integer price, TicketState state, LocalDateTime createdAt, Double latitude, Double longitude, Boolean isMembership, LocalDate expiryDate, Integer remainingNumber) {
-        this.tagHash = 0L;
+    public Ticket(User seller, String location, String address, LocalDateTime createdAt, Integer price, TicketState state, TicketType type, Boolean canNego, TicketTradeType tradeType, Boolean hasShower, Boolean hasLocker, Boolean hasClothes, Boolean hasGx, Boolean canResell, Boolean canRefund, String description, TicketTransferFee transferFee, Double latitude, Double longitude, Boolean isMembership, Boolean isHolding, Integer remainingNumber) {
         this.seller = seller;
-        this.buyer = buyer;
         this.location = location;
-        this.price = price;
-        this.state = state;
+        this.address = address;
         this.createdAt = createdAt;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.price = price;
+        this.state = state == null ? TicketState.SALE : state;
+        this.type = type == null ? TicketType.HEALTH : type;
+        this.canNego = canNego != null && canNego;
+        this.tradeType = tradeType == null ? TicketTradeType.BOTH : null;
+        this.hasShower = hasShower != null && hasShower;
+        this.hasLocker = hasLocker != null && hasLocker;
+        this.hasClothes = hasClothes != null && hasClothes;
+        this.hasGx = hasGx != null && hasGx;
+        this.canResell = canResell != null && canResell;
+        this.canRefund = canRefund != null && canRefund;
+        this.description = description == null ? "" : description;
+        this.transferFee = transferFee == null ? TicketTransferFee.NONE : transferFee;
+        this.point = (Point) GeometryUtil.wktToGeometry(String.format("POINT(%s %s)", latitude, longitude));
+        this.tagHash = 0L;
         this.isMembership = isMembership;
-        this.expiryDate = expiryDate;
+        this.isHolding = isHolding != null && isHolding;
         this.remainingNumber = remainingNumber;
     }
 
