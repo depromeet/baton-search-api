@@ -10,7 +10,6 @@ import depromeet.batonsearch.domain.tickettag.TicketTag;
 import depromeet.batonsearch.domain.tickettag.repository.TicketTagRepository;
 import depromeet.batonsearch.domain.user.User;
 import depromeet.batonsearch.domain.user.repository.UserRepository;
-import depromeet.batonsearch.domain.usertag.repository.UserTagRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +34,6 @@ public class TicketQueryDslAccuracyTest {
     private TicketTagRepository ticketTagRepository;
 
     @Autowired
-    private UserTagRepository userTagRepository;
-
-    @Autowired
     private TicketQueryRepository ticketQueryRepository;
 
     @Autowired
@@ -53,23 +49,23 @@ public class TicketQueryDslAccuracyTest {
     void DB_초기화() {
         User user = userRepository.save(User.builder().id(1).nickname("유저").gender(true).build());
 
-        Ticket ticket1 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(12000).state(TicketState.SALE)
-                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).expiryDate(LocalDate.now().plusDays(80)).build());
+        Ticket ticket1 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").address("반포동").price(12000).state(TicketState.SALE)
+                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(true).remainingNumber(80).build());
 
-        Ticket ticket2 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(15000).state(TicketState.SALE)
-                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).expiryDate(LocalDate.now().plusDays(150)).build());
+        Ticket ticket2 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").address("반포동").price(15000).state(TicketState.SALE)
+                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(true).remainingNumber(150).build());
 
-        Ticket ticket3 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(18000).state(TicketState.SALE)
-                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).expiryDate(LocalDate.now().plusDays(220)).build());
+        Ticket ticket3 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").address("반포동").price(18000).state(TicketState.SALE)
+                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(true).remainingNumber(220).build());
 
-        Ticket ticket4 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(12000).state(TicketState.SALE)
-                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(true).remainingNumber(10).build());
+        Ticket ticket4 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").address("반포동").price(12000).state(TicketState.SALE)
+                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).remainingNumber(10).build());
 
-        Ticket ticket5 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(15000).state(TicketState.SALE)
-                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(true).remainingNumber(20).build());
+        Ticket ticket5 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").address("반포동").price(15000).state(TicketState.SALE)
+                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).remainingNumber(20).build());
 
-        Ticket ticket6 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(18000).state(TicketState.SALE)
-                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(true).remainingNumber(30).build());
+        Ticket ticket6 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").address("반포동").price(18000).state(TicketState.SALE)
+                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).remainingNumber(30).build());
 
         Tag tag1 = tagRepository.findById(1).orElseThrow(IllegalAccessError::new);
         Tag tag2 = tagRepository.findById(2).orElseThrow(IllegalAccessError::new);
@@ -179,16 +175,15 @@ public class TicketQueryDslAccuracyTest {
     @Transactional
     void 남은_일자_테스트() {
         TicketRequestDto.Search search = TicketRequestDto.Search.builder()
-                .minRemainDay(100)
-                .maxRemainDay(200)
+                .minRemainNumber(100)
+                .maxRemainNumber(200)
+                .isMembership(true)
                 .build();
 
         PageRequest request = PageRequest.of(0, 5);
 
         Page<TicketResponseDto.Simple> simples = ticketQueryRepository.searchAll(search, request);
-        Assertions.assertThat(simples.getContent()).allMatch(
-                x -> x.getExpiryDate().isAfter(LocalDate.now().plusDays(100)) && LocalDate.now().plusDays(200).isAfter(x.getExpiryDate())
-        );
+        Assertions.assertThat(simples.getContent()).allMatch(x -> (x.getRemainingNumber() >= 100 && x.getRemainingNumber() <= 200) && x.getIsMembership());
     }
 
     @Test
@@ -198,12 +193,13 @@ public class TicketQueryDslAccuracyTest {
         TicketRequestDto.Search search = TicketRequestDto.Search.builder()
                 .minRemainNumber(15)
                 .maxRemainNumber(25)
+                .isMembership(false)
                 .build();
 
         PageRequest request = PageRequest.of(0, 5);
 
         Page<TicketResponseDto.Simple> simples = ticketQueryRepository.searchAll(search, request);
-        Assertions.assertThat(simples.getContent()).allMatch(x -> x.getRemainingNumber() >= 15 && x.getRemainingNumber() <= 25);
+        Assertions.assertThat(simples.getContent()).allMatch(x -> (x.getRemainingNumber() >= 15 && x.getRemainingNumber() <= 25) && !x.getIsMembership());
     }
 
     @Test
@@ -211,12 +207,15 @@ public class TicketQueryDslAccuracyTest {
     @Transactional
     void 거리_쿼리_테스트() {
         TicketRequestDto.Search search = TicketRequestDto.Search.builder()
+                .latitude(34.9)
+                .longitude(34.9)
                 .maxDistance(100.0)
                 .build();
 
         PageRequest request = PageRequest.of(0, 5);
 
         Page<TicketResponseDto.Simple> simples = ticketQueryRepository.searchAll(search, request);
+        Assertions.assertThat(simples.getContent().size()).isEqualTo(5);
     }
 
 
@@ -225,7 +224,6 @@ public class TicketQueryDslAccuracyTest {
     @Transactional
     void DB_삭제() {
         ticketTagRepository.deleteAll();
-        userTagRepository.deleteAll();
         ticketRepository.deleteAll();
         userRepository.deleteAll();
     }

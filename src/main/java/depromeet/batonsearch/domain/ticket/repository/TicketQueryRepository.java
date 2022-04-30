@@ -6,6 +6,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import depromeet.batonsearch.domain.ticket.dto.QTicketResponseDto_Simple;
 import depromeet.batonsearch.domain.ticket.dto.TicketRequestDto;
 import depromeet.batonsearch.domain.ticket.dto.TicketResponseDto;
+import depromeet.batonsearch.global.util.Direction;
+import depromeet.batonsearch.global.util.GeometryUtil;
+import depromeet.batonsearch.global.util.Location;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,10 +17,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Date;
 import java.util.List;
 
 import static depromeet.batonsearch.domain.ticket.QTicket.ticket;
+
 
 @RequiredArgsConstructor
 @Repository
@@ -26,25 +29,27 @@ public class TicketQueryRepository {
 
     @Transactional(readOnly = true)
     public Page<TicketResponseDto.Simple> searchAll(TicketRequestDto.Search search, Pageable pageable) {
+
         List<TicketResponseDto.Simple> results = queryFactory.select(new QTicketResponseDto_Simple(
-                        ticket.id, ticket.location, ticket.price, ticket.state, ticket.createdAt, ticket.isMembership, ticket.expiryDate, ticket.remainingNumber, ticket.tagHash
+                        ticket.id, ticket.location, ticket.address, ticket.price, ticket.state, ticket.createdAt, ticket.isMembership, ticket.remainingNumber, ticket.tagHash, ticket.point
                 ))
                 .from(ticket)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .where(
+                    distanceLoe(search.getLatitude(), search.getLongitude(), search.getMaxDistance()),
+                    isMembership(search.getIsMembership()),
                     likePlace(search.getPlace()),
                     priceGoe(search.getMinPrice()),
                     priceLoe(search.getMaxPrice()),
                     remainNumberGoe(search.getMinRemainNumber()),
                     remainNumberLoe(search.getMaxRemainNumber()),
-                    remainDayGoe(search.getMinRemainDay()),
-                    remainDayLoe(search.getMaxRemainDay()),
                     hasTag(search.getTagHash())
                 )
                 .fetch();
         return new PageImpl<>(results, pageable, results.size());
     }
+
 
     private BooleanExpression hasTag(Long tagHash) {
         if (tagHash == null) return null;
@@ -64,6 +69,10 @@ public class TicketQueryRepository {
         return maxPrice != null ? ticket.price.loe(maxPrice) : null;
     }
 
+    private BooleanExpression isMembership(Boolean bool) {
+        return bool != null ? ticket.isMembership.eq(bool) : null;
+    }
+
     private BooleanExpression remainNumberGoe(Integer minRemainNumber) {
         return minRemainNumber != null ? ticket.remainingNumber.goe(minRemainNumber) : null;
     }
@@ -72,10 +81,18 @@ public class TicketQueryRepository {
         return minRemainNumber != null ? ticket.remainingNumber.loe(minRemainNumber) : null;
     }
 
-    private BooleanExpression remainDayGoe(Integer minRemainDay) {
-        return minRemainDay != null ? Expressions.numberTemplate(Integer.class, "function('datediff', {0}, {1})", new Date(), ticket.expiryDate).goe(minRemainDay) : null;
-    }
-    private BooleanExpression remainDayLoe(Integer maxRemainDay) {
-        return maxRemainDay != null ? Expressions.numberTemplate(Integer.class, "function('datediff', {0}, {1})", new Date(), ticket.expiryDate).loe(maxRemainDay) : null;
+    private BooleanExpression distanceLoe(Double latitude, Double longitude, Double distance) {
+        if (latitude == null || longitude == null || distance == null)
+            return null;
+
+        Location northEast = GeometryUtil.calculate(latitude, longitude, distance, Direction.NORTHEAST.getBearing());
+        Location southWest = GeometryUtil.calculate(latitude, longitude, distance, Direction.SOUTHWEST.getBearing());
+
+        double x1 = northEast.getLatitude();
+        double y1 = northEast.getLongitude();
+        double x2 = southWest.getLatitude();
+        double y2 = southWest.getLongitude();
+
+        return Expressions.booleanTemplate("function('geocontains', {0}, {1})", String.format("LINESTRING(%f %f, %f %f)", x1, y1, x2, y2), ticket.point).eq(true);
     }
 }

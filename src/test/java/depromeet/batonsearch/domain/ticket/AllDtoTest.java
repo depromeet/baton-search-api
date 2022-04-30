@@ -35,8 +35,6 @@ public class AllDtoTest {
                 .location("반포동")
                 .price(random.nextInt(8000) + 12000)
                 .createdAt(LocalDateTime.now())
-                .latitude(35.0)
-                .longitude(35.0)
                 .state(TicketState.SALE)
                 .isMembership(true)
                 .remainingNumber(150)
