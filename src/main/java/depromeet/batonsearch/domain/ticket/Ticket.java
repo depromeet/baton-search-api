@@ -124,6 +124,7 @@ public class Ticket {
         this.description = description == null ? "" : description;
         this.transferFee = transferFee == null ? TicketTransferFee.NONE : transferFee;
         this.point = (Point) GeometryUtil.wktToGeometry(String.format("POINT(%s %s)", latitude, longitude));
+        this.point.setSRID(4326);
         this.tagHash = 0L;
         this.isMembership = isMembership;
         this.isHolding = isHolding != null && isHolding;

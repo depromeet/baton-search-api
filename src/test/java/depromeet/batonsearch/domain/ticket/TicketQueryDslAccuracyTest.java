@@ -103,7 +103,10 @@ public class TicketQueryDslAccuracyTest {
     @Order(2)
     @Transactional(readOnly = true)
     void 페이지_번호_테스트() {
-        TicketRequestDto.Search search = TicketRequestDto.Search.builder().build();
+        TicketRequestDto.Search search = TicketRequestDto.Search.builder()
+                .latitude(34.9)
+                .longitude(34.9)
+                .build();
         PageRequest request = PageRequest.of(0, 5);
 
         Page<TicketResponseDto.Simple> simples = ticketQueryRepository.searchAll(search, request);
@@ -118,6 +121,8 @@ public class TicketQueryDslAccuracyTest {
         hashSet.add("태그2");
 
         TicketRequestDto.Search search = TicketRequestDto.Search.builder()
+                .latitude(34.9)
+                .longitude(34.9)
                 .hashtag(hashSet)
                 .build();
 
@@ -132,6 +137,8 @@ public class TicketQueryDslAccuracyTest {
     @Transactional(readOnly = true)
     void 최소_가격_테스트() {
         TicketRequestDto.Search search = TicketRequestDto.Search.builder()
+                .latitude(34.9)
+                .longitude(34.9)
                 .minPrice(15000L)
                 .build();
 
@@ -146,6 +153,8 @@ public class TicketQueryDslAccuracyTest {
     @Transactional
     void 최대_가격_테스트() {
         TicketRequestDto.Search search = TicketRequestDto.Search.builder()
+                .latitude(34.9)
+                .longitude(34.9)
                 .maxPrice(15000L)
                 .build();
 
@@ -160,6 +169,8 @@ public class TicketQueryDslAccuracyTest {
     @Transactional
     void 사이_가격_테스트() {
         TicketRequestDto.Search search = TicketRequestDto.Search.builder()
+                .latitude(34.9)
+                .longitude(34.9)
                 .minPrice(13000L)
                 .maxPrice(17000L)
                 .build();
@@ -175,6 +186,8 @@ public class TicketQueryDslAccuracyTest {
     @Transactional
     void 남은_일자_테스트() {
         TicketRequestDto.Search search = TicketRequestDto.Search.builder()
+                .latitude(34.9)
+                .longitude(34.9)
                 .minRemainNumber(100)
                 .maxRemainNumber(200)
                 .isMembership(true)
@@ -191,6 +204,8 @@ public class TicketQueryDslAccuracyTest {
     @Transactional
     void 남은_횟수_테스트() {
         TicketRequestDto.Search search = TicketRequestDto.Search.builder()
+                .latitude(34.9)
+                .longitude(34.9)
                 .minRemainNumber(15)
                 .maxRemainNumber(25)
                 .isMembership(false)

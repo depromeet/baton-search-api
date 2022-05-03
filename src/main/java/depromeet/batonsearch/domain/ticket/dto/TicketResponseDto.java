@@ -6,6 +6,7 @@ import depromeet.batonsearch.domain.ticket.TicketState;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDate;
@@ -32,10 +33,11 @@ public class TicketResponseDto {
         private Integer remainingNumber;
         private TicketState state;
         private Point point;
+        private Double distance;
 
         @Builder
         @QueryProjection
-        public Simple(Integer id, String location, String address, Integer price, TicketState state, LocalDateTime createAt, Boolean isMembership, Integer remainingNumber, Long tagHash, Point point) {
+        public Simple(Integer id, String location, String address, Integer price, TicketState state, LocalDateTime createAt, Boolean isMembership, Integer remainingNumber, Long tagHash, Point point, Double distance) {
             this.id = id;
             this.location = location;
             this.address = address;
@@ -45,6 +47,7 @@ public class TicketResponseDto {
             this.isMembership = isMembership;
             this.remainingNumber = remainingNumber;
             this.point = point;
+            this.distance = distance;
             this.tags = new HashSet<>();
 
             for (int i = 1; i <= keyToTag.size(); i++) {

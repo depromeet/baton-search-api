@@ -31,7 +31,19 @@ public class TicketQueryRepository {
     public Page<TicketResponseDto.Simple> searchAll(TicketRequestDto.Search search, Pageable pageable) {
 
         List<TicketResponseDto.Simple> results = queryFactory.select(new QTicketResponseDto_Simple(
-                        ticket.id, ticket.location, ticket.address, ticket.price, ticket.state, ticket.createdAt, ticket.isMembership, ticket.remainingNumber, ticket.tagHash, ticket.point
+                    ticket.id,
+                    ticket.location,
+                    ticket.address,
+                    ticket.price,
+                    ticket.state,
+                    ticket.createdAt,
+                    ticket.isMembership,
+                    ticket.remainingNumber,
+                    ticket.tagHash,
+                    ticket.point,
+                    Expressions.numberTemplate(
+                            Double.class, "function('calc_distance', {0}, {1})", String.format("point(%f %f)", search.getLatitude(), search.getLongitude()), ticket.point
+                    ).as("distance")
                 ))
                 .from(ticket)
                 .offset(pageable.getOffset())
