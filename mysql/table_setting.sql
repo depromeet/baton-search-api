@@ -34,7 +34,7 @@ CREATE TABLE `Ticket` (
   `can_refund` tinyint(1) NOT NULL,
   `is_holding` tinyint(1) NOT NULL,
   `description` varchar(255) NOT NULL,
-  `transfer_pee` int NOT NULL,
+  `transfer_fee` int NOT NULL,
   `point` point NOT NULL,
   `tag_hash` bigint NOT NULL,
   `is_membership` tinyint(1) NOT NULL,
