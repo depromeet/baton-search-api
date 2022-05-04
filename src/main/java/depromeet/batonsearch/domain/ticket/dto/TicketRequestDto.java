@@ -1,6 +1,7 @@
 package depromeet.batonsearch.domain.ticket.dto;
 
 
+import depromeet.batonsearch.domain.ticket.*;
 import lombok.*;
 
 import java.util.Set;
@@ -22,6 +23,13 @@ public class TicketRequestDto {
         private Long maxPrice;
         private Integer minRemainNumber;
         private Integer maxRemainNumber;
+        private Integer minRemainDay;
+        private Integer maxRemainDay;
+        private Set<TicketType> types;
+        private TicketTradeType tradeType;
+        private TicketTransferFee transferFee;
+        private TicketState state;
+        private TicketSortType sortType;
         private Boolean hasClothes;
         private Boolean hasLocker;
         private Boolean hasShower;
@@ -34,7 +42,7 @@ public class TicketRequestDto {
         private Double maxDistance;
 
         @Builder
-        public Search(Integer page, Integer size, String place, Set<String> hashtag, Double latitude, Double longitude, String town, Long minPrice, Long maxPrice, Integer minRemainNumber, Integer maxRemainNumber, Boolean hasClothes, Boolean hasLocker, Boolean hasShower, Boolean hasGx, Boolean canResell, Boolean canRefund, Boolean isHold, Boolean canNego, Boolean isMembership, Double maxDistance) {
+        public Search(Integer page, Integer size, String place, Set<String> hashtag, Double latitude, Double longitude, String town, Long minPrice, Long maxPrice, Integer minRemainNumber, Integer maxRemainNumber, Integer minRemainDay, Integer maxRemainDay, Boolean hasClothes, Boolean hasLocker, Boolean hasShower, Boolean hasGx, Boolean canResell, Boolean canRefund, Boolean isHold, Boolean canNego, Boolean isMembership, Double maxDistance, Set<TicketType> ticketTypes, TicketState ticketState, TicketTradeType ticketTradeType, TicketTransferFee ticketTransferFee, TicketSortType sortType) {
             this.tagHash = 0L;
 
             if (hashtag != null)
@@ -54,9 +62,12 @@ public class TicketRequestDto {
             this.maxPrice = maxPrice;
             this.minRemainNumber = minRemainNumber;
             this.maxRemainNumber = maxRemainNumber;
+            this.minRemainDay = minRemainDay;
+            this.maxRemainDay = maxRemainDay;
             this.hasClothes = hasClothes;
             this.hasLocker = hasLocker;
             this.hasShower = hasShower;
+            this.sortType = sortType;
             this.hasGx = hasGx;
             this.canResell = canResell;
             this.canRefund = canRefund;
@@ -64,6 +75,10 @@ public class TicketRequestDto {
             this.canNego = canNego;
             this.isMembership = isMembership;
             this.maxDistance = maxDistance;
+            this.tradeType = ticketTradeType;
+            this.types = ticketTypes;
+            this.transferFee = ticketTransferFee;
+            this.state = ticketState;
         }
     }
 }
