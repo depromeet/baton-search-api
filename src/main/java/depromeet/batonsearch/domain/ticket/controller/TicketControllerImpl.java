@@ -9,18 +9,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/query")
 public class TicketControllerImpl implements TicketController {
-    private final TicketService ticketService;
+    final private TicketService ticketService;
 
     @GetMapping(value = "/all")
-    @ResponseBody
     public ResponseEntity<Page<TicketResponseDto.Simple>> findAll(@Valid TicketRequestDto.Search search) {
         return new ResponseEntity<>(ticketService.findAll(search), HttpStatus.OK);
     }
