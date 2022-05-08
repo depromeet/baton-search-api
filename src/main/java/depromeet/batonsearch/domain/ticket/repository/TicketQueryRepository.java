@@ -48,8 +48,6 @@ public class TicketQueryRepository {
                     ).as("distance")
                 ))
                 .from(ticket)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .where(
                     distanceLoe(search.getLatitude(), search.getLongitude(), search.getMaxDistance()),
                     likePlace(search.getPlace()),
@@ -70,6 +68,8 @@ public class TicketQueryRepository {
                     canNegoCheck(search.getCanNego()),
                     isHoldCheck(search.getIsHold())
                 )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .orderBy(
                     orderSelect(search.getSortType())
                 )
