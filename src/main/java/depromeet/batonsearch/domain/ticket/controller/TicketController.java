@@ -7,4 +7,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface TicketController {
     ResponseEntity<Page<TicketResponseDto.Simple>> findAll(TicketRequestDto.Search search);
+    ResponseEntity<TicketResponseDto.Simple> save(TicketRequestDto.Info info);
 }
