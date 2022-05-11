@@ -2,9 +2,13 @@ package depromeet.batonsearch.domain.ticket.dto;
 
 
 import depromeet.batonsearch.domain.ticket.*;
+import depromeet.batonsearch.domain.user.User;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import static depromeet.batonsearch.domain.tag.StaticTag.tagToKey;
@@ -112,8 +116,96 @@ public class TicketRequestDto {
         }
     }
 
-    @Getter @Setter
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @Builder
     public static class Info {
+        // @NotNull: 유저 인증이 붙으면 수정
+        User seller;
 
+        @NotBlank
+        String location;
+
+        @NotBlank
+        String address;
+
+        @NotNull @Min(value = 0)
+        Integer price;
+
+        @NotNull
+        TicketType type;
+
+        @NotNull
+        Boolean canNego;
+
+        @NotNull
+        TicketTradeType tradeType;
+
+        @NotNull
+        Boolean hasShower;
+
+        @NotNull
+        Boolean hasLocker;
+
+        @NotNull
+        Boolean hasClothes;
+
+        @NotNull
+        Boolean hasGx;
+
+        @NotNull
+        Boolean canResell;
+
+        @NotNull
+        Boolean canRefund;
+
+        @NotEmpty
+        String description;
+
+        @NotNull
+        TicketTransferFee transferFee;
+
+        @NotNull
+        Double latitude;
+
+        @NotNull
+        Double longitude;
+
+        @NotNull
+        Boolean isMembership;
+
+        @NotNull
+        Boolean isHolding;
+
+        @NotNull @Min(value = 0)
+        Integer remainingNumber;
+
+        public Ticket toEntity() {
+            return Ticket.builder()
+                    .seller(this.seller)
+                    .location(this.location)
+                    .address(this.address)
+                    .createdAt(LocalDateTime.now())
+                    .price(this.price)
+                    .state(TicketState.SALE)
+                    .type(this.type)
+                    .canNego(this.canNego)
+                    .tradeType(this.tradeType)
+                    .hasShower(this.hasShower)
+                    .hasLocker(this.hasLocker)
+                    .hasClothes(this.hasClothes)
+                    .hasGx(this.hasGx)
+                    .canResell(this.canResell)
+                    .canRefund(this.canRefund)
+                    .description(this.description)
+                    .transferFee(this.transferFee)
+                    .latitude(this.latitude)
+                    .longitude(this.longitude)
+                    .isMembership(this.isMembership)
+                    .isHolding(this.isHolding)
+                    .remainingNumber(this.remainingNumber)
+                    .build();
+        }
     }
 }

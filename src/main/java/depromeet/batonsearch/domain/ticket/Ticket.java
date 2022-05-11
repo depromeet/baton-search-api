@@ -114,7 +114,7 @@ public class Ticket {
         this.state = state == null ? TicketState.SALE : state;
         this.type = type == null ? TicketType.HEALTH : type;
         this.canNego = canNego != null && canNego;
-        this.tradeType = tradeType == null ? TicketTradeType.BOTH : null;
+        this.tradeType = tradeType == null ? TicketTradeType.BOTH : tradeType;
         this.hasShower = hasShower != null && hasShower;
         this.hasLocker = hasLocker != null && hasLocker;
         this.hasClothes = hasClothes != null && hasClothes;
