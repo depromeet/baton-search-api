@@ -4,6 +4,8 @@ package depromeet.batonsearch.domain.ticket.dto;
 import depromeet.batonsearch.domain.ticket.*;
 import depromeet.batonsearch.domain.user.User;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
@@ -119,7 +121,7 @@ public class TicketRequestDto {
     @AllArgsConstructor
     @Builder
     public static class Info {
-        @NotNull
+        // @NotNull: 유저 인증이 붙으면 수정
         User seller;
 
         @NotBlank

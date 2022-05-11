@@ -5,18 +5,17 @@ import depromeet.batonsearch.domain.ticket.*;
 import depromeet.batonsearch.domain.ticketimage.TicketImage;
 import depromeet.batonsearch.domain.user.User;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
-import org.locationtech.jts.geom.Geometry;
+import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static depromeet.batonsearch.domain.tag.StaticTag.keyToTag;
+
 
 public class TicketResponseDto {
     @ApiModel(value = "양도권 정보 축약형 모델")
@@ -69,6 +68,7 @@ public class TicketResponseDto {
                 .location(ticket.getLocation())
                 .price(ticket.getPrice())
                 .state(ticket.getState())
+                .point(ticket.getPoint())
                 .tagHash(ticket.getTagHash())
                 .createAt(ticket.getCreatedAt())
                 .isMembership(ticket.getIsMembership())
