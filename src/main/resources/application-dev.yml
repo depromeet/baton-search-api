@@ -26,3 +26,7 @@ logging:
         type:
           descriptor:
             sql: trace
+server:
+  error:
+    include-message: always
+    whitelabel.enabled: false

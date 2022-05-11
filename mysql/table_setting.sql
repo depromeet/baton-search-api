@@ -93,3 +93,4 @@ ALTER TABLE `TicketTag` ADD FOREIGN KEY (`ticket_id`) REFERENCES `Ticket` (`id`)
 ALTER TABLE `TicketTag` ADD FOREIGN KEY (`tag_id`) REFERENCES `Tag` (`id`);
 
 INSERT INTO Tag (id, subject, content) VALUES (1, "태그1", "태그1"), (2, "태그2", "태그2"), (3, "태그3", "태그3");
+INSERT INTO `User` (id, nickname, gender) VALUES (1, 'justkode', true);
