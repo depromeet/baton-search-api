@@ -4,9 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import depromeet.batonsearch.domain.ticket.*;
 import depromeet.batonsearch.domain.ticketimage.TicketImage;
 import depromeet.batonsearch.domain.user.User;
-import io.swagger.annotations.ApiModel;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
@@ -18,7 +16,6 @@ import static depromeet.batonsearch.domain.tag.StaticTag.keyToTag;
 
 
 public class TicketResponseDto {
-    @ApiModel(value = "양도권 정보 축약형 모델")
     @Getter
     @Setter
     @NoArgsConstructor
