@@ -11,4 +11,5 @@ public interface TicketService {
     Page<TicketResponseDto.Simple> findAll(TicketRequestDto.Search search);
     TicketResponseDto.Simple save(TicketRequestDto.Info info, Set<String> tags, Set<MultipartFile> images);
     TicketResponseDto.Info findById(Integer id);
+    String deleteById(Integer id);
 }

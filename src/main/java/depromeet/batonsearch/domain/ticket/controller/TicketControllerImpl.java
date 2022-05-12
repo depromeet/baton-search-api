@@ -43,4 +43,10 @@ public class TicketControllerImpl implements TicketController {
     public ResponseEntity<TicketResponseDto.Info> findById(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(ticketService.findById(id));
     }
+
+    @Transactional
+    @DeleteMapping(value = "/info/{id}")
+    public ResponseEntity<String> deleteById(@PathVariable("id") Integer id) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(ticketService.deleteById(id));
+    }
 }

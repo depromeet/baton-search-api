@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static depromeet.batonsearch.domain.ticket.QTicket.ticket;
@@ -75,6 +76,14 @@ public class TicketQueryRepository {
                 )
                 .fetch();
         return new PageImpl<>(results, pageable, results.size());
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Ticket> findTicketById(Integer id) {
+        return Optional.ofNullable(
+                queryFactory.selectFrom(ticket)
+                .where(ticket.id.eq(id))
+                .fetchOne());
     }
 
 

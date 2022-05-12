@@ -4,8 +4,6 @@ package depromeet.batonsearch.domain.ticket.dto;
 import depromeet.batonsearch.domain.ticket.*;
 import depromeet.batonsearch.domain.user.User;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
