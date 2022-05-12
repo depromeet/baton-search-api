@@ -1,5 +1,6 @@
 package depromeet.batonsearch.domain.ticket;
 
+import depromeet.batonsearch.domain.bookmark.Bookmark;
 import depromeet.batonsearch.domain.buy.Buy;
 import depromeet.batonsearch.domain.ticketimage.TicketImage;
 import depromeet.batonsearch.domain.tickettag.TicketTag;
@@ -92,17 +93,21 @@ public class Ticket {
     @Column(nullable = false, name = "remaining_number")
     private Integer remainingNumber;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "ticket_id", updatable = false)
     private Set<TicketTag> ticketTags = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "ticket_id", updatable = false)
     private Set<Buy> buys = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "ticket_id", updatable = false)
     private Set<TicketImage> images = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "ticket_id", updatable = false)
+    private Set<Bookmark> bookmarks = new HashSet<>();
 
     @Builder
     public Ticket(User seller, String location, String address, LocalDateTime createdAt, Integer price, TicketState state, TicketType type, Boolean canNego, TicketTradeType tradeType, Boolean hasShower, Boolean hasLocker, Boolean hasClothes, Boolean hasGx, Boolean canResell, Boolean canRefund, String description, TicketTransferFee transferFee, Double latitude, Double longitude, Boolean isMembership, Boolean isHolding, Integer remainingNumber) {
@@ -141,5 +146,13 @@ public class Ticket {
         if (this.ticketTags != null)
             this.ticketTags.remove(ticketTag);
         this.tagHash -= (1L << (ticketTag.getTag().getId() - 1)) & this.tagHash;
+    }
+
+    @PreRemove
+    void preRemove() {
+        getTicketTags().clear();
+        getBuys().clear();
+        getImages().clear();
+        getBookmarks().clear();
     }
 }

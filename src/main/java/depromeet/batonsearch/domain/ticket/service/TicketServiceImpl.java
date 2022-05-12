@@ -16,15 +16,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -46,7 +43,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public TicketResponseDto.Simple save(TicketRequestDto.Info info, Set<String> tags, Set<MultipartFile> images) {
         // User Check
-        User user = userRepository.getById(getUserIdInHeader());
+        User user = getUserByUserIdInHeader();
         info.setSeller(user);
 
         // Ticket Save
@@ -66,6 +63,21 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    public String deleteById(Integer id) {
+        User user = getUserByUserIdInHeader();
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket Not Found")
+        );
+
+        if (ticket.getSeller().getId().equals(user.getId())) {
+            ticketRepository.delete(ticket);
+            return "delete success";
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "user doesn't match");
+        }
+    }
+
+    @Override
     public TicketResponseDto.Info findById(Integer id) {
         return TicketResponseDto.Info.of(
                 ticketRepository.findById(id).orElseThrow(
@@ -74,7 +86,7 @@ public class TicketServiceImpl implements TicketService {
         );
     }
 
-    private Integer getUserIdInHeader() {
+    private User getUserByUserIdInHeader() {
         String userIdString = request.getHeader("userId");
         Integer userId;
 
@@ -87,6 +99,6 @@ public class TicketServiceImpl implements TicketService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "userID를 파싱할 수 없습니다.");
         }
 
-        return userId;
+        return userRepository.getById(userId);
     }
 }
