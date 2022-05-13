@@ -16,7 +16,7 @@ public class TicketRequestDto {
     @Getter @Setter
     public static class Search {
         @NotNull(message = "페이지 수를 입력 해 주세요.")
-        @Positive(message = "페이지 수는 양수여야 합니다.")
+        @PositiveOrZero(message = "페이지 수는 양수여야 합니다.")
         private Integer page;
 
         @NotNull(message = "사이즈 수를 입력 해 주세요.")
