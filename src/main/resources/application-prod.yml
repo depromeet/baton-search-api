@@ -1,7 +1,7 @@
 spring:
   config:
     activate:
-      on-profile: devdb
+      on-profile: prod
   datasource:
     url: jdbc:mysql://${DB_URL}/baton
     username: ${DB_USER}
