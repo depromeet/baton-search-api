@@ -3,4 +3,4 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   profiles:
-    default: dev
+    default: prod
