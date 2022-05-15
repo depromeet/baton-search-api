@@ -1,6 +1,14 @@
+server:
+  error:
+    include-message: always
+    whitelabel.enabled: false
 spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 100MB
   profiles:
     default: prod

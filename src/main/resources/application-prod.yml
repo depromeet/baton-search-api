@@ -18,7 +18,3 @@ spring:
       hibernate:
         dialect: depromeet.batonsearch.global.config.MySQLDialect
     database-platform: org.hibernate.spatial.dialect.mysql.MySQL8SpatialDialect
-server:
-  error:
-    include-message: always
-    whitelabel.enabled: false
