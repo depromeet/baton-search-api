@@ -11,4 +11,4 @@ spring:
       max-file-size: 20MB
       max-request-size: 100MB
   profiles:
-    default: dev
+    default: prod
