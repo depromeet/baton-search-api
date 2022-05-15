@@ -22,6 +22,9 @@ public class TicketImage {
     @Column
     private String url;
 
+    @Column(name = "thumbnail_url")
+    private String thumbnailUrl;
+
     @Column(name = "is_main")
     private Boolean isMain;
 }
