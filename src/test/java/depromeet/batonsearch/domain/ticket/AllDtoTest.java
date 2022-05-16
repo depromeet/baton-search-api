@@ -3,6 +3,7 @@ package depromeet.batonsearch.domain.ticket;
 import depromeet.batonsearch.domain.tag.Tag;
 import depromeet.batonsearch.domain.ticket.dto.TicketResponseDto;
 import depromeet.batonsearch.domain.user.User;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import static depromeet.batonsearch.domain.tag.StaticTag.*;
@@ -16,7 +17,6 @@ public class AllDtoTest {
     @Test
     void TicketResponseDto_테스트() {
         User user = User.builder()
-                .id(1)
                 .nickname("유저")
                 .gender(true)
                 .build();
@@ -32,18 +32,21 @@ public class AllDtoTest {
         
         Ticket ticket = Ticket.builder()
                 .seller(user)
-                .location("반포동")
+                .location("안녕 헬스장")
+                .address("강남동")
                 .price(random.nextInt(8000) + 12000)
                 .createdAt(LocalDateTime.now())
                 .state(TicketState.SALE)
+                .type(TicketType.HEALTH)
+                .description("이사가요")
+                .transferFee(TicketTransferFee.NONE)
+                .latitude(37.49888733403366)
+                .longitude(127.0279892656964)
                 .isMembership(true)
                 .remainingNumber(150)
                 .build();
 
         TicketResponseDto.Simple ticketSimple = TicketResponseDto.Simple.of(ticket);
-        System.out.println("tagToKey = " + tagToKey);
-        System.out.println("keyToTag = " + keyToTag);
-        System.out.println("ticket = " + ticket);
-        System.out.println("ticketSimple = " + ticketSimple);
+        Assertions.assertThat(ticketSimple).isInstanceOf(TicketResponseDto.Simple.class);
     }
 }

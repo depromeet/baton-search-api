@@ -40,28 +40,41 @@ public class EntityLogicTest {
     @Order(1)
     @Transactional
     void 태그_수정_테스트() {
-        User user = userRepository.save(User.builder().id(1).nickname("유저").gender(true).build());
+        User user = userRepository.save(User.builder().id(1234567890).nickname("유저").gender(true).build());
 
-        Tag tag1 = tagRepository.getById(1);
-        Tag tag2 = tagRepository.getById(2);
+        Tag tag1 = tagRepository.save(Tag.builder().subject("태그1").content("태그1").build());
+        Tag tag2 = tagRepository.save(Tag.builder().subject("태그2").content("태그2").build());
 
-        Ticket ticket = ticketRepository.save(Ticket.builder().seller(user).location("반포동").price(12000).state(TicketState.SALE)
-                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).remainingNumber(30).build());
+        Ticket ticket = Ticket.builder()
+                .seller(user)
+                .location("안녕 헬스장")
+                .address("강남동")
+                .price(10000)
+                .createdAt(LocalDateTime.now())
+                .state(TicketState.SALE)
+                .type(TicketType.HEALTH)
+                .description("이사가요")
+                .transferFee(TicketTransferFee.NONE)
+                .latitude(37.49888733403366)
+                .longitude(127.0279892656964)
+                .isMembership(true)
+                .remainingNumber(150)
+                .build();
 
-        System.out.println("ticket = " + ticket);
+        ticketRepository.save(ticket);
         
         TicketTag ticketTag1 = TicketTag.builder().tag(tag1).ticket(ticket).build();
         ticketTagRepository.save(ticketTag1);
-        assertThat(ticket.getTagHash()).isEqualTo(1);
+        assertThat(ticket.getTagHash()).isEqualTo(1L << (tag1.getId() - 1));
         assertThat(ticket.getTicketTags()).contains(ticketTag1);
 
         TicketTag ticketTag2 = TicketTag.builder().tag(tag2).ticket(ticket).build();
         ticketTagRepository.save(ticketTag2);
-        assertThat(ticket.getTagHash()).isEqualTo(3);
+        assertThat(ticket.getTagHash()).isEqualTo((1L << (tag1.getId() - 1)) + (1L << (tag2.getId() - 1)));
         assertThat(ticket.getTicketTags()).contains(ticketTag2);
 
         ticketTagRepository.delete(ticketTag1);
-        assertThat(ticket.getTagHash()).isEqualTo(2);
+        assertThat(ticket.getTagHash()).isEqualTo(1L << (tag2.getId() - 1));
         assertThat(ticket.getTicketTags()).doesNotContain(ticketTag1);
 
         ticketTagRepository.delete(ticketTag2);
