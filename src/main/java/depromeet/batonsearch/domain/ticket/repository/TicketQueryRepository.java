@@ -46,7 +46,8 @@ public class TicketQueryRepository {
                     ticket.point,
                     Expressions.numberTemplate(
                             Double.class, "function('calc_distance', {0}, {1})", String.format("point(%f %f)", search.getLatitude(), search.getLongitude()), ticket.point
-                    ).as("distance")
+                    ).as("distance"),
+                    ticket.mainImage
                 ))
                 .from(ticket)
                 .where(

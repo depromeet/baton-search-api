@@ -68,7 +68,6 @@ public class TicketServiceImpl implements TicketService {
         User user = getUserByUserIdInHeader();
         info.setSeller(user);
 
-        // Ticket Save
         Ticket ticket = ticketRepository.save(info.toEntity());
 
         // Tag add
@@ -83,8 +82,7 @@ public class TicketServiceImpl implements TicketService {
         );
 
         // Image add
-        ticketImageRepository.saveAll(
-            images.stream()
+        List<TicketImage> ticketImages = images.stream()
                 .filter(image -> image.getContentType() != null && image.getContentType().startsWith("image/"))
                 .map(image -> {
                     String originFileName = createFileName(image.getOriginalFilename());
@@ -107,9 +105,9 @@ public class TicketServiceImpl implements TicketService {
                     try (InputStream inputStream = image.getInputStream()) {
                         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                         Thumbnails.of(inputStream)
-                            .crop(Positions.CENTER)
-                            .size(512,512)
-                            .toOutputStream(outputStream);
+                                .crop(Positions.CENTER)
+                                .size(512,512)
+                                .toOutputStream(outputStream);
 
                         objectMetadata.setContentLength(outputStream.size());
 
@@ -126,8 +124,14 @@ public class TicketServiceImpl implements TicketService {
                             .ticket(ticket)
                             .build();
                 })
-                .collect(Collectors.toList())
-            );
+                .collect(Collectors.toList());
+
+        if (ticketImages.size() == 0) {
+            return TicketResponseDto.Simple.of(ticket);
+        }
+
+        ticket.setMainImage(ticketImages.get(0).getThumbnailUrl());
+        ticketImageRepository.saveAll(ticketImages);
 
         return TicketResponseDto.Simple.of(ticketRepository.save(ticket));
     }
@@ -151,7 +155,7 @@ public class TicketServiceImpl implements TicketService {
     public TicketResponseDto.Info findById(Integer id) {
         return TicketResponseDto.Info.of(
                 ticketRepository.findById(id).orElseThrow(
-                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket Not Found")
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found")
             )
         );
     }

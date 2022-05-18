@@ -121,6 +121,7 @@ public class TicketRequestDto {
     public static class Info {
         // @NotNull: 유저 인증이 붙으면 수정
         User seller;
+        String mainImage;
 
         @NotBlank
         String location;
@@ -203,6 +204,7 @@ public class TicketRequestDto {
                     .isMembership(this.isMembership)
                     .isHolding(this.isHolding)
                     .remainingNumber(this.remainingNumber)
+                    .mainImage(this.mainImage)
                     .build();
         }
     }
