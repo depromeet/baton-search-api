@@ -16,16 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Transactional
 public class TicketQueryDslAccuracyTest {
     @Autowired
     private TicketRepository ticketRepository;
@@ -44,28 +43,40 @@ public class TicketQueryDslAccuracyTest {
 
     @Test
     @Order(1)
-    @Transactional
-    @Rollback(value = false)
     void DB_초기화() {
-        User user = userRepository.save(User.builder().id(1).nickname("유저").gender(true).build());
+        User user = userRepository.save(
+                User.builder().id(1234567890).nickname("유저").gender(true).build()
+        );
 
-        Ticket ticket1 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").address("반포동").price(12000).state(TicketState.SALE)
-                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(true).remainingNumber(80).build());
+        Ticket ticket1 = ticketRepository.save(Ticket.builder().seller(user).location("안녕 헬스장 1호점").address("강남동").price(10000)
+                .createdAt(LocalDateTime.now()).state(TicketState.SALE).type(TicketType.HEALTH).description("이사가요").transferFee(TicketTransferFee.NONE)
+                .latitude(37.49888733403366).longitude(127.0279892656964).isMembership(true).remainingNumber(10).build()
+        );
 
-        Ticket ticket2 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").address("반포동").price(15000).state(TicketState.SALE)
-                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(true).remainingNumber(150).build());
+        Ticket ticket2 = ticketRepository.save(Ticket.builder().seller(user).location("안녕 헬스장 2호점").address("강남동").price(10000)
+                .createdAt(LocalDateTime.now()).state(TicketState.SALE).type(TicketType.HEALTH).description("이사가요").transferFee(TicketTransferFee.NONE)
+                .latitude(37.48544261067623).longitude(127.03440649287161).isMembership(true).remainingNumber(80).build()
+        );
 
-        Ticket ticket3 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").address("반포동").price(18000).state(TicketState.SALE)
-                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(true).remainingNumber(220).build());
+        Ticket ticket3 = ticketRepository.save(Ticket.builder().seller(user).location("안녕 헬스장 3호점").address("강남동").price(10000)
+                .createdAt(LocalDateTime.now()).state(TicketState.SALE).type(TicketType.HEALTH).description("이사가요").transferFee(TicketTransferFee.NONE)
+                .latitude(37.48544261067623).longitude(127.03440649287161).isMembership(true).remainingNumber(150).build()
+        );
 
-        Ticket ticket4 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").address("반포동").price(12000).state(TicketState.SALE)
-                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).remainingNumber(10).build());
+        Ticket ticket4 = ticketRepository.save(Ticket.builder().seller(user).location("안녕 헬스장 4호점").address("강남동").price(10000)
+                .createdAt(LocalDateTime.now()).state(TicketState.SALE).type(TicketType.HEALTH).description("이사가요").transferFee(TicketTransferFee.NONE)
+                .latitude(37.457648237049234).longitude(127.05374377340756).isMembership(false).remainingNumber(10).build()
+        );
 
-        Ticket ticket5 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").address("반포동").price(15000).state(TicketState.SALE)
-                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).remainingNumber(20).build());
+        Ticket ticket5 = ticketRepository.save(Ticket.builder().seller(user).location("안녕 헬스장 5호점").address("강남동").price(10000)
+                .createdAt(LocalDateTime.now()).state(TicketState.SALE).type(TicketType.HEALTH).description("이사가요").transferFee(TicketTransferFee.NONE)
+                .latitude(37.457648237049234).longitude(127.05374377340756).isMembership(false).remainingNumber(80).build()
+        );
 
-        Ticket ticket6 = ticketRepository.save(Ticket.builder().seller(user).location("반포동").address("반포동").price(18000).state(TicketState.SALE)
-                .createdAt(LocalDateTime.now()).latitude(35.0).longitude(35.0).isMembership(false).remainingNumber(30).build());
+        Ticket ticket6 = ticketRepository.save(Ticket.builder().seller(user).location("안녕 헬스장 6호점").address("강남동").price(10000)
+                .createdAt(LocalDateTime.now()).state(TicketState.SALE).type(TicketType.HEALTH).description("이사가요").transferFee(TicketTransferFee.NONE)
+                .latitude(37.457648237049234).longitude(127.05374377340756).isMembership(false).remainingNumber(150).build()
+        );
 
         Tag tag1 = tagRepository.findById(1).orElseThrow(IllegalAccessError::new);
         Tag tag2 = tagRepository.findById(2).orElseThrow(IllegalAccessError::new);
@@ -87,7 +98,6 @@ public class TicketQueryDslAccuracyTest {
 
     @Test
     @Order(2)
-    @Transactional(readOnly = true)
     void 데이터_확인() {
         List<User> userList = userRepository.findAll();
         System.out.println("userList = " + userList);
@@ -231,15 +241,5 @@ public class TicketQueryDslAccuracyTest {
 
         Page<TicketResponseDto.Simple> simples = ticketQueryRepository.searchAll(search, request);
         Assertions.assertThat(simples.getContent().size()).isEqualTo(5);
-    }
-
-
-
-    @AfterAll
-    @Transactional
-    void DB_삭제() {
-        ticketTagRepository.deleteAll();
-        ticketRepository.deleteAll();
-        userRepository.deleteAll();
     }
 }

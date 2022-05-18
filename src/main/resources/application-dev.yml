@@ -21,8 +21,24 @@ spring:
     database-platform: org.hibernate.spatial.dialect.mysql.MySQL8SpatialDialect
 logging:
   level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
     org:
       hibernate:
         type:
           descriptor:
             sql: trace
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: ${AWS_BUCKET}
+      prefix: ${AWS_FOLDER}
+    stack:
+      auto: false

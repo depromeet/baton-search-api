@@ -3,6 +3,7 @@ package depromeet.batonsearch.domain.ticket.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import depromeet.batonsearch.domain.ticket.*;
 import depromeet.batonsearch.domain.ticketimage.TicketImage;
+import depromeet.batonsearch.domain.ticketimage.dto.TicketImageResponseDto;
 import depromeet.batonsearch.domain.user.User;
 import lombok.*;
 import org.locationtech.jts.geom.Point;
@@ -25,6 +26,7 @@ public class TicketResponseDto {
         private String location;
         private String address;
         private Integer price;
+        private String mainImage;
         private LocalDateTime createAt;
         private Set<String> tags;
         private Boolean isMembership;
@@ -36,7 +38,7 @@ public class TicketResponseDto {
 
         @Builder
         @QueryProjection
-        public Simple(Integer id, String location, String address, Integer price, TicketState state, LocalDateTime createAt, Boolean isMembership, Integer remainingNumber, Long tagHash, Point point, Double distance) {
+        public Simple(Integer id, String location, String address, Integer price, TicketState state, LocalDateTime createAt, Boolean isMembership, Integer remainingNumber, Long tagHash, Point point, Double distance, String mainImage) {
             this.id = id;
             this.location = location;
             this.address = address;
@@ -48,6 +50,7 @@ public class TicketResponseDto {
             this.latitude = point.getY();
             this.longitude = point.getX();
             this.distance = distance;
+            this.mainImage = mainImage;
             this.tags = new HashSet<>();
 
             for (int i = 1; i <= keyToTag.size(); i++) {
@@ -70,6 +73,7 @@ public class TicketResponseDto {
                 .createAt(ticket.getCreatedAt())
                 .isMembership(ticket.getIsMembership())
                 .remainingNumber(ticket.getRemainingNumber())
+                .mainImage(ticket.getMainImage())
                 .build();
         }
     }
@@ -97,7 +101,7 @@ public class TicketResponseDto {
         private Boolean canRefund;
         private String description;
         private Set<String> tags;
-        private Set<String> images;
+        private Set<TicketImageResponseDto> images;
         private Boolean isMembership;
         private Boolean isHolding;
         private Integer remainingNumber;
@@ -136,10 +140,7 @@ public class TicketResponseDto {
                     .canResell(ticket.getCanResell())
                     .canRefund(ticket.getCanRefund())
                     .description(ticket.getDescription())
-                    .images(
-                            ticket.getImages().stream().map(TicketImage::getUrl)
-                                    .collect(Collectors.toSet())
-                    )
+                    .images(ticket.getImages().stream().map(TicketImageResponseDto::of).collect(Collectors.toSet()))
                     .tags(tags)
                     .isMembership(ticket.getIsMembership())
                     .isHolding(ticket.getIsHolding())

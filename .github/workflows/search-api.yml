@@ -27,7 +27,15 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build -x test
     - name: Building Docker Image
-      run: docker build --build-arg DB_URL=${{secrets.DB_URL}} --build-arg DB_USER=${{secrets.DB_USER}} --build-arg DB_PASSWORD=${{secrets.DB_PASSWORD}} -t justkode/spring-boot .
+      run: >
+        docker build --build-arg DB_URL=${{secrets.DB_URL}}
+        --build-arg DB_USER=${{secrets.DB_USER}}
+        --build-arg DB_PASSWORD=${{secrets.DB_PASSWORD}}
+        --build-arg AWS_ACCESS_KEY=${{secrets.AWS_S3_ACCESS_KEY}}
+        --build-arg AWS_SECRET_KEY=${{secrets.AWS_S3_SECRET_KEY}}
+        --build-arg AWS_BUCKET=${{secrets.AWS_BUCKET}}
+        --build-arg AWS_FOLDER=${{secrets.AWS_FOLDER}}
+        -t justkode/spring-boot .
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
