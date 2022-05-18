@@ -1,6 +1,8 @@
 package depromeet.batonsearch.domain.ticketimage;
 
 import depromeet.batonsearch.domain.ticket.Ticket;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +11,8 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 @Table(name = "TicketImage")
 public class TicketImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

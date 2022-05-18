@@ -26,8 +26,8 @@ public class User {
     private Boolean gender;
 
     @OneToMany(mappedBy = "id")
-    private Set<Bookmark> bookmarks = new HashSet<>();
+    private Set<Bookmark> bookmarks;
 
     @OneToMany(mappedBy = "id")
-    private Set<Buy> buys = new HashSet<>();
+    private Set<Buy> buys;
 }
