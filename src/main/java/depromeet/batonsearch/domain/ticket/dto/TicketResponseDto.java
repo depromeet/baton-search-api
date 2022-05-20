@@ -5,6 +5,7 @@ import depromeet.batonsearch.domain.ticket.*;
 import depromeet.batonsearch.domain.ticketimage.TicketImage;
 import depromeet.batonsearch.domain.ticketimage.dto.TicketImageResponseDto;
 import depromeet.batonsearch.domain.user.User;
+import depromeet.batonsearch.domain.user.dto.UserResponseDto;
 import lombok.*;
 import org.locationtech.jts.geom.Point;
 
@@ -83,7 +84,7 @@ public class TicketResponseDto {
     @Builder
     public static class Info {
         private Integer id;
-        private User seller;
+        private UserResponseDto seller;
         private String location;
         private String address;
         private Integer price;
@@ -123,7 +124,7 @@ public class TicketResponseDto {
 
             return Info.builder()
                     .id(ticket.getId())
-                    .seller(ticket.getSeller())
+                    .seller(UserResponseDto.of(ticket.getSeller()))
                     .location(ticket.getLocation())
                     .address(ticket.getAddress())
                     .price(ticket.getPrice())
