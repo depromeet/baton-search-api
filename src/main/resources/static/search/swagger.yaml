@@ -1,0 +1,220 @@
+swagger: "2.0"
+info:
+  description: "Baton의 양도권 검색, 조회 및 등록 관련 API를 담고 있습니다."
+  version: "0.0.1"
+  title: "Baton Search API"
+  contact:
+    email: "sobu0715@gmail.com"
+host: "localhost:8080"
+basePath: "/"
+tags:
+  - name: "Ticket"
+    description: "티켓 검색, 조회 및 등록 관련 API 입니다."
+schemes:
+  - "https"
+  - "http"
+paths:
+  /ticket/info/{ID}:
+    get:
+      tags:
+        - "Ticket"
+      summary: "해당하는 ID를 가진 양도권을 반환 합니다."
+      description: "해당하는 ID를 가진 양도권을 반환 합니다."
+      operationId: "getTicket"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "query"
+          name: longitude
+          description: "경도"
+          type: number
+          format: float
+          required: true
+        - in: "query"
+          name: latitude
+          description: "위도"
+          type: number
+          format: float
+          required: true
+        - in: "path"
+          name: "ID"
+          description: "양도권 ID"
+          type: number
+          required: true
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/TicketInfo"
+        "404":
+          description: "양도권을 찾을 수 없습니다."
+definitions:
+  User:
+    type: object
+    description: "유저 정보"
+    properties:
+      id:
+        type: number
+        example: 1
+        description: "유저 ID"
+      nickname:
+        type: string
+        example: "nickname"
+        description: "유저 닉네임"
+      gender:
+        type: boolean
+        example: true
+        description: "남성인지 아닌지 여부"
+  TicketImage:
+    type: object
+    description: "양도권 관련 이미지"
+    properties:
+      id:
+        type: number
+        example: 1
+        description: "양도권 ID"
+      url:
+        type: string
+        format: url
+        example: "https://depromeet11th.s3.ap-northeast-2.amazonaws.com/6team/18ee9e14-ceec-41a3-a458-97ec0d1099b1.jpeg"
+        description: "원본 이미지"
+      thumbnailUrl:
+        type: string
+        format: url
+        example: "https://depromeet11th.s3.ap-northeast-2.amazonaws.com/6team/18ee9e14-ceec-41a3-a458-97ec0d1099b1.jpeg"
+        description: "썸네일 용 이미지"
+      isMain:
+        type: boolean
+        example: false
+        description: "메인 이미지 여부, 현재 사용 하지 않음."
+  TicketState:
+    type: string
+    description: "양도권 상태를 나타냄. 각각 판매중, 예약중, 거래 완료"
+    enum:
+      - SALE
+      - RESERVED
+      - DONE
+    example: SALE
+  TicketType:
+    type: string
+    description: "양도권 종류를 나타냄. 각각 헬스, PT, 필라테스 & 요가, 기타"
+    enum:
+      - HEALTH
+      - PT
+      - PILATES_YOGA
+      - ETC
+    example: HEALTH
+  TicketTradeType:
+    type: string
+    description: "거래 타입을 나타냄. 각각 대면, 비대면, 둘 다 가능"
+    enum:
+      - CONTECT
+      - UNTECT
+      - BOTH
+    example: "CONTECT"
+  TicketTransferFee:
+    type: string
+    description: "양도권 거래 수수료 부담을 누가 할 지 나타냄. 각각 판매자, 구매자, 없음"
+    enum:
+      - SELLER
+      - CONSUMER
+      - NONE
+    example: "SELLER"
+  TicketInfo:
+    type: object
+    description: "양도권 정보"
+    properties:
+      id:
+        type: number
+        example: 1
+        description: "양도권 ID"
+      seller:
+        $ref: "#/definitions/User"
+      location:
+        type: string
+        example: "휴메이크 휘트니스 석촌점"
+        description: "헬스장 이름"
+      address:
+        type: string
+        example: "광진구 중곡동 텍스트 1234번지"
+        description: "주소"
+      price:
+        type: number
+        example: 200000
+        description: "가격 정보"
+      createAt:
+        type: string
+        format: date-time
+        example: "2017-07-21T17:32:28Z"
+        description: "생성 일자"
+      state:
+        $ref: "#/definitions/TicketState"
+      type:
+        $ref: "#/definitions/TicketType"
+      tradeType:
+        $ref: "#/definitions/TicketTradeType"
+      transferFee:
+        $ref: "#/definitions/TicketTransferFee"
+      canNego:
+        type: boolean
+        description: "네고 가능 여부"
+      hasShower:
+        type: boolean
+        description: "샤워장 여부"
+      hasLocker:
+        type: boolean
+        description: "라커 여부"
+      hasClothes:
+        type: boolean
+        description: "운동복 제공 여부"
+      hasGx:
+        type: boolean
+        description: "GX 여부"
+      canResell:
+        type: boolean
+        description: "재판매 가능 여부"
+      canRefund:
+        type: boolean
+        description: "환불 가능 여부"
+      description:
+        type: string
+        description: "양도권 설명"
+      tags:
+        type: array
+        description: "해시 태그 리스트"
+        items:
+          type: string
+      images:
+        type: array
+        description: "이미지 리스트"
+        items:
+          $ref: "#/definitions/TicketImage"
+      isMembership:
+        type: boolean
+        description: "기간제 여부, true일 시 remainingNumber은 남은 일수를 의미 하고, false일 시 remainingNumber은 남은 횟수를 의미 한다."
+        example: true
+      isHolding:
+        type: boolean
+        description: "기간 홀딩 가능 여부"
+        example: true
+      remainingNumber:
+        type: number
+        description: "남은 일 수 혹은 횟수, isMembership에 따라 달라진다."
+        example: 180
+      latitude:
+        type: number
+        description: "위도 정보"
+        format: float
+        example: 36.1234
+      longitude:
+        type: number
+        description: "경도 정보"
+        format: float
+        example: 127.1234
+      distance:
+        type: number
+        description: "현재 위치에서 부터 거리 정보 (m 단위)"
+        format: float
+        example: 2432.1

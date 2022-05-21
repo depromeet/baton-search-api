@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import depromeet.batonsearch.domain.tag.StaticTag;
-import depromeet.batonsearch.domain.tag.Tag;
 import depromeet.batonsearch.domain.tag.repository.TagRepository;
 import depromeet.batonsearch.domain.ticket.Ticket;
 import depromeet.batonsearch.domain.ticket.dto.TicketRequestDto;
@@ -20,7 +19,6 @@ import depromeet.batonsearch.domain.user.User;
 import depromeet.batonsearch.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.coobird.thumbnailator.Thumbnailator;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
 import org.springframework.beans.factory.annotation.Value;
@@ -152,12 +150,14 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public TicketResponseDto.Info findById(Integer id) {
-        return TicketResponseDto.Info.of(
+    public TicketResponseDto.Info findById(Integer id, Double latitude, Double longitude) {
+        TicketResponseDto.Info info = TicketResponseDto.Info.of(
                 ticketRepository.findById(id).orElseThrow(
-                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found")
-            )
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found")
+                )
         );
+        info.setDistance(TicketResponseDto.Info.distance(info.getLatitude(), info.getLongitude(), latitude, longitude));
+        return info;
     }
 
     private User getUserByUserIdInHeader() {

@@ -11,6 +11,6 @@ import java.util.Set;
 public interface TicketController {
     ResponseEntity<Page<TicketResponseDto.Simple>> findAll(TicketRequestDto.Search search);
     ResponseEntity<TicketResponseDto.Simple> save(TicketRequestDto.Info info, Set<String> tags, Set<MultipartFile> images);
-    ResponseEntity<TicketResponseDto.Info> findById(Integer id);
+    ResponseEntity<TicketResponseDto.Info> findById(Integer id, Double latitude, Double longitude);
     ResponseEntity<String> deleteById(Integer id);
 }

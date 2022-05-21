@@ -2,9 +2,8 @@ package depromeet.batonsearch.domain.ticket.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import depromeet.batonsearch.domain.ticket.*;
-import depromeet.batonsearch.domain.ticketimage.TicketImage;
 import depromeet.batonsearch.domain.ticketimage.dto.TicketImageResponseDto;
-import depromeet.batonsearch.domain.user.User;
+import depromeet.batonsearch.domain.user.dto.UserResponseDto;
 import lombok.*;
 import org.locationtech.jts.geom.Point;
 
@@ -83,7 +82,7 @@ public class TicketResponseDto {
     @Builder
     public static class Info {
         private Integer id;
-        private User seller;
+        private UserResponseDto seller;
         private String location;
         private String address;
         private Integer price;
@@ -109,6 +108,7 @@ public class TicketResponseDto {
         private Double longitude;
         private Double distance;
 
+
         public static Info of(Ticket ticket) {
             Set<String> tags = new HashSet<>();
             Long tagHash = ticket.getTagHash();
@@ -123,7 +123,7 @@ public class TicketResponseDto {
 
             return Info.builder()
                     .id(ticket.getId())
-                    .seller(ticket.getSeller())
+                    .seller(UserResponseDto.of(ticket.getSeller()))
                     .location(ticket.getLocation())
                     .address(ticket.getAddress())
                     .price(ticket.getPrice())
@@ -150,5 +150,13 @@ public class TicketResponseDto {
                     .build();
         }
 
+        public static double distance(double lat1, double lon1, double lat2, double lon2) {
+            double theta = lon1 - lon2;
+            double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
+
+            dist = Math.acos(dist);
+            dist = Math.toDegrees(dist);
+            return dist * 60 * 1.1515 * 1609.344;
+        }
     }
 }

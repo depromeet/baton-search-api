@@ -10,6 +10,6 @@ import java.util.Set;
 public interface TicketService {
     Page<TicketResponseDto.Simple> findAll(TicketRequestDto.Search search);
     TicketResponseDto.Simple save(TicketRequestDto.Info info, Set<String> tags, Set<MultipartFile> images);
-    TicketResponseDto.Info findById(Integer id);
+    TicketResponseDto.Info findById(Integer id, Double latitude, Double longitude);
     String deleteById(Integer id);
 }

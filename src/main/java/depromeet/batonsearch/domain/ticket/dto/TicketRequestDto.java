@@ -16,7 +16,7 @@ public class TicketRequestDto {
     @Getter @Setter
     public static class Search {
         @NotNull(message = "페이지 수를 입력 해 주세요.")
-        @PositiveOrZero(message = "페이지 수는 양수여야 합니다.")
+        @PositiveOrZero(message = "페이지 수는 0 혹은 양수여야 합니다.")
         private Integer page;
 
         @NotNull(message = "사이즈 수를 입력 해 주세요.")
@@ -55,7 +55,7 @@ public class TicketRequestDto {
         @PositiveOrZero(message = "남은 일자 혹은 횟수는 0보다 커야 합니다.")
         private Integer maxRemainDay;
 
-        @Min(value = 0, message = "거리는 0km 보다 크거나 같아야 합니다.") @Max(value = 10, message = "거리는 10km 보다 작거나 같아야 합니다.")
+        @Min(value = 0, message = "거리는 0km 보다 크거나 같아야 합니다.") @Max(value = 10000, message = "거리는 10km (10000m) 보다 작거나 같아야 합니다.")
         private Double maxDistance;
 
         private Set<TicketType> types;
