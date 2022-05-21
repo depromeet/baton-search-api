@@ -215,6 +215,6 @@ definitions:
         example: 127.1234
       distance:
         type: number
-        description: "현재 위치에서 부터 거리 정보 (km 단위)"
+        description: "현재 위치에서 부터 거리 정보 (m 단위)"
         format: float
-        example: 2.432
+        example: 2432.1
