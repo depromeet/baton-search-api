@@ -40,8 +40,10 @@ public class TicketControllerImpl implements TicketController {
 
     @Transactional(readOnly = true)
     @GetMapping(value = "/info/{id}")
-    public ResponseEntity<TicketResponseDto.Info> findById(@PathVariable("id") Integer id) {
-        return ResponseEntity.ok(ticketService.findById(id));
+    public ResponseEntity<TicketResponseDto.Info> findById(@PathVariable("id") Integer id,
+                                                           @RequestParam("latitude") Double latitude,
+                                                           @RequestParam("longitude") Double longitude) {
+        return ResponseEntity.ok(ticketService.findById(id, latitude, longitude));
     }
 
     @Transactional

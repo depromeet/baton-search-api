@@ -22,7 +22,7 @@ public class GeometryUtil {
         Double radianLatitude = toRadian(baseLatitude);
         Double radianLongitude = toRadian(baseLongitude);
         Double radianAngle = toRadian(bearing);
-        Double distanceRadius = distance / 6371.01;
+        Double distanceRadius = distance * Math.sqrt(2) / 6371010;
 
         Double latitude = Math.asin(sin(radianLatitude) * cos(distanceRadius) +
                 cos(radianLatitude) * sin(distanceRadius) * cos(radianAngle));
