@@ -10,6 +10,7 @@ import lombok.*;
 import org.locationtech.jts.geom.Point;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -93,6 +94,9 @@ public class Ticket {
     @Column(nullable = false, name = "remaining_number")
     private Integer remainingNumber;
 
+    @Column(name = "expiry_date")
+    private LocalDate expiryDate;
+
     @Column(name = "main_image")
     private String mainImage;
 
@@ -113,7 +117,7 @@ public class Ticket {
     private Set<Bookmark> bookmarks = new HashSet<>();
 
     @Builder
-    public Ticket(User seller, String location, String address, LocalDateTime createdAt, Integer price, TicketState state, TicketType type, Boolean canNego, TicketTradeType tradeType, Boolean hasShower, Boolean hasLocker, Boolean hasClothes, Boolean hasGx, Boolean canResell, Boolean canRefund, String description, TicketTransferFee transferFee, Double latitude, Double longitude, Boolean isMembership, Boolean isHolding, Integer remainingNumber, String mainImage) {
+    public Ticket(User seller, String location, String address, LocalDateTime createdAt, Integer price, TicketState state, TicketType type, Boolean canNego, TicketTradeType tradeType, Boolean hasShower, Boolean hasLocker, Boolean hasClothes, Boolean hasGx, Boolean canResell, Boolean canRefund, String description, TicketTransferFee transferFee, Double latitude, Double longitude, Boolean isMembership, Boolean isHolding, Integer remainingNumber, String mainImage, LocalDate expiryDate) {
         this.seller = seller;
         this.location = location;
         this.address = address;
@@ -138,6 +142,7 @@ public class Ticket {
         this.isHolding = isHolding != null && isHolding;
         this.remainingNumber = remainingNumber;
         this.mainImage = mainImage;
+        this.expiryDate = expiryDate;
     }
 
     public void addTicketTag(TicketTag ticketTag) {
