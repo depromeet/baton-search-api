@@ -19,8 +19,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static depromeet.batonsearch.domain.ticket.QTicket.ticket;
@@ -47,7 +47,8 @@ public class TicketQueryRepository {
                     Expressions.numberTemplate(
                             Double.class, "function('calc_distance', {0}, {1})", String.format("point(%f %f)", search.getLatitude(), search.getLongitude()), ticket.point
                     ).as("distance"),
-                    ticket.mainImage
+                    ticket.mainImage,
+                    ticket.expiryDate
                 ))
                 .from(ticket)
                 .where(
@@ -55,7 +56,7 @@ public class TicketQueryRepository {
                     likePlace(search.getPlace()),
                     priceGoe(search.getMinPrice()),
                     priceLoe(search.getMaxPrice()),
-                    remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(),search.getMinRemainDay(), search.getMaxRemainDay()),
+                    remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinExpiryDate(), search.getMaxExpiryDate()),
                     ticketStateCheck(search.getState()),
                     ticketTypeCheck(search.getTypes()),
                     ticketTradeTypeCheck(search.getTradeType()),
@@ -77,14 +78,6 @@ public class TicketQueryRepository {
                 )
                 .fetch();
         return new PageImpl<>(results, pageable, results.size());
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<Ticket> findTicketById(Integer id) {
-        return Optional.ofNullable(
-                queryFactory.selectFrom(ticket)
-                .where(ticket.id.eq(id))
-                .fetchOne());
     }
 
 
@@ -113,25 +106,24 @@ public class TicketQueryRepository {
         return ticket.isMembership.eq(false).and(ticket.remainingNumber.between(minRemainNumber, maxRemainNumber));
     }
 
-    private BooleanExpression remainDaySearch(Integer minRemainDay, Integer maxRemainDay) {
-        if (minRemainDay == null || maxRemainDay == null)
+    private BooleanExpression expiryDaySearch(LocalDate minExpiryDay, LocalDate maxExpiryDay) {
+        if (minExpiryDay == null || maxExpiryDay == null)
             return null;
 
-        return ticket.isMembership.eq(true).and(ticket.remainingNumber.between(minRemainDay, maxRemainDay));
+        return ticket.isMembership.eq(true).and(ticket.expiryDate.between(minExpiryDay, maxExpiryDay));
     }
 
-    private BooleanExpression remainSearch(Integer minRemainNumber, Integer maxRemainNumber, Integer minRemainDay, Integer maxRemainDay) {
-        BooleanExpression ds = remainDaySearch(minRemainDay, maxRemainDay);
-        BooleanExpression ns = remainNumberSearch(minRemainNumber, maxRemainNumber);
+    private BooleanExpression remainSearch(Integer minRemainNumber, Integer maxRemainNumber, LocalDate minExpiryDay, LocalDate maxExpiryDay) {
+        BooleanExpression remainNumberExpression = remainNumberSearch(minRemainNumber, maxRemainNumber);
+        BooleanExpression expiryDayExpression = expiryDaySearch(minExpiryDay, maxExpiryDay);
 
-        if (ds == null && ns == null)
-            return null;
-        else if (ds != null && ns != null)
-            return ds.or(ns);
-        else if (ns == null)
-            return ds;
-        else
-            return ns;
+        if (remainNumberExpression == null) {
+            return expiryDayExpression;
+        } else if (expiryDayExpression == null) {
+            return remainNumberExpression;
+        } else {
+            return expiryDayExpression.or(remainNumberExpression);
+        }
     }
 
     private BooleanExpression distanceLoe(Double latitude, Double longitude, Double distance) {

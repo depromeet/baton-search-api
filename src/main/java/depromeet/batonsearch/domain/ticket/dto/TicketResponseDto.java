@@ -1,12 +1,15 @@
 package depromeet.batonsearch.domain.ticket.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.annotations.QueryProjection;
 import depromeet.batonsearch.domain.ticket.*;
 import depromeet.batonsearch.domain.ticketimage.dto.TicketImageResponseDto;
 import depromeet.batonsearch.domain.user.dto.UserResponseDto;
 import lombok.*;
 import org.locationtech.jts.geom.Point;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,12 +24,18 @@ public class TicketResponseDto {
     @NoArgsConstructor
     @ToString
     public static class Simple {
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+        private LocalDateTime createAt;
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+        private LocalDate expiryDate;
+
         private Integer id;
         private String location;
         private String address;
         private Integer price;
         private String mainImage;
-        private LocalDateTime createAt;
         private Set<String> tags;
         private Boolean isMembership;
         private Integer remainingNumber;
@@ -37,7 +46,7 @@ public class TicketResponseDto {
 
         @Builder
         @QueryProjection
-        public Simple(Integer id, String location, String address, Integer price, TicketState state, LocalDateTime createAt, Boolean isMembership, Integer remainingNumber, Long tagHash, Point point, Double distance, String mainImage) {
+        public Simple(Integer id, String location, String address, Integer price, TicketState state, LocalDateTime createAt, Boolean isMembership, Integer remainingNumber, Long tagHash, Point point, Double distance, String mainImage, LocalDate expiryDate) {
             this.id = id;
             this.location = location;
             this.address = address;
@@ -50,6 +59,7 @@ public class TicketResponseDto {
             this.longitude = point.getX();
             this.distance = distance;
             this.mainImage = mainImage;
+            this.expiryDate = expiryDate;
             this.tags = new HashSet<>();
 
             for (int i = 1; i <= keyToTag.size(); i++) {
@@ -64,6 +74,8 @@ public class TicketResponseDto {
         public static Simple of(Ticket ticket) {
             return Simple.builder()
                 .id(ticket.getId())
+                .createAt(ticket.getCreatedAt())
+                .expiryDate(ticket.getExpiryDate())
                 .location(ticket.getLocation())
                 .price(ticket.getPrice())
                 .state(ticket.getState())
@@ -81,12 +93,18 @@ public class TicketResponseDto {
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @Builder
     public static class Info {
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+        private LocalDateTime createAt;
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+        private LocalDate expiryDate;
+
         private Integer id;
         private UserResponseDto seller;
         private String location;
         private String address;
         private Integer price;
-        private LocalDateTime createAt;
         private TicketState state;
         private TicketType type;
         private TicketTradeType tradeType;
@@ -147,6 +165,7 @@ public class TicketResponseDto {
                     .remainingNumber(ticket.getRemainingNumber())
                     .latitude(ticket.getPoint().getY())
                     .longitude(ticket.getPoint().getX())
+                    .expiryDate(ticket.getExpiryDate())
                     .build();
         }
 

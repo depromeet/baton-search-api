@@ -3,9 +3,6 @@ spring:
     activate:
       on-profile: prod
   datasource:
-    url: jdbc:mysql://${DB_URL}/baton
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -24,15 +21,3 @@ logging:
       amazonaws:
         util:
           EC2MetadataUtils: error
-cloud:
-  aws:
-    credentials:
-      access-key: ${S3_ACCESS_KEY}
-      secret-key: ${S3_SECRET_KEY}
-    region:
-      static: ap-northeast-2
-    s3:
-      bucket: ${AWS_BUCKET}
-      prefix: ${AWS_FOLDER}
-    stack:
-      auto: false

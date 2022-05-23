@@ -12,4 +12,10 @@ spring:
       max-file-size: 20MB
       max-request-size: 100MB
   profiles:
-    default: prod
+    active: prod
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
