@@ -5,6 +5,8 @@ import depromeet.batonsearch.domain.ticket.*;
 import depromeet.batonsearch.domain.user.User;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -189,6 +191,12 @@ public class TicketRequestDto {
         LocalDate expiryDate;
 
         public Ticket toEntity() {
+            if (this.isMembership && this.expiryDate == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "멤버쉽이라면 만료 일자 (expiryDate) 가 필요합니다.");
+            } else if (!this.isMembership && this.remainingNumber == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "멤버쉽이 아니라면, 남은 횟수 (remainingNumber) 가 필요합니다.");
+            }
+
             return Ticket.builder()
                     .seller(this.seller)
                     .location(this.location)
