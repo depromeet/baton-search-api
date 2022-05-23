@@ -30,15 +30,3 @@ logging:
         type:
           descriptor:
             sql: trace
-cloud:
-  aws:
-    credentials:
-      access-key: ${S3_ACCESS_KEY}
-      secret-key: ${S3_SECRET_KEY}
-    region:
-      static: ap-northeast-2
-    s3:
-      bucket: ${AWS_BUCKET}
-      prefix: ${AWS_FOLDER}
-    stack:
-      auto: false
