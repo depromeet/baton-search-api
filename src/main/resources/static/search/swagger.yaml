@@ -5,8 +5,8 @@ info:
   title: "Baton Search API"
   contact:
     email: "sobu0715@gmail.com"
-host: "localhost:8080"
-basePath: "/"
+host: "baton.yonghochoi.com"
+basePath: "/search"
 tags:
   - name: "Ticket"
     description: "티켓 검색, 조회 및 등록 관련 API 입니다."
@@ -21,8 +21,6 @@ paths:
       summary: "해당하는 ID를 가진 양도권을 반환 합니다."
       description: "해당하는 ID를 가진 양도권을 반환 합니다."
       operationId: "getTicket"
-      consumes:
-        - "application/json"
       produces:
         - "application/json"
       parameters:
@@ -50,6 +48,354 @@ paths:
             $ref: "#/definitions/TicketInfo"
         "404":
           description: "양도권을 찾을 수 없습니다."
+    delete:
+      tags:
+        - "Ticket"
+      summary: "해당하는 ID를 가진 양도권을 삭제 합니다."
+      description: "해당하는 ID를 가진 양도권을 삭제 합니다."
+      operationId: "deleteTicket"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "ID"
+          description: "양도권 ID"
+          type: number
+          required: true
+      responses:
+        "202":
+          description: "ACCEPTED"
+        "401":
+          description: "로그인이 되어 있지 않습니다."
+        "403":
+          description: "권한이 없습니다."
+        "404":
+          description: "양도권을 찾을 수 없습니다."
+
+  /ticket/query:
+    get:
+      tags:
+        - "Ticket"
+      summary: "티켓 필터 검색 API 입니다."
+      description: "티켓 필터 검색 API 입니다."
+      produces:
+        - "application/json"
+      parameters:
+        - in: "query"
+          name: page
+          description: "페이지 수"
+          type: number
+          format: integer
+          required: true
+        - in: "query"
+          name: size
+          description: "페이지 당 아이템 갯수"
+          type: number
+          format: integer
+          required: true
+        - in: "query"
+          name: place
+          description: "위치"
+          type: string
+        - in: "query"
+          name: tagHash
+          description: "해시 태그 비트 마스크"
+          format: integer
+          type: number
+        - in: "query"
+          name: latitude
+          description: "위도"
+          type: number
+          format: float
+          required: true
+        - in: "query"
+          name: longitude
+          description: "경도"
+          type: number
+          format: float
+          required: true
+        - in: "query"
+          name: town
+          description: "동 이름"
+          type: string
+        - in: "query"
+          name: minPrice
+          description: "최소 금액"
+          type: number
+          format: integer
+        - in: "query"
+          name: maxPrice
+          description: "최대 금액"
+          type: number
+          format: integer
+        - in: "query"
+          name: minRemainNumber
+          description: "최소 남은 횟수"
+          type: number
+          format: integer
+        - in: "query"
+          name: maxRemainNumber
+          description: "최대 남은 횟수"
+          type: number
+          format: integer
+        - in: "query"
+          name: minRemainDay
+          description: "최소 남은 일자"
+          type: number
+          format: integer
+        - in: "query"
+          name: maxRemainDay
+          description: "최대 남은 일자"
+          type: number
+          format: integer
+        - in: "query"
+          name: maxDistance
+          description: "최대 거리"
+          type: number
+          format: integer
+          required: true
+        - in: "query"
+          name: types
+          description: "거래 타입, TicketType의 Enum을 따름"
+          type: array
+          format: form
+          items:
+            type: string
+            enum:
+              - HEALTH
+              - PT
+              - PILATES_YOGA
+              - ETC
+        - in: "query"
+          name: tradeType
+          description: "거래 방식. TicketTradeType의 Enum을 따름"
+          type: string
+          enum:
+            - CONTECT
+            - UNTECT
+            - BOTH
+        - in: "query"
+          name: transferFee
+          description: "양도비 납부를 누가 할 지 나타냄. TicketTransferFee의 Enum을 따름"
+          type: string
+          enum:
+            - SELLER
+            - CONSUMER
+            - NONE
+        - in: "query"
+          name: state
+          description: "거래 상태. TicketState의 Enum을 따름"
+          type: string
+          enum:
+            - SALE
+            - RESERVED
+            - DONE
+        - in: "query"
+          name: sortType
+          description: "양도권 정렬 방식. TicketSortType의 Enum을 따름"
+          type: string
+          enum:
+            - RECENT
+            - LOWER_PRICE
+            - HIGHER_PRICE
+            - VIEW
+            - REMAIN_DAY
+            - DISTANCE
+        - in: "query"
+          name: hasClothes
+          description: "운동복 대여 여부"
+          type: boolean
+        - in: "query"
+          name: hasLocker
+          description: "락커 여부"
+          type: boolean
+        - in: "query"
+          name: hasShower
+          description: "샤워장 여부"
+          type: boolean
+        - in: "query"
+          name: hasGx
+          description: "GX 여부"
+          type: boolean
+        - in: "query"
+          name: canResell
+          description: "재판매 가능 여부"
+          type: boolean
+        - in: "query"
+          name: canRefund
+          description: "환불 가능 여부"
+          type: boolean
+        - in: "query"
+          name: isHold
+          description: "홀딩 가능 여부"
+          type: boolean
+        - in: "query"
+          name: canNego
+          description: "네고 가능 여부"
+          type: boolean
+        - in: "query"
+          name: isMembership
+          description: "멤버쉽 여부"
+          type: boolean
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/TicketSimpleInfo"
+  /ticket/post:
+    post:
+      tags:
+        - "Ticket"
+      summary: "양도권을 등록 합니다."
+      description: "양도권을 등록 합니다."
+      consumes:
+        - "multipart/form-data"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "formData"
+          name: location
+          type: string
+          description: "헬스장 이름"
+          required: true
+        - in: "formData"
+          name: address
+          type: string
+          description: "주소"
+          required: true
+        - in: "formData"
+          name: price
+          type: number
+          description: "가격 정보"
+          required: true
+        - in: "formData"
+          name: expiryDate
+          type: string
+          format: date
+          description: "만료 일자. isMembership이 True면 필수 (yyyy-MM-dd)"
+        - in: "formData"
+          name: type
+          description: "거래 타입, TicketType의 Enum을 따름"
+          type: string
+          required: true
+          enum:
+            - HEALTH
+            - PT
+            - PILATES_YOGA
+            - ETC
+        - in: "formData"
+          name: tradeType
+          description: "거래 방식. TicketTradeType의 Enum을 따름"
+          type: string
+          required: true
+          enum:
+            - CONTECT
+            - UNTECT
+            - BOTH
+        - in: "formData"
+          name: transferFee
+          description: "양도비 납부를 누가 할 지 나타냄. TicketTransferFee의 Enum을 따름"
+          type: string
+          required: true
+          enum:
+            - SELLER
+            - CONSUMER
+            - NONE
+        - in: "formData"
+          name: canNego
+          type: boolean
+          description: "네고 가능 여부"
+          required: true
+        - in: "formData"
+          name: hasShower
+          type: boolean
+          description: "샤워장 여부"
+          required: true
+        - in: "formData"
+          name: hasLocker
+          type: boolean
+          description: "라커 여부"
+          required: true
+        - in: "formData"
+          name: hasClothes
+          type: boolean
+          description: "운동복 제공 여부"
+          required: true
+        - in: "formData"
+          name: hasGx
+          type: boolean
+          description: "GX 여부"
+          required: true
+        - in: "formData"
+          name: canResell
+          type: boolean
+          description: "재판매 가능 여부"
+          required: true
+        - in: "formData"
+          name: canRefund
+          type: boolean
+          description: "환불 가능 여부"
+          required: true
+        - in: "formData"
+          name: description
+          type: string
+          description: "양도권 설명"
+          required: true
+        - in: "formData"
+          name: isMembership
+          type: boolean
+          required: true
+        - in: "formData"
+          name: isHolding
+          type: boolean
+          description: "기간 홀딩 가능 여부"
+          required: true
+        - in: "formData"
+          name: remainingNumber
+          type: number
+          description: "남은 횟수. isMembership이 False면 필수"
+        - in: "formData"
+          name: latitude
+          type: number
+          description: "위도 정보"
+          format: float
+          required: true
+        - in: "formData"
+          name: longitude
+          type: number
+          description: "경도 정보"
+          format: float
+          required: true
+        - in: "formData"
+          name: tags
+          type: array
+          description: "해시 태그 목록"
+          items:
+            type: string
+            enum:
+              - "친절한 선생님"
+              - "체계적인 수업"
+              - "맞춤케어"
+              - "넓은 시설"
+              - "다양한 기구"
+              - "최신 기구"
+              - "사람이 많은"
+              - "사람이 적은"
+              - "쾌적한 환경"
+              - "조용한 분위기"
+              - "역세권"
+        - in: "formData"
+          name: images
+          type: file
+          description: "이미지 파일, 여러 개 업로드 가능하지만 Swagger 2.0 에서는 제공하지 않습니다."
+      responses:
+        "201":
+          description: "Created"
+          schema:
+            $ref: "#/definitions/TicketSimpleInfo"
+
 definitions:
   User:
     type: object
@@ -122,6 +468,17 @@ definitions:
       - CONSUMER
       - NONE
     example: "SELLER"
+  TicketSortType:
+    type: string
+    description: "정렬 방식을 나타냄. 각각 최신, 가격 낮은 순, 가격 높은 순, 조회수, 남은 일자 순, 거리순"
+    enum:
+      - RECENT
+      - LOWER_PRICE
+      - HIGHER_PRICE
+      - VIEW
+      - REMAIN_DAY
+      - DISTANCE
+    example: "RECENT"
   TicketInfo:
     type: object
     description: "양도권 정보"
@@ -149,6 +506,11 @@ definitions:
         format: date-time
         example: "2017-07-21T17:32:28Z"
         description: "생성 일자"
+      expiryDate:
+        type: string
+        format: date
+        description: "만료 일자. isMembership이 true일 때 사용."
+        example: "2023-04-05"
       state:
         $ref: "#/definitions/TicketState"
       type:
@@ -193,7 +555,7 @@ definitions:
           $ref: "#/definitions/TicketImage"
       isMembership:
         type: boolean
-        description: "기간제 여부, true일 시 remainingNumber은 남은 일수를 의미 하고, false일 시 remainingNumber은 남은 횟수를 의미 한다."
+        description: "기간제 여부."
         example: true
       isHolding:
         type: boolean
@@ -201,7 +563,7 @@ definitions:
         example: true
       remainingNumber:
         type: number
-        description: "남은 일 수 혹은 횟수, isMembership에 따라 달라진다."
+        description: "남은 횟수, isMembership이 false면 사용"
         example: 180
       latitude:
         type: number
@@ -218,3 +580,164 @@ definitions:
         description: "현재 위치에서 부터 거리 정보 (m 단위)"
         format: float
         example: 2432.1
+  TicketSimpleInfo:
+    type: object
+    description: "양도권 정보"
+    properties:
+      id:
+        type: number
+        example: 1
+        description: "양도권 ID"
+      location:
+        type: string
+        example: "휴메이크 휘트니스 석촌점"
+        description: "헬스장 이름"
+      address:
+        type: string
+        example: "광진구 중곡동 텍스트 1234번지"
+        description: "주소"
+      price:
+        type: number
+        example: 200000
+        description: "가격 정보"
+      mainImage:
+        type: string
+        example: "https://depromeet11th.s3.ap-northeast-2.amazonaws.com/6team/18ee9e14-ceec-41a3-a458-97ec0d1099b1.jpeg"
+        description: "메인 이미지 썸네일"
+      createAt:
+        type: string
+        format: date-time
+        example: "2017-07-21T17:32:28Z"
+        description: "생성 일자"
+      state:
+        $ref: "#/definitions/TicketState"
+      tags:
+        type: array
+        description: "해시 태그 리스트"
+        items:
+          type: string
+      images:
+        type: array
+        description: "이미지 리스트"
+        items:
+          $ref: "#/definitions/TicketImage"
+      isMembership:
+        type: boolean
+        description: "기간제 여부, true일 시 expiryDate를 사용하고 false일 시 remainingNumber를 사용 한다."
+        example: true
+      remainingNumber:
+        type: number
+        description: "남은 이용 횟수, isMembership이 true면 null"
+        example: 180
+      expiryDate:
+        type: string
+        format: date
+        description: "만료 일자"
+        example: "2023-04-05"
+      latitude:
+        type: number
+        description: "위도 정보"
+        format: float
+        example: 36.1234
+      longitude:
+        type: number
+        description: "경도 정보"
+        format: float
+        example: 127.1234
+      distance:
+        type: number
+        description: "현재 위치에서 부터 거리 정보 (m 단위)"
+        format: float
+        example: 2432.1
+  TicketPostInfo:
+    type: object
+    description: "양도권 정보"
+    required:
+      - location
+      - address
+      - price
+      - type
+      - canNego
+      - tradeType
+      - hasLocker
+      - hasShower
+      - hasClothes
+      - hasGx
+      - canResell
+      - canRefund
+      - description
+      - transferFee
+      - latitude
+      - longitude
+      - isMembership
+      - isHolding
+    properties:
+      location:
+        type: string
+        example: "휴메이크 휘트니스 석촌점"
+        description: "헬스장 이름"
+      address:
+        type: string
+        example: "광진구 중곡동 텍스트 1234번지"
+        description: "주소"
+      price:
+        type: number
+        example: 200000
+        description: "가격 정보"
+      expiryDate:
+        type: string
+        format: date
+        description: "만료 일자. isMembership이 True면 필수"
+        example: "2023-04-05"
+      type:
+        $ref: "#/definitions/TicketType"
+      tradeType:
+        $ref: "#/definitions/TicketTradeType"
+      transferFee:
+        $ref: "#/definitions/TicketTransferFee"
+      canNego:
+        type: boolean
+        description: "네고 가능 여부"
+      hasShower:
+        type: boolean
+        description: "샤워장 여부"
+      hasLocker:
+        type: boolean
+        description: "라커 여부"
+      hasClothes:
+        type: boolean
+        description: "운동복 제공 여부"
+      hasGx:
+        type: boolean
+        description: "GX 여부"
+      canResell:
+        type: boolean
+        description: "재판매 가능 여부"
+      canRefund:
+        type: boolean
+        description: "환불 가능 여부"
+      description:
+        type: string
+        description: "양도권 설명"
+      isMembership:
+        type: boolean
+        description: "기간제 여부."
+        example: true
+      isHolding:
+        type: boolean
+        description: "기간 홀딩 가능 여부"
+        example: true
+      remainingNumber:
+        type: number
+        description: "남은 횟수, . isMembership이 False면 필수"
+        example: 180
+      latitude:
+        type: number
+        description: "위도 정보"
+        format: float
+        example: 36.1234
+      longitude:
+        type: number
+        description: "경도 정보"
+        format: float
+        example: 127.1234

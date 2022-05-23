@@ -19,7 +19,7 @@ public class SwaggerSpecConfig {
     public SwaggerResourcesProvider swaggerResourcesProvider(InMemorySwaggerResourcesProvider defaultResourcesProvider) {
         return () -> {
             List<SwaggerResource> resources = new ArrayList<>();
-            Arrays.asList("ticket", "user", "search").forEach(resourceName -> resources.add(loadResource(resourceName)));
+            Arrays.asList("search", "ticket", "user").forEach(resourceName -> resources.add(loadResource(resourceName)));
             return resources;
         };
     }
