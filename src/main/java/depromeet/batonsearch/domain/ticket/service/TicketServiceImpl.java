@@ -165,14 +165,15 @@ public class TicketServiceImpl implements TicketService {
         Integer userId;
 
         if (userIdString == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            userId = 1;
+            // throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        } else {
+            try {
+                userId = Integer.parseInt(userIdString);
+            } catch (NumberFormatException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "userID를 파싱할 수 없습니다.");
+            }
         }
-        try {
-            userId = Integer.parseInt(userIdString);
-        } catch (NumberFormatException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "userID를 파싱할 수 없습니다.");
-        }
-
         return userRepository.getById(userId);
     }
 
