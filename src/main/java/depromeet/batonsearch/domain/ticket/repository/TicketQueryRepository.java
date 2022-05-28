@@ -1,8 +1,10 @@
 package depromeet.batonsearch.domain.ticket.repository;
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import depromeet.batonsearch.domain.ticket.*;
 import depromeet.batonsearch.domain.ticket.dto.QTicketResponseDto_Simple;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -75,9 +78,31 @@ public class TicketQueryRepository {
                 .limit(pageable.getPageSize())
                 .orderBy(
                     orderSelect(search.getSortType())
-                )
-                .fetch();
-        return new PageImpl<>(results, pageable, results.size());
+                ).fetch();
+
+        JPAQuery<Ticket> countQuery = queryFactory.selectFrom(ticket)
+                .where(
+                    distanceLoe(search.getLatitude(), search.getLongitude(), search.getMaxDistance()),
+                    likePlace(search.getPlace()),
+                    priceGoe(search.getMinPrice()),
+                    priceLoe(search.getMaxPrice()),
+                    remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinExpiryDate(), search.getMaxExpiryDate()),
+                    ticketStateCheck(search.getState()),
+                    ticketTypeCheck(search.getTypes()),
+                    ticketTradeTypeCheck(search.getTradeType()),
+                    ticketTransferFeeCheck(search.getTransferFee()),
+                    hasTag(search.getTagHash()),
+                    hasGxCheck(search.getHasGx()),
+                    hasClothesCheck(search.getHasClothes()),
+                    hasShowerCheck(search.getHasShower()),
+                    hasLockerCheck(search.getHasLocker()),
+                    canResellCheck(search.getCanResell()),
+                    canRefundCheck(search.getCanRefund()),
+                    canNegoCheck(search.getCanNego()),
+                    isHoldCheck(search.getIsHold())
+                );
+
+        return PageableExecutionUtils.getPage(results, pageable, () -> countQuery.fetch().size());
     }
 
 
