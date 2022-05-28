@@ -1,10 +1,11 @@
 server:
   error:
     include-message: always
-    whitelabel.enabled: false
+    whitelabel.enabled: true
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
   servlet:
     context-path: /search
     multipart:
