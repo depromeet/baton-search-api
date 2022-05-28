@@ -3,6 +3,7 @@ package depromeet.batonsearch.domain.ticket.repository;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import depromeet.batonsearch.domain.ticket.*;
@@ -33,6 +34,33 @@ public class TicketQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Transactional(readOnly = true)
+    public Long countSearch(TicketRequestDto.Search search) {
+        return queryFactory.select(Wildcard.count)
+                .from(ticket)
+                .where(
+                        distanceLoe(search.getLatitude(), search.getLongitude(), search.getMaxDistance()),
+                        likePlace(search.getPlace()),
+                        likeTown(search.getTown()),
+                        priceGoe(search.getMinPrice()),
+                        priceLoe(search.getMaxPrice()),
+                        remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinExpiryDate(), search.getMaxExpiryDate()),
+                        ticketStateCheck(search.getState()),
+                        ticketTypeCheck(search.getTypes()),
+                        ticketTradeTypeCheck(search.getTradeType()),
+                        ticketTransferFeeCheck(search.getTransferFee()),
+                        hasTag(search.getTagHash()),
+                        hasGxCheck(search.getHasGx()),
+                        hasClothesCheck(search.getHasClothes()),
+                        hasShowerCheck(search.getHasShower()),
+                        hasLockerCheck(search.getHasLocker()),
+                        canResellCheck(search.getCanResell()),
+                        canRefundCheck(search.getCanRefund()),
+                        canNegoCheck(search.getCanNego()),
+                        isHoldCheck(search.getIsHold())
+                ).fetch().get(0);
+    }
+
+    @Transactional(readOnly = true)
     public Page<TicketResponseDto.Simple> stringSearch(TicketRequestDto.StringSearch search, Pageable pageable) {
         List<TicketResponseDto.Simple> results = queryFactory.select(new QTicketResponseDto_Simple(
                 ticket.id,
@@ -56,11 +84,12 @@ public class TicketQueryRepository {
                     distanceLoe(search.getLatitude(), search.getLongitude(), search.getMaxDistance()),
                     singleStringQuery(search.getQuery())
             )
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
             .orderBy(
                     orderSelect(TicketSortType.RECENT)
-            ).fetch();
+            )
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
 
         JPAQuery<Ticket> countQuery = queryFactory.selectFrom(ticket)
                 .where(
@@ -113,13 +142,15 @@ public class TicketQueryRepository {
                     canNegoCheck(search.getCanNego()),
                     isHoldCheck(search.getIsHold())
                 )
+                .orderBy(
+                        orderSelect(search.getSortType())
+                )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(
-                    orderSelect(search.getSortType())
-                ).fetch();
+                .fetch();
 
-        JPAQuery<Ticket> countQuery = queryFactory.selectFrom(ticket)
+        JPAQuery<Long> countQuery = queryFactory.select(Wildcard.count)
+                .from(ticket)
                 .where(
                     distanceLoe(search.getLatitude(), search.getLongitude(), search.getMaxDistance()),
                     likePlace(search.getPlace()),
@@ -142,7 +173,7 @@ public class TicketQueryRepository {
                     isHoldCheck(search.getIsHold())
                 );
 
-        return PageableExecutionUtils.getPage(results, pageable, () -> countQuery.fetch().size());
+        return PageableExecutionUtils.getPage(results, pageable, () -> countQuery.fetch().get(0));
     }
 
 

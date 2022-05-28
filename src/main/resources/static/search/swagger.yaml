@@ -307,7 +307,191 @@ paths:
             type: array
             items:
               $ref: "#/definitions/TicketSimpleInfo"
-
+  /ticket/count_query:
+    get:
+      tags:
+        - "Ticket"
+      summary: "티켓 필터 카운트 쿼리 API 입니다."
+      description: "티켓 필터 카운트 쿼리 API 입니다."
+      produces:
+        - "application/json"
+      parameters:
+        - in: "query"
+          name: page
+          description: "페이지 수"
+          type: number
+          format: integer
+          required: true
+        - in: "query"
+          name: size
+          description: "페이지 당 아이템 갯수"
+          type: number
+          format: integer
+          required: true
+        - in: "query"
+          name: place
+          description: "위치"
+          type: string
+        - in: "query"
+          name: tags
+          type: array
+          description: "해시 태그 목록"
+          items:
+            type: string
+            enum:
+              - "친절한 선생님"
+              - "체계적인 수업"
+              - "맞춤케어"
+              - "넓은 시설"
+              - "다양한 기구"
+              - "최신 기구"
+              - "사람이 많은"
+              - "사람이 적은"
+              - "쾌적한 환경"
+              - "조용한 분위기"
+              - "역세권"
+        - in: "query"
+          name: latitude
+          description: "위도"
+          type: number
+          format: float
+          required: true
+        - in: "query"
+          name: longitude
+          description: "경도"
+          type: number
+          format: float
+          required: true
+        - in: "query"
+          name: town
+          description: "동 이름"
+          type: string
+        - in: "query"
+          name: minPrice
+          description: "최소 금액"
+          type: number
+          format: integer
+        - in: "query"
+          name: maxPrice
+          description: "최대 금액"
+          type: number
+          format: integer
+        - in: "query"
+          name: minRemainNumber
+          description: "최소 남은 횟수"
+          type: number
+          format: integer
+        - in: "query"
+          name: maxRemainNumber
+          description: "최대 남은 횟수"
+          type: number
+          format: integer
+        - in: "query"
+          name: minRemainDay
+          description: "최소 남은 일자"
+          type: number
+          format: integer
+        - in: "query"
+          name: maxRemainDay
+          description: "최대 남은 일자"
+          type: number
+          format: integer
+        - in: "query"
+          name: maxDistance
+          description: "최대 거리"
+          type: number
+          format: integer
+          required: true
+        - in: "query"
+          name: types
+          description: "거래 타입, TicketType의 Enum을 따름"
+          type: array
+          format: form
+          items:
+            type: string
+            enum:
+              - HEALTH
+              - PT
+              - PILATES_YOGA
+              - ETC
+        - in: "query"
+          name: tradeType
+          description: "거래 방식. TicketTradeType의 Enum을 따름"
+          type: string
+          enum:
+            - CONTECT
+            - UNTECT
+            - BOTH
+        - in: "query"
+          name: transferFee
+          description: "양도비 납부를 누가 할 지 나타냄. TicketTransferFee의 Enum을 따름"
+          type: string
+          enum:
+            - SELLER
+            - CONSUMER
+            - NONE
+        - in: "query"
+          name: state
+          description: "거래 상태. TicketState의 Enum을 따름"
+          type: string
+          enum:
+            - SALE
+            - RESERVED
+            - DONE
+        - in: "query"
+          name: sortType
+          description: "양도권 정렬 방식. TicketSortType의 Enum을 따름"
+          type: string
+          enum:
+            - RECENT
+            - LOWER_PRICE
+            - HIGHER_PRICE
+            - VIEW
+            - REMAIN_DAY
+            - DISTANCE
+        - in: "query"
+          name: hasClothes
+          description: "운동복 대여 여부"
+          type: boolean
+        - in: "query"
+          name: hasLocker
+          description: "락커 여부"
+          type: boolean
+        - in: "query"
+          name: hasShower
+          description: "샤워장 여부"
+          type: boolean
+        - in: "query"
+          name: hasGx
+          description: "GX 여부"
+          type: boolean
+        - in: "query"
+          name: canResell
+          description: "재판매 가능 여부"
+          type: boolean
+        - in: "query"
+          name: canRefund
+          description: "환불 가능 여부"
+          type: boolean
+        - in: "query"
+          name: isHold
+          description: "홀딩 가능 여부"
+          type: boolean
+        - in: "query"
+          name: canNego
+          description: "네고 가능 여부"
+          type: boolean
+        - in: "query"
+          name: isMembership
+          description: "멤버쉽 여부"
+          type: boolean
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: number
+            format: integer
+            example: 5
   /ticket/post:
     post:
       tags:

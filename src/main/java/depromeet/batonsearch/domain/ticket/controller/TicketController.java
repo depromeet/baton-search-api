@@ -6,10 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.Set;
 
 public interface TicketController {
     ResponseEntity<Page<TicketResponseDto.Simple>> findAll(TicketRequestDto.Search search);
+    ResponseEntity<Long> countSearch(TicketRequestDto.Search search);
+    ResponseEntity<Page<TicketResponseDto.Simple>> stringSearch(TicketRequestDto.StringSearch search);
     ResponseEntity<TicketResponseDto.Simple> save(TicketRequestDto.Info info, Set<String> tags, Set<MultipartFile> images);
     ResponseEntity<TicketResponseDto.Info> findById(Integer id, Double latitude, Double longitude);
     ResponseEntity<String> deleteById(Integer id);

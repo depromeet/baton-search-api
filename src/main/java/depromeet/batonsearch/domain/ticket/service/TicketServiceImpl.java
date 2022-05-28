@@ -66,6 +66,11 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    public Long countSearch(TicketRequestDto.Search search) {
+        return ticketQueryRepository.countSearch(search);
+    }
+
+    @Override
     public TicketResponseDto.Simple save(TicketRequestDto.Info info, Set<String> tags, Set<MultipartFile> images) {
         // User Check
         User user = getUserByUserIdInHeader();

@@ -30,8 +30,14 @@ public class TicketControllerImpl implements TicketController {
 
     @Transactional(readOnly = true)
     @GetMapping(value = "/string_query")
-    public ResponseEntity<Page<TicketResponseDto.Simple>> findAll(@Valid TicketRequestDto.StringSearch search) {
+    public ResponseEntity<Page<TicketResponseDto.Simple>> stringSearch(@Valid TicketRequestDto.StringSearch search) {
         return new ResponseEntity<>(ticketService.stringSearch(search), HttpStatus.OK);
+    }
+
+    @Transactional(readOnly = true)
+    @GetMapping(value = "/count_query")
+    public ResponseEntity<Long> countSearch(TicketRequestDto.Search search) {
+        return new ResponseEntity<>(ticketService.countSearch(search), HttpStatus.OK);
     }
 
     @Transactional
