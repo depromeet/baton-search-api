@@ -61,6 +61,16 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    public Page<TicketResponseDto.Simple> stringSearch(TicketRequestDto.StringSearch search) {
+        return ticketQueryRepository.stringSearch(search, PageRequest.of(search.getPage(), search.getSize()));
+    }
+
+    @Override
+    public Long countSearch(TicketRequestDto.Search search) {
+        return ticketQueryRepository.countSearch(search);
+    }
+
+    @Override
     public TicketResponseDto.Simple save(TicketRequestDto.Info info, Set<String> tags, Set<MultipartFile> images) {
         // User Check
         User user = getUserByUserIdInHeader();
@@ -69,67 +79,70 @@ public class TicketServiceImpl implements TicketService {
         Ticket ticket = ticketRepository.save(info.toEntity());
 
         // Tag add
-        ticketTagRepository.saveAll(
-            tags.stream()
-                .map(x -> StaticTag.tagToKey.getOrDefault(x, -1))
-                .filter(x -> x != -1)
-                .map(tagRepository::getById)
-                .map(tag ->
-                        TicketTag.builder().ticket(ticket).tag(tag).build()
-                ).collect(Collectors.toSet())
-        );
-
-        // Image add
-        List<TicketImage> ticketImages = images.stream()
-                .filter(image -> image.getContentType() != null && image.getContentType().startsWith("image/"))
-                .map(image -> {
-                    String originFileName = createFileName(image.getOriginalFilename());
-                    String fileName = (prefix != null ? prefix : "") + originFileName;
-                    String thumbnailFileName = (prefix != null ? prefix : "") + "s_" + originFileName;
-
-                    // 원본 저장
-                    ObjectMetadata objectMetadata = new ObjectMetadata();
-                    objectMetadata.setContentLength(image.getSize());
-                    objectMetadata.setContentType(image.getContentType());
-
-                    try (InputStream inputStream = image.getInputStream()) {
-                        amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
-                                .withCannedAcl(CannedAccessControlList.PublicRead));
-                    } catch(IOException e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
-                    }
-
-                    // 썸네일 저장
-                    try (InputStream inputStream = image.getInputStream()) {
-                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                        Thumbnails.of(inputStream)
-                                .crop(Positions.CENTER)
-                                .size(512,512)
-                                .toOutputStream(outputStream);
-
-                        objectMetadata.setContentLength(outputStream.size());
-
-                        amazonS3.putObject(new PutObjectRequest(bucket, thumbnailFileName, new ByteArrayInputStream(outputStream.toByteArray()), objectMetadata)
-                                .withCannedAcl(CannedAccessControlList.PublicRead));
-                    } catch(IOException e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
-                    }
-
-                    return TicketImage.builder()
-                            .url(String.format("https://%s.s3.ap-northeast-2.amazonaws.com/%s", bucket, fileName))
-                            .thumbnailUrl(String.format("https://%s.s3.ap-northeast-2.amazonaws.com/%s", bucket, thumbnailFileName))
-                            .isMain(false)
-                            .ticket(ticket)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        if (ticketImages.size() == 0) {
-            return TicketResponseDto.Simple.of(ticket);
+        if (tags != null) {
+            ticketTagRepository.saveAll(
+                tags.stream()
+                    .map(x -> StaticTag.tagToKey.getOrDefault(x, -1))
+                    .filter(x -> x != -1)
+                    .map(tagRepository::getById)
+                    .map(tag ->
+                            TicketTag.builder().ticket(ticket).tag(tag).build()
+                    ).collect(Collectors.toSet())
+            );
         }
 
-        ticket.setMainImage(ticketImages.get(0).getThumbnailUrl());
-        ticketImageRepository.saveAll(ticketImages);
+        // Image add
+        if (images != null) {
+            List<TicketImage> ticketImages = images.stream()
+                    .filter(image -> image.getContentType() != null && image.getContentType().startsWith("image/"))
+                    .map(image -> {
+                        String originFileName = createFileName(image.getOriginalFilename());
+                        String fileName = (prefix != null ? prefix : "") + originFileName;
+                        String thumbnailFileName = (prefix != null ? prefix : "") + "s_" + originFileName;
+
+                        // 원본 저장
+                        ObjectMetadata objectMetadata = new ObjectMetadata();
+                        objectMetadata.setContentLength(image.getSize());
+                        objectMetadata.setContentType(image.getContentType());
+
+                        try (InputStream inputStream = image.getInputStream()) {
+                            amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+                                    .withCannedAcl(CannedAccessControlList.PublicRead));
+                        } catch (IOException e) {
+                            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
+                        }
+
+                        // 썸네일 저장
+                        try (InputStream inputStream = image.getInputStream()) {
+                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                            Thumbnails.of(inputStream)
+                                    .crop(Positions.CENTER)
+                                    .size(512, 512)
+                                    .toOutputStream(outputStream);
+
+                            objectMetadata.setContentLength(outputStream.size());
+
+                            amazonS3.putObject(new PutObjectRequest(bucket, thumbnailFileName, new ByteArrayInputStream(outputStream.toByteArray()), objectMetadata)
+                                    .withCannedAcl(CannedAccessControlList.PublicRead));
+                        } catch (IOException e) {
+                            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
+                        }
+
+                        return TicketImage.builder()
+                                .url(String.format("https://%s.s3.ap-northeast-2.amazonaws.com/%s", bucket, fileName))
+                                .thumbnailUrl(String.format("https://%s.s3.ap-northeast-2.amazonaws.com/%s", bucket, thumbnailFileName))
+                                .isMain(false)
+                                .ticket(ticket)
+                                .build();
+                    })
+                    .collect(Collectors.toList());
+
+            if (ticketImages.size() == 0) {
+                return TicketResponseDto.Simple.of(ticket);
+            }
+            ticket.setMainImage(ticketImages.get(0).getThumbnailUrl());
+            ticketImageRepository.saveAll(ticketImages);
+        }
 
         return TicketResponseDto.Simple.of(ticketRepository.save(ticket));
     }

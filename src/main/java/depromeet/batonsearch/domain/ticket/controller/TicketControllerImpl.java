@@ -28,11 +28,23 @@ public class TicketControllerImpl implements TicketController {
         return new ResponseEntity<>(ticketService.findAll(search), HttpStatus.OK);
     }
 
+    @Transactional(readOnly = true)
+    @GetMapping(value = "/string_query")
+    public ResponseEntity<Page<TicketResponseDto.Simple>> stringSearch(@Valid TicketRequestDto.StringSearch search) {
+        return new ResponseEntity<>(ticketService.stringSearch(search), HttpStatus.OK);
+    }
+
+    @Transactional(readOnly = true)
+    @GetMapping(value = "/count_query")
+    public ResponseEntity<Long> countSearch(TicketRequestDto.Search search) {
+        return new ResponseEntity<>(ticketService.countSearch(search), HttpStatus.OK);
+    }
+
     @Transactional
     @PostMapping(value = "/post")
     public ResponseEntity<TicketResponseDto.Simple> save(@Valid @ModelAttribute TicketRequestDto.Info info,
-                                                         @RequestParam("tags") Set<String> tags,
-                                                         @RequestParam("images") Set<MultipartFile> images) {
+                                                         @RequestParam(value = "tags", required = false) Set<String> tags,
+                                                         @RequestParam(value = "images", required = false) Set<MultipartFile> images) {
 
         TicketResponseDto.Simple response = ticketService.save(info, tags, images);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
