@@ -1,6 +1,5 @@
 package depromeet.batonsearch.domain.ticket.repository;
 
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -15,7 +14,6 @@ import depromeet.batonsearch.global.util.GeometryUtil;
 import depromeet.batonsearch.global.util.Location;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
@@ -33,6 +31,46 @@ import static depromeet.batonsearch.domain.ticket.QTicket.ticket;
 @Repository
 public class TicketQueryRepository {
     private final JPAQueryFactory queryFactory;
+
+    @Transactional(readOnly = true)
+    public Page<TicketResponseDto.Simple> stringSearch(TicketRequestDto.StringSearch search, Pageable pageable) {
+        List<TicketResponseDto.Simple> results = queryFactory.select(new QTicketResponseDto_Simple(
+                ticket.id,
+                ticket.location,
+                ticket.address,
+                ticket.price,
+                ticket.state,
+                ticket.createdAt,
+                ticket.isMembership,
+                ticket.remainingNumber,
+                ticket.tagHash,
+                ticket.point,
+                Expressions.numberTemplate(
+                        Double.class, "function('calc_distance', {0}, {1})", String.format("point(%f %f)", search.getLatitude(), search.getLongitude()), ticket.point
+                ).as("distance"),
+                ticket.mainImage,
+                ticket.expiryDate
+            ))
+            .from(ticket)
+            .where(
+                    distanceLoe(search.getLatitude(), search.getLongitude(), search.getMaxDistance()),
+                    singleStringQuery(search.getQuery())
+            )
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(
+                    orderSelect(TicketSortType.RECENT)
+            ).fetch();
+
+        JPAQuery<Ticket> countQuery = queryFactory.selectFrom(ticket)
+                .where(
+                        distanceLoe(search.getLatitude(), search.getLongitude(), search.getMaxDistance()),
+                        singleStringQuery(search.getQuery())
+                );
+
+        return PageableExecutionUtils.getPage(results, pageable, () -> countQuery.fetch().size());
+
+    }
 
     @Transactional(readOnly = true)
     public Page<TicketResponseDto.Simple> searchAll(TicketRequestDto.Search search, Pageable pageable) {
@@ -57,6 +95,7 @@ public class TicketQueryRepository {
                 .where(
                     distanceLoe(search.getLatitude(), search.getLongitude(), search.getMaxDistance()),
                     likePlace(search.getPlace()),
+                    likeTown(search.getTown()),
                     priceGoe(search.getMinPrice()),
                     priceLoe(search.getMaxPrice()),
                     remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinExpiryDate(), search.getMaxExpiryDate()),
@@ -84,6 +123,7 @@ public class TicketQueryRepository {
                 .where(
                     distanceLoe(search.getLatitude(), search.getLongitude(), search.getMaxDistance()),
                     likePlace(search.getPlace()),
+                    likeTown(search.getTown()),
                     priceGoe(search.getMinPrice()),
                     priceLoe(search.getMaxPrice()),
                     remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinExpiryDate(), search.getMaxExpiryDate()),
@@ -113,7 +153,11 @@ public class TicketQueryRepository {
     }
 
     private BooleanExpression likePlace(String place) {
-        return StringUtils.hasText(place) ? ticket.location.like(place) : null;
+        return StringUtils.hasText(place) ? ticket.location.like('%' + place + '%') : null;
+    }
+
+    private BooleanExpression likeTown(String town) {
+        return StringUtils.hasText(town) ? ticket.address.like('%' + town + '%') : null;
     }
 
     private BooleanExpression priceGoe(Long minPrice) {
@@ -149,6 +193,13 @@ public class TicketQueryRepository {
         } else {
             return expiryDayExpression.or(remainNumberExpression);
         }
+    }
+
+    private BooleanExpression singleStringQuery(String query) {
+        if (query == null)
+            return null;
+        else
+            return likePlace(query).or(likeTown(query));
     }
 
     private BooleanExpression distanceLoe(Double latitude, Double longitude, Double distance) {

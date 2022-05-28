@@ -61,6 +61,11 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    public Page<TicketResponseDto.Simple> stringSearch(TicketRequestDto.StringSearch search) {
+        return ticketQueryRepository.stringSearch(search, PageRequest.of(search.getPage(), search.getSize()));
+    }
+
+    @Override
     public TicketResponseDto.Simple save(TicketRequestDto.Info info, Set<String> tags, Set<MultipartFile> images) {
         // User Check
         User user = getUserByUserIdInHeader();

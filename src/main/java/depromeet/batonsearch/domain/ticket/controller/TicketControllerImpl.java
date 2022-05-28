@@ -28,6 +28,12 @@ public class TicketControllerImpl implements TicketController {
         return new ResponseEntity<>(ticketService.findAll(search), HttpStatus.OK);
     }
 
+    @Transactional(readOnly = true)
+    @GetMapping(value = "/string_query")
+    public ResponseEntity<Page<TicketResponseDto.Simple>> findAll(@Valid TicketRequestDto.StringSearch search) {
+        return new ResponseEntity<>(ticketService.stringSearch(search), HttpStatus.OK);
+    }
+
     @Transactional
     @PostMapping(value = "/post")
     public ResponseEntity<TicketResponseDto.Simple> save(@Valid @ModelAttribute TicketRequestDto.Info info,

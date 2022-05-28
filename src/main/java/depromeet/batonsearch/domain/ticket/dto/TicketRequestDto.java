@@ -121,6 +121,32 @@ public class TicketRequestDto {
         }
     }
 
+    @Getter @Setter
+    @Builder
+    @AllArgsConstructor
+    public static class StringSearch {
+        @NotNull(message = "페이지 수를 입력 해 주세요.")
+        @PositiveOrZero(message = "페이지 수는 0 혹은 양수여야 합니다.")
+        private Integer page;
+
+        @NotNull(message = "사이즈 수를 입력 해 주세요.")
+        @Positive(message = "사이즈 수는 양수여야 합니다.")
+        private Integer size;
+
+        @NotNull(message = "위도를 입력 해 주세요.")
+        private Double latitude;
+
+        @NotNull(message = "경도를 입력 해 주세요.")
+        private Double longitude;
+
+        @NotBlank(message = "검색어를 입력 해 주세요.")
+        private String query;
+
+        @Min(value = 0, message = "거리는 0km 보다 크거나 같아야 합니다.") @Max(value = 20000, message = "거리는 20km (20000m) 보다 작거나 같아야 합니다.")
+        @NotNull(message = "거리를 입력 하여야 합니다.")
+        private Double maxDistance;
+    }
+
     @Getter
     @Setter
     @AllArgsConstructor

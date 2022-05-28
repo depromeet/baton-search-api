@@ -71,7 +71,57 @@ paths:
           description: "권한이 없습니다."
         "404":
           description: "양도권을 찾을 수 없습니다."
-
+  /ticket/string_query:
+    get:
+      tags:
+        - "Ticket"
+      summary: "메인 화면 검색 API 입니다."
+      description: "메인 화면 검색 API 입니다."
+      produces:
+        - "application/json"
+      parameters:
+        - in: "query"
+          name: page
+          description: "페이지 수"
+          type: number
+          format: integer
+          required: true
+        - in: "query"
+          name: size
+          description: "페이지 당 아이템 갯수"
+          type: number
+          format: integer
+          required: true
+        - in: "query"
+          name: latitude
+          description: "위도"
+          type: number
+          format: float
+          required: true
+        - in: "query"
+          name: longitude
+          description: "경도"
+          type: number
+          format: float
+          required: true
+        - in: "query"
+          name: query
+          description: "검색어"
+          type: string
+          required: true
+        - in: "query"
+          name: maxDistance
+          description: "최대 거리"
+          type: number
+          format: integer
+          required: true
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/TicketSimpleInfo"
   /ticket/query:
     get:
       tags:
@@ -257,6 +307,7 @@ paths:
             type: array
             items:
               $ref: "#/definitions/TicketSimpleInfo"
+
   /ticket/post:
     post:
       tags:
