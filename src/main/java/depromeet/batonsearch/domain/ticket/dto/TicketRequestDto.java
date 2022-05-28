@@ -61,7 +61,8 @@ public class TicketRequestDto {
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         private LocalDate maxExpiryDate;
 
-        @Min(value = 0, message = "거리는 0km 보다 크거나 같아야 합니다.") @Max(value = 10000, message = "거리는 10km (10000m) 보다 작거나 같아야 합니다.")
+        @Min(value = 0, message = "거리는 0km 보다 크거나 같아야 합니다.") @Max(value = 20000, message = "거리는 20km (20000m) 보다 작거나 같아야 합니다.")
+        @NotNull(message = "거리를 입력 하여야 합니다.")
         private Double maxDistance;
 
         private Set<TicketType> types;

@@ -31,8 +31,8 @@ public class TicketControllerImpl implements TicketController {
     @Transactional
     @PostMapping(value = "/post")
     public ResponseEntity<TicketResponseDto.Simple> save(@Valid @ModelAttribute TicketRequestDto.Info info,
-                                                         @RequestParam("tags") Set<String> tags,
-                                                         @RequestParam("images") Set<MultipartFile> images) {
+                                                         @RequestParam(value = "tags", required = false) Set<String> tags,
+                                                         @RequestParam(value = "images", required = false) Set<MultipartFile> images) {
 
         TicketResponseDto.Simple response = ticketService.save(info, tags, images);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

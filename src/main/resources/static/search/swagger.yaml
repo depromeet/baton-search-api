@@ -98,10 +98,23 @@ paths:
           description: "위치"
           type: string
         - in: "query"
-          name: tagHash
-          description: "해시 태그 비트 마스크"
-          format: integer
-          type: number
+          name: tags
+          type: array
+          description: "해시 태그 목록"
+          items:
+            type: string
+            enum:
+              - "친절한 선생님"
+              - "체계적인 수업"
+              - "맞춤케어"
+              - "넓은 시설"
+              - "다양한 기구"
+              - "최신 기구"
+              - "사람이 많은"
+              - "사람이 적은"
+              - "쾌적한 환경"
+              - "조용한 분위기"
+              - "역세권"
         - in: "query"
           name: latitude
           description: "위도"
