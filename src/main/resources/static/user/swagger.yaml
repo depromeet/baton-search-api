@@ -1,11 +1,507 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
-  description: "This is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key `special-key` to test the authorization     filters."
-  version: "1.0.0"
-  title: "Swagger Petstore"
-  termsOfService: "http://swagger.io/terms/"
+  title: Baton User API
+  description: "Baton\uC758 \uB9C8\uC774\uD398\uC774\uC9C0, \uAD00\uC2EC\uC0C1\uD488\
+    , \uAD6C\uB9E4 \uAD00\uB828 API\uB97C \uB2F4\uACE0 \uC788\uC2B5\uB2C8\uB2E4."
   contact:
-    email: "apiteam@swagger.io"
-  license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+    email: jseoplim@gmail.com
+  version: 0.0.1
+host: 127.0.0.1:8000
+schemes:
+  - http
+basePath: /user
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+  - Basic: []
+paths:
+  /bookmarks:
+    get:
+      operationId: bookmarks_list
+      description: "Bookmark instance \uBAA9\uB85D, \uC0DD\uC131"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Bookmark'
+      tags:
+        - bookmarks
+    post:
+      operationId: bookmarks_create
+      description: "Bookmark instance \uBAA9\uB85D, \uC0DD\uC131"
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Bookmark'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Bookmark'
+      tags:
+        - bookmarks
+    parameters: []
+  /bookmarks/{id}:
+    get:
+      operationId: bookmarks_read
+      description: "Bookmark instance \uC0C1\uC138, \uC0AD\uC81C"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Bookmark'
+      tags:
+        - bookmarks
+    delete:
+      operationId: bookmarks_delete
+      description: "Bookmark instance \uC0C1\uC138, \uC0AD\uC81C"
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - bookmarks
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this bookmark.
+        required: true
+        type: integer
+  /buys:
+    get:
+      operationId: buys_list
+      description: "\uAD6C\uB9E4/\uC608\uC57D \uBAA9\uB85D"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/BuyCreate'
+      tags:
+        - buys
+    post:
+      operationId: buys_create
+      description: |-
+        Reserve a ticket.
+        Buy instance 생성 (ticket state 0 -> 1)
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/BuyCreate'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/BuyCreate'
+      tags:
+        - buys
+    parameters: []
+  /buys/{id}:
+    get:
+      operationId: buys_read
+      description: "\uAD6C\uB9E4/\uC608\uC57D \uC0C1\uC138 \uC870\uD68C, \uC218\uC815\
+        , \uC0AD\uC81C"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/BuyDetail'
+      tags:
+        - buys
+    put:
+      operationId: buys_update
+      description: "\uAD6C\uB9E4/\uC608\uC57D \uC0C1\uC138 \uC870\uD68C, \uC218\uC815\
+        , \uC0AD\uC81C"
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/BuyDetail'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/BuyDetail'
+      tags:
+        - buys
+    patch:
+      operationId: buys_partial_update
+      description: "\uAD6C\uB9E4/\uC608\uC57D \uC0C1\uC138 \uC870\uD68C, \uC218\uC815\
+        , \uC0AD\uC81C"
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/BuyDetail'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/BuyDetail'
+      tags:
+        - buys
+    delete:
+      operationId: buys_delete
+      description: |-
+        Cancel Reservation.
+        Buy instance 삭제 (ticket state 1,2 -> 0)
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - buys
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this buy.
+        required: true
+        type: integer
+  /login/kakao:
+    post:
+      operationId: login_kakao_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/KaKaoLogin'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/JWT'
+      tags:
+        - login
+    parameters: []
+  /users/{id}/bookmarks:
+    get:
+      operationId: users_bookmarks_list
+      description: "\uAD00\uC2EC\uC0C1\uD488; \uC0AC\uC6A9\uC790ID\uAC00 {id}\uC778\
+        \ \uC0AC\uC6A9\uC790\uC758 \uAD00\uC2EC\uC0C1\uD488 \uBAA9\uB85D"
+      parameters:
+        - name: id
+          in: path
+          description: "\uC0AC\uC6A9\uC790ID"
+          type: integer
+          required: true
+        - name: state
+          in: query
+          description: "\uC870\uD68C\uD560 \uC591\uB3C4\uAD8C \uC0C1\uD0DC ((blank):\
+            \ \uC804\uCCB4, 0: \uD310\uB9E4\uC911, 1: \uC608\uC57D\uC911, 2: \uD310\
+            \uB9E4\uC644\uB8CC)"
+          type: integer
+          default: ''
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserBookmark'
+      tags:
+        - users
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+  /users/{id}/buys:
+    get:
+      operationId: users_buys_list
+      description: "\uAD6C\uB9E4\uB0B4\uC5ED; \uC0AC\uC6A9\uC790ID\uAC00 {id}\uC778\
+        \ \uC0AC\uC6A9\uC790\uAC00 \uD310\uB9E4\uD55C \uC591\uB3C4\uAD8C \uBAA9\uB85D"
+      parameters:
+        - name: id
+          in: path
+          description: "\uC0AC\uC6A9\uC790ID"
+          type: integer
+          required: true
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserBuy'
+      tags:
+        - users
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+  /users/{id}/sells:
+    get:
+      operationId: users_sells_list
+      description: "\uD310\uB9E4\uB0B4\uC5ED; \uC0AC\uC6A9\uC790ID\uAC00 {id}\uC778\
+        \ \uC0AC\uC6A9\uC790\uAC00 \uAD6C\uB9E4\uD55C \uC591\uB3C4\uAD8C \uBAA9\uB85D"
+      parameters:
+        - name: id
+          in: path
+          description: "\uC0AC\uC6A9\uC790ID"
+          type: integer
+          required: true
+        - name: state
+          in: query
+          description: "\uC870\uD68C\uD560 \uC591\uB3C4\uAD8C \uC0C1\uD0DC (0: \uD310\
+            \uB9E4\uC911, 2: \uD310\uB9E4\uC644\uB8CC)"
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TicketList'
+      tags:
+        - users
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+  /users/{social_user}:
+    get:
+      operationId: users_read
+      description: "\uB9C8\uC774\uD398\uC774\uC9C0; \uC0AC\uC6A9\uC790ID\uAC00 {social_user}\uC778\
+        \ \uC0AC\uC6A9\uC790\uC758 \uC0C1\uC138 \uC815\uBCF4"
+      parameters:
+        - name: social_user
+          in: path
+          description: "\uC0AC\uC6A9\uC790ID"
+          type: integer
+          required: true
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - users
+    parameters:
+      - name: social_user
+        in: path
+        description: User ID(integer)
+        required: true
+        type: string
+definitions:
+  Bookmark:
+    required:
+      - user
+      - ticket
+    type: object
+    properties:
+      id:
+        title: ID
+        description: Bookmark ID
+        type: integer
+        readOnly: true
+      user:
+        title: User
+        description: User ID(integer)
+        type: string
+      ticket:
+        title: Ticket
+        description: Ticket ID
+        type: integer
+  BuyCreate:
+    required:
+      - user
+      - ticket
+    type: object
+    properties:
+      id:
+        title: ID
+        description: Buy ID
+        type: integer
+        readOnly: true
+      user:
+        title: User
+        description: User ID(integer)
+        type: string
+      ticket:
+        title: Ticket
+        description: Ticket ID
+        type: integer
+      date:
+        title: Date
+        description: "\uAD6C\uB9E4\uC77C\uC2DC"
+        type: string
+        format: date-time
+        x-nullable: true
+  BuyDetail:
+    type: object
+    properties:
+      id:
+        title: ID
+        description: Buy ID
+        type: integer
+        readOnly: true
+      user:
+        title: User
+        description: User ID(integer)
+        type: string
+        readOnly: true
+      ticket:
+        title: Ticket
+        description: Ticket ID
+        type: integer
+        readOnly: true
+      date:
+        title: Date
+        description: "\uAD6C\uB9E4\uC77C\uC2DC"
+        type: string
+        format: date-time
+        x-nullable: true
+  KaKaoLogin:
+    required:
+      - access_token
+    type: object
+    properties:
+      access_token:
+        title: Access token
+        description: "Kakao \uC11C\uBC84 \uC778\uC99D\uC744 \uC704\uD55C Access Token"
+        type: string
+        minLength: 1
+  JWTUser:
+    required:
+      - id
+    type: object
+    properties:
+      id:
+        title: Id
+        description: User ID
+        type: integer
+  JWT:
+    required:
+      - access_token
+      - refresh_token
+      - user
+    type: object
+    properties:
+      access_token:
+        title: Access token
+        description: "Baton App \uC778\uC99D\uC744 \uC704\uD55C Access Token"
+        type: string
+        minLength: 1
+      refresh_token:
+        title: Refresh token
+        description: "Baton App Access Token \uAC31\uC2E0\uC744 \uC704\uD55C Refresh\
+          \ Token"
+        type: string
+        minLength: 1
+      user:
+        $ref: '#/definitions/JWTUser'
+  TicketList:
+    required:
+      - state
+      - location
+      - price
+    type: object
+    properties:
+      id:
+        title: ID
+        description: Ticket ID
+        type: integer
+        readOnly: true
+      state:
+        title: State
+        description: "\uC591\uB3C4\uAD8C \uC0C1\uD0DC (0: \uD310\uB9E4\uC911, 1: \uC608\
+          \uC57D\uC911, 2: \uD310\uB9E4\uC644\uB8CC)"
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      location:
+        title: Location
+        type: string
+        maxLength: 255
+        minLength: 1
+      price:
+        title: Price
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+  UserBookmark:
+    required:
+      - ticket
+    type: object
+    properties:
+      id:
+        title: ID
+        description: Bookmark ID
+        type: integer
+        readOnly: true
+      ticket:
+        $ref: '#/definitions/TicketList'
+  UserBuy:
+    required:
+      - ticket
+    type: object
+    properties:
+      id:
+        title: ID
+        description: Buy ID
+        type: integer
+        readOnly: true
+      date:
+        title: Date
+        description: "\uAD6C\uB9E4\uC77C\uC2DC"
+        type: string
+        format: date-time
+        x-nullable: true
+      ticket:
+        $ref: '#/definitions/TicketList'
+  User:
+    required:
+      - nickname
+    type: object
+    properties:
+      nickname:
+        title: Nickname
+        type: string
+        maxLength: 255
+        minLength: 1
+      sells:
+        title: Sells
+        description: "\uD310\uB9E4\uB0B4\uC5ED URL"
+        type: string
+        format: uri
+        readOnly: true
+      buys:
+        title: Buys
+        description: "\uAD6C\uB9E4 \uBC0F \uC608\uC57D\uB0B4\uC5ED URL"
+        type: string
+        format: uri
+        readOnly: true
+      bookmarks:
+        title: Bookmarks
+        description: "\uAD00\uC2EC\uC0C1\uD488 URL"
+        type: string
+        format: uri
+        readOnly: true
