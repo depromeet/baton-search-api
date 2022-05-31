@@ -4,7 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import depromeet.batonsearch.domain.tag.StaticTag;
+import depromeet.batonsearch.domain.tag.TagEnum;
 import depromeet.batonsearch.domain.tag.repository.TagRepository;
 import depromeet.batonsearch.domain.ticket.Ticket;
 import depromeet.batonsearch.domain.ticket.dto.TicketRequestDto;
@@ -82,12 +82,17 @@ public class TicketServiceImpl implements TicketService {
         if (tags != null) {
             ticketTagRepository.saveAll(
                 tags.stream()
-                    .map(x -> StaticTag.tagToKey.getOrDefault(x, -1))
+                    .map(x -> {
+                        try {
+                            return TagEnum.valueOf(x).getHash();
+                        } catch (IllegalAccessError e) {
+                            return -1;
+                        }
+                    })
                     .filter(x -> x != -1)
                     .map(tagRepository::getById)
-                    .map(tag ->
-                            TicketTag.builder().ticket(ticket).tag(tag).build()
-                    ).collect(Collectors.toSet())
+                    .map(tag -> TicketTag.builder().ticket(ticket).tag(tag).build())
+                    .collect(Collectors.toSet())
             );
         }
 

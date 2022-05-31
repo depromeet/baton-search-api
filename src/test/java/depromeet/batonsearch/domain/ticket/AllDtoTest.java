@@ -6,7 +6,6 @@ import depromeet.batonsearch.domain.user.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import static depromeet.batonsearch.domain.tag.StaticTag.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;

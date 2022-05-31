@@ -1,6 +1,7 @@
 package depromeet.batonsearch.domain.ticket.dto;
 
 
+import depromeet.batonsearch.domain.tag.TagEnum;
 import depromeet.batonsearch.domain.ticket.*;
 import depromeet.batonsearch.domain.user.User;
 import lombok.*;
@@ -12,8 +13,6 @@ import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
-
-import static depromeet.batonsearch.domain.tag.StaticTag.tagToKey;
 
 public class TicketRequestDto {
 
@@ -86,7 +85,7 @@ public class TicketRequestDto {
 
             if (hashtag != null)
                 for (String key: hashtag) {
-                    Integer i = tagToKey.get(key);
+                    Integer i = TagEnum.valueOf(key).getHash();
                     if (i != null)
                         this.tagHash += (1L << (i - 1));
                 }

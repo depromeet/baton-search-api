@@ -2,20 +2,18 @@ package depromeet.batonsearch.domain.ticket.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.annotations.QueryProjection;
+import depromeet.batonsearch.domain.tag.TagEnum;
 import depromeet.batonsearch.domain.ticket.*;
 import depromeet.batonsearch.domain.ticketimage.dto.TicketImageResponseDto;
 import depromeet.batonsearch.domain.user.dto.UserResponseDto;
 import lombok.*;
 import org.locationtech.jts.geom.Point;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static depromeet.batonsearch.domain.tag.StaticTag.keyToTag;
 
 
 public class TicketResponseDto {
@@ -62,11 +60,11 @@ public class TicketResponseDto {
             this.expiryDate = expiryDate;
             this.tags = new HashSet<>();
 
-            for (int i = 1; i <= keyToTag.size(); i++) {
+            for (int i = 1; i <= TagEnum.values().length; i++) {
                 if (tagHash == 0)
                     break;
                 else if (tagHash % 2 == 1)
-                    tags.add(keyToTag.get(i));
+                    tags.add(TagEnum.values()[i - 1].getContent());
                 tagHash /= 2;
             }
         }
@@ -131,11 +129,11 @@ public class TicketResponseDto {
             Set<String> tags = new HashSet<>();
             Long tagHash = ticket.getTagHash();
 
-            for (int i = 1; i <= keyToTag.size(); i++) {
+            for (int i = 1; i <= TagEnum.values().length; i++) {
                 if (tagHash == 0)
                     break;
                 else if (tagHash % 2 == 1)
-                    tags.add(keyToTag.get(i));
+                    tags.add(TagEnum.values()[i - 1].getContent());
                 tagHash /= 2;
             }
 
