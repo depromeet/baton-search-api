@@ -53,13 +53,13 @@ public class TicketRequestDto {
         @PositiveOrZero(message = "남은 일자 혹은 횟수는 0보다 커야 합니다.")
         private Integer maxRemainNumber;
 
-        @FutureOrPresent(message = "최소 오늘이거나 오늘 보단 뒤여야 합니다.")
-        @DateTimeFormat(pattern = "yyyy-MM-dd")
-        private LocalDate minExpiryDate;
+        @Min(value = 1, message = "남은 개월 수는 1보단 같거나 커야 합니다.")
+        @Max(value = 12, message = "남은 개월 수는 12보단 같거나 작아야 합니다.")
+        private Integer minRemainMonth;
 
-        @FutureOrPresent(message = "최소 오늘이거나 오늘 보단 뒤여야 합니다.")
-        @DateTimeFormat(pattern = "yyyy-MM-dd")
-        private LocalDate maxExpiryDate;
+        @Min(value = 1, message = "남은 개월 수는 1보단 같거나 커야 합니다.")
+        @Max(value = 12, message = "남은 개월 수는 12보단 같거나 작아야 합니다.")
+        private Integer maxRemainMonth;
 
         @Min(value = 0, message = "거리는 0km 보다 크거나 같아야 합니다.") @Max(value = 20000, message = "거리는 20km (20000m) 보다 작거나 같아야 합니다.")
         @NotNull(message = "거리를 입력 하여야 합니다.")
@@ -81,7 +81,7 @@ public class TicketRequestDto {
         private Boolean isMembership;
 
         @Builder
-        public Search(Integer page, Integer size, String place, Set<String> hashtag, Double latitude, Double longitude, String town, Long minPrice, Long maxPrice, Integer minRemainNumber, Integer maxRemainNumber, LocalDate minExpiryDate, LocalDate maxExpiryDate, Boolean hasClothes, Boolean hasLocker, Boolean hasShower, Boolean hasGx, Boolean canResell, Boolean canRefund, Boolean isHold, Boolean canNego, Boolean isMembership, Double maxDistance, Set<TicketType> ticketTypes, TicketState ticketState, TicketTradeType ticketTradeType, TicketTransferFee ticketTransferFee, TicketSortType sortType) {
+        public Search(Integer page, Integer size, String place, Set<String> hashtag, Double latitude, Double longitude, String town, Long minPrice, Long maxPrice, Integer minRemainNumber, Integer maxRemainNumber, Integer minRemainMonth, Integer maxRemainMonth, Boolean hasClothes, Boolean hasLocker, Boolean hasShower, Boolean hasGx, Boolean canResell, Boolean canRefund, Boolean isHold, Boolean canNego, Boolean isMembership, Double maxDistance, Set<TicketType> ticketTypes, TicketState ticketState, TicketTradeType ticketTradeType, TicketTransferFee ticketTransferFee, TicketSortType sortType) {
             this.tagHash = 0L;
 
             if (hashtag != null)
@@ -101,8 +101,8 @@ public class TicketRequestDto {
             this.maxPrice = maxPrice;
             this.minRemainNumber = minRemainNumber;
             this.maxRemainNumber = maxRemainNumber;
-            this.minExpiryDate = minExpiryDate;
-            this.maxExpiryDate = maxExpiryDate;
+            this.minRemainMonth = minRemainMonth;
+            this.maxRemainMonth = maxRemainMonth;
             this.hasClothes = hasClothes;
             this.hasLocker = hasLocker;
             this.hasShower = hasShower;
