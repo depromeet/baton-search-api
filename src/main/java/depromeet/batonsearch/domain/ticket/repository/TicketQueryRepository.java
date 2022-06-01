@@ -43,7 +43,7 @@ public class TicketQueryRepository {
                         likeTown(search.getTown()),
                         priceGoe(search.getMinPrice()),
                         priceLoe(search.getMaxPrice()),
-                        remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinExpiryDate(), search.getMaxExpiryDate()),
+                        remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinRemainMonth(), search.getMaxRemainMonth()),
                         ticketStateCheck(search.getState()),
                         ticketTypeCheck(search.getTypes()),
                         ticketTradeTypeCheck(search.getTradeType()),
@@ -127,7 +127,7 @@ public class TicketQueryRepository {
                     likeTown(search.getTown()),
                     priceGoe(search.getMinPrice()),
                     priceLoe(search.getMaxPrice()),
-                    remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinExpiryDate(), search.getMaxExpiryDate()),
+                    remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinRemainMonth(), search.getMaxRemainMonth()),
                     ticketStateCheck(search.getState()),
                     ticketTypeCheck(search.getTypes()),
                     ticketTradeTypeCheck(search.getTradeType()),
@@ -157,7 +157,7 @@ public class TicketQueryRepository {
                     likeTown(search.getTown()),
                     priceGoe(search.getMinPrice()),
                     priceLoe(search.getMaxPrice()),
-                    remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinExpiryDate(), search.getMaxExpiryDate()),
+                    remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinRemainMonth(), search.getMaxRemainMonth()),
                     ticketStateCheck(search.getState()),
                     ticketTypeCheck(search.getTypes()),
                     ticketTradeTypeCheck(search.getTradeType()),
@@ -206,16 +206,19 @@ public class TicketQueryRepository {
         return ticket.isMembership.eq(false).and(ticket.remainingNumber.between(minRemainNumber, maxRemainNumber));
     }
 
-    private BooleanExpression expiryDaySearch(LocalDate minExpiryDay, LocalDate maxExpiryDay) {
-        if (minExpiryDay == null || maxExpiryDay == null)
+    private BooleanExpression remainMonthSearch(Integer minRemainMonth, Integer maxRemainMonth) {
+        if (minRemainMonth == null || maxRemainMonth == null)
             return null;
 
-        return ticket.isMembership.eq(true).and(ticket.expiryDate.between(minExpiryDay, maxExpiryDay));
+        LocalDate minDate = LocalDate.now().plusMonths(minRemainMonth);
+        LocalDate maxDate = LocalDate.now().plusMonths(maxRemainMonth);
+
+        return ticket.isMembership.eq(true).and(ticket.expiryDate.between(minDate, maxDate));
     }
 
-    private BooleanExpression remainSearch(Integer minRemainNumber, Integer maxRemainNumber, LocalDate minExpiryDay, LocalDate maxExpiryDay) {
+    private BooleanExpression remainSearch(Integer minRemainNumber, Integer maxRemainNumber, Integer minRemainMonth, Integer maxRemainMonth) {
         BooleanExpression remainNumberExpression = remainNumberSearch(minRemainNumber, maxRemainNumber);
-        BooleanExpression expiryDayExpression = expiryDaySearch(minExpiryDay, maxExpiryDay);
+        BooleanExpression expiryDayExpression = remainMonthSearch(minRemainMonth, maxRemainMonth);
 
         if (remainNumberExpression == null) {
             return expiryDayExpression;

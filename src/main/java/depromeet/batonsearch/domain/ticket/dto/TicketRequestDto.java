@@ -1,9 +1,11 @@
 package depromeet.batonsearch.domain.ticket.dto;
 
 
+import depromeet.batonsearch.domain.tag.TagEnum;
 import depromeet.batonsearch.domain.ticket.*;
 import depromeet.batonsearch.domain.user.User;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,83 +15,86 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import static depromeet.batonsearch.domain.tag.StaticTag.tagToKey;
-
+@Slf4j
 public class TicketRequestDto {
 
-    @Getter @Setter
+    @Getter
     public static class Search {
         @NotNull(message = "페이지 수를 입력 해 주세요.")
         @PositiveOrZero(message = "페이지 수는 0 혹은 양수여야 합니다.")
-        private Integer page;
+        private final Integer page;
 
         @NotNull(message = "사이즈 수를 입력 해 주세요.")
         @Positive(message = "사이즈 수는 양수여야 합니다.")
-        private Integer size;
+        private final Integer size;
 
         @Size(min = 2, max = 50, message = "최소 2자 이상, 최대 50자를 입력 해 주세요")
-        private String place;
+        private final String place;
 
         private Long tagHash;
 
         @NotNull(message = "위도를 입력 해 주세요.")
-        private Double latitude;
+        private final Double latitude;
 
         @NotNull(message = "경도를 입력 해 주세요.")
-        private Double longitude;
+        private final Double longitude;
 
         @Size(min = 2, max = 50, message = "최소 2자 이상, 최대 50자를 입력 해 주세요")
-        private String town;
+        private final String town;
 
         @PositiveOrZero(message = "가격은 0보다 커야 합니다.")
-        private Long minPrice;
+        private final Long minPrice;
 
         @PositiveOrZero(message = "가격은 0보다 커야 합니다.")
-        private Long maxPrice;
+        private final Long maxPrice;
 
         @PositiveOrZero(message = "남은 일자 혹은 횟수는 0보다 커야 합니다.")
-        private Integer minRemainNumber;
+        private final Integer minRemainNumber;
 
         @PositiveOrZero(message = "남은 일자 혹은 횟수는 0보다 커야 합니다.")
-        private Integer maxRemainNumber;
+        private final Integer maxRemainNumber;
 
-        @FutureOrPresent(message = "최소 오늘이거나 오늘 보단 뒤여야 합니다.")
-        @DateTimeFormat(pattern = "yyyy-MM-dd")
-        private LocalDate minExpiryDate;
+        @Min(value = 1, message = "남은 개월 수는 1보단 같거나 커야 합니다.")
+        @Max(value = 12, message = "남은 개월 수는 12보단 같거나 작아야 합니다.")
+        private final Integer minRemainMonth;
 
-        @FutureOrPresent(message = "최소 오늘이거나 오늘 보단 뒤여야 합니다.")
-        @DateTimeFormat(pattern = "yyyy-MM-dd")
-        private LocalDate maxExpiryDate;
+        @Min(value = 1, message = "남은 개월 수는 1보단 같거나 커야 합니다.")
+        @Max(value = 12, message = "남은 개월 수는 12보단 같거나 작아야 합니다.")
+        private final Integer maxRemainMonth;
 
         @Min(value = 0, message = "거리는 0km 보다 크거나 같아야 합니다.") @Max(value = 20000, message = "거리는 20km (20000m) 보다 작거나 같아야 합니다.")
         @NotNull(message = "거리를 입력 하여야 합니다.")
-        private Double maxDistance;
+        private final Double maxDistance;
 
-        private Set<TicketType> types;
-        private TicketTradeType tradeType;
-        private TicketTransferFee transferFee;
-        private TicketState state;
-        private TicketSortType sortType;
-        private Boolean hasClothes;
-        private Boolean hasLocker;
-        private Boolean hasShower;
-        private Boolean hasGx;
-        private Boolean canResell;
-        private Boolean canRefund;
-        private Boolean isHold;
-        private Boolean canNego;
-        private Boolean isMembership;
+        private final Set<TicketType> types;
+        private final TicketTradeType tradeType;
+        private final TicketTransferFee transferFee;
+        private final TicketState state;
+        private final TicketSortType sortType;
+        private final Boolean hasClothes;
+        private final Boolean hasLocker;
+        private final Boolean hasShower;
+        private final Boolean hasGx;
+        private final Boolean canResell;
+        private final Boolean canRefund;
+        private final Boolean isHold;
+        private final Boolean canNego;
+        private final Boolean isMembership;
 
         @Builder
-        public Search(Integer page, Integer size, String place, Set<String> hashtag, Double latitude, Double longitude, String town, Long minPrice, Long maxPrice, Integer minRemainNumber, Integer maxRemainNumber, LocalDate minExpiryDate, LocalDate maxExpiryDate, Boolean hasClothes, Boolean hasLocker, Boolean hasShower, Boolean hasGx, Boolean canResell, Boolean canRefund, Boolean isHold, Boolean canNego, Boolean isMembership, Double maxDistance, Set<TicketType> ticketTypes, TicketState ticketState, TicketTradeType ticketTradeType, TicketTransferFee ticketTransferFee, TicketSortType sortType) {
+        public Search(Integer page, Integer size, String place, Set<String> hashtag, Double latitude, Double longitude, String town, Long minPrice, Long maxPrice, Integer minRemainNumber, Integer maxRemainNumber, Integer minRemainMonth, Integer maxRemainMonth, Boolean hasClothes, Boolean hasLocker, Boolean hasShower, Boolean hasGx, Boolean canResell, Boolean canRefund, Boolean isHold, Boolean canNego, Boolean isMembership, Double maxDistance, Set<TicketType> ticketTypes, TicketState ticketState, TicketTradeType ticketTradeType, TicketTransferFee ticketTransferFee, TicketSortType sortType) {
             this.tagHash = 0L;
 
-            if (hashtag != null)
-                for (String key: hashtag) {
-                    Integer i = tagToKey.get(key);
-                    if (i != null)
-                        this.tagHash += (1L << (i - 1));
-                }
+            try {
+                if (hashtag != null)
+                    for (String key: hashtag) {
+                        Integer i = TagEnum.valueOf(key).getHash();
+                        if (i != null)
+                            this.tagHash += (1L << (i - 1));
+                    }
+            } catch (IllegalArgumentException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 Enum 값입니다.");
+            }
 
             this.page = page;
             this.size = size;
@@ -101,8 +106,8 @@ public class TicketRequestDto {
             this.maxPrice = maxPrice;
             this.minRemainNumber = minRemainNumber;
             this.maxRemainNumber = maxRemainNumber;
-            this.minExpiryDate = minExpiryDate;
-            this.maxExpiryDate = maxExpiryDate;
+            this.minRemainMonth = minRemainMonth;
+            this.maxRemainMonth = maxRemainMonth;
             this.hasClothes = hasClothes;
             this.hasLocker = hasLocker;
             this.hasShower = hasShower;

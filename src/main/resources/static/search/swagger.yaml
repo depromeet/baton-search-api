@@ -148,23 +148,23 @@ paths:
           description: "위치"
           type: string
         - in: "query"
-          name: tags
+          name: hashtag
           type: array
-          description: "해시 태그 목록"
+          description: "해시 태그 목록, TagEnum을 따름"
           items:
             type: string
             enum:
-              - "친절한 선생님"
-              - "체계적인 수업"
-              - "맞춤케어"
-              - "넓은 시설"
-              - "다양한 기구"
-              - "최신 기구"
-              - "사람이 많은"
-              - "사람이 적은"
-              - "쾌적한 환경"
-              - "조용한 분위기"
-              - "역세권"
+              - KIND_TEACHER
+              - SYSTEMATIC_CLASS
+              - CUSTOMIZED_CARE
+              - SPACIOUS_FACILITIES
+              - VARIOUS_EQUIPMENT
+              - NEW_EQUIPMENT
+              - MANY_PEOPLE
+              - LESS_PEOPLE
+              - AGREEMENT
+              - QUIET_AMBIENCE
+              - STATION_AREA
         - in: "query"
           name: latitude
           description: "위도"
@@ -202,13 +202,13 @@ paths:
           type: number
           format: integer
         - in: "query"
-          name: minRemainDay
-          description: "최소 남은 일자"
+          name: minRemainMonth
+          description: "최소 남은 개월 수"
           type: number
           format: integer
         - in: "query"
-          name: maxRemainDay
-          description: "최대 남은 일자"
+          name: maxRemainMonth
+          description: "최대 남은 개월 수"
           type: number
           format: integer
         - in: "query"
@@ -218,10 +218,9 @@ paths:
           format: integer
           required: true
         - in: "query"
-          name: types
+          name: ticketTypes
           description: "거래 타입, TicketType의 Enum을 따름"
           type: array
-          format: form
           items:
             type: string
             enum:
@@ -230,7 +229,7 @@ paths:
               - PILATES_YOGA
               - ETC
         - in: "query"
-          name: tradeType
+          name: ticketTradeType
           description: "거래 방식. TicketTradeType의 Enum을 따름"
           type: string
           enum:
@@ -238,7 +237,7 @@ paths:
             - UNTECT
             - BOTH
         - in: "query"
-          name: transferFee
+          name: ticketTransferFee
           description: "양도비 납부를 누가 할 지 나타냄. TicketTransferFee의 Enum을 따름"
           type: string
           enum:
@@ -246,7 +245,7 @@ paths:
             - CONSUMER
             - NONE
         - in: "query"
-          name: state
+          name: ticketState
           description: "거래 상태. TicketState의 Enum을 따름"
           type: string
           enum:
@@ -333,23 +332,23 @@ paths:
           description: "위치"
           type: string
         - in: "query"
-          name: tags
+          name: hashtag
           type: array
-          description: "해시 태그 목록"
+          description: "해시 태그 목록, TagEnum을 따름"
           items:
             type: string
             enum:
-              - "친절한 선생님"
-              - "체계적인 수업"
-              - "맞춤케어"
-              - "넓은 시설"
-              - "다양한 기구"
-              - "최신 기구"
-              - "사람이 많은"
-              - "사람이 적은"
-              - "쾌적한 환경"
-              - "조용한 분위기"
-              - "역세권"
+              - KIND_TEACHER
+              - SYSTEMATIC_CLASS
+              - CUSTOMIZED_CARE
+              - SPACIOUS_FACILITIES
+              - VARIOUS_EQUIPMENT
+              - NEW_EQUIPMENT
+              - MANY_PEOPLE
+              - LESS_PEOPLE
+              - AGREEMENT
+              - QUIET_AMBIENCE
+              - STATION_AREA
         - in: "query"
           name: latitude
           description: "위도"
@@ -387,13 +386,13 @@ paths:
           type: number
           format: integer
         - in: "query"
-          name: minRemainDay
-          description: "최소 남은 일자"
+          name: minRemainMonth
+          description: "최소 남은 개월 수"
           type: number
           format: integer
         - in: "query"
-          name: maxRemainDay
-          description: "최대 남은 일자"
+          name: maxRemainMonth
+          description: "최대 남은 개월 수"
           type: number
           format: integer
         - in: "query"
@@ -403,10 +402,9 @@ paths:
           format: integer
           required: true
         - in: "query"
-          name: types
+          name: ticketTypes
           description: "거래 타입, TicketType의 Enum을 따름"
           type: array
-          format: form
           items:
             type: string
             enum:
@@ -415,7 +413,7 @@ paths:
               - PILATES_YOGA
               - ETC
         - in: "query"
-          name: tradeType
+          name: ticketTradeType
           description: "거래 방식. TicketTradeType의 Enum을 따름"
           type: string
           enum:
@@ -423,7 +421,7 @@ paths:
             - UNTECT
             - BOTH
         - in: "query"
-          name: transferFee
+          name: ticketTransferFee
           description: "양도비 납부를 누가 할 지 나타냄. TicketTransferFee의 Enum을 따름"
           type: string
           enum:
@@ -431,7 +429,7 @@ paths:
             - CONSUMER
             - NONE
         - in: "query"
-          name: state
+          name: ticketState
           description: "거래 상태. TicketState의 Enum을 따름"
           type: string
           enum:
@@ -619,21 +617,21 @@ paths:
         - in: "formData"
           name: tags
           type: array
-          description: "해시 태그 목록"
+          description: "해시 태그 목록, TagEnum을 따름"
           items:
             type: string
             enum:
-              - "친절한 선생님"
-              - "체계적인 수업"
-              - "맞춤케어"
-              - "넓은 시설"
-              - "다양한 기구"
-              - "최신 기구"
-              - "사람이 많은"
-              - "사람이 적은"
-              - "쾌적한 환경"
-              - "조용한 분위기"
-              - "역세권"
+              - KIND_TEACHER
+              - SYSTEMATIC_CLASS
+              - CUSTOMIZED_CARE
+              - SPACIOUS_FACILITIES
+              - VARIOUS_EQUIPMENT
+              - NEW_EQUIPMENT
+              - MANY_PEOPLE
+              - LESS_PEOPLE
+              - AGREEMENT
+              - QUIET_AMBIENCE
+              - STATION_AREA
         - in: "formData"
           name: images
           type: file
@@ -897,6 +895,21 @@ definitions:
         description: "현재 위치에서 부터 거리 정보 (m 단위)"
         format: float
         example: 2432.1
+  TagEnum:
+    type: string
+    description: "Tag 관련 Enum 입니다. 순서대로 친절한 선생님, 체계적인 수업, 맞춤케어, 넓은 시설, 다양한 기구, 최신 기구, 사람이 많은, 사람이 적은, 쾌적한 환경, 조용한 분위기, 역세권"
+    enum:
+      - KIND_TEACHER
+      - SYSTEMATIC_CLASS
+      - CUSTOMIZED_CARE
+      - SPACIOUS_FACILITIES
+      - VARIOUS_EQUIPMENT
+      - NEW_EQUIPMENT
+      - MANY_PEOPLE
+      - LESS_PEOPLE
+      - AGREEMENT
+      - QUIET_AMBIENCE
+      - STATION_AREA
   TicketPostInfo:
     type: object
     description: "양도권 정보"
