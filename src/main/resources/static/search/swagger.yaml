@@ -148,7 +148,7 @@ paths:
           description: "위치"
           type: string
         - in: "query"
-          name: tags
+          name: hashtag
           type: array
           description: "해시 태그 목록, TagEnum을 따름"
           items:
@@ -218,10 +218,9 @@ paths:
           format: integer
           required: true
         - in: "query"
-          name: types
+          name: ticketTypes
           description: "거래 타입, TicketType의 Enum을 따름"
           type: array
-          format: form
           items:
             type: string
             enum:
@@ -230,7 +229,7 @@ paths:
               - PILATES_YOGA
               - ETC
         - in: "query"
-          name: tradeType
+          name: ticketTradeType
           description: "거래 방식. TicketTradeType의 Enum을 따름"
           type: string
           enum:
@@ -238,7 +237,7 @@ paths:
             - UNTECT
             - BOTH
         - in: "query"
-          name: transferFee
+          name: ticketTransferFee
           description: "양도비 납부를 누가 할 지 나타냄. TicketTransferFee의 Enum을 따름"
           type: string
           enum:
@@ -246,7 +245,7 @@ paths:
             - CONSUMER
             - NONE
         - in: "query"
-          name: state
+          name: ticketState
           description: "거래 상태. TicketState의 Enum을 따름"
           type: string
           enum:
@@ -333,7 +332,7 @@ paths:
           description: "위치"
           type: string
         - in: "query"
-          name: tags
+          name: hashtag
           type: array
           description: "해시 태그 목록, TagEnum을 따름"
           items:
@@ -403,10 +402,9 @@ paths:
           format: integer
           required: true
         - in: "query"
-          name: types
+          name: ticketTypes
           description: "거래 타입, TicketType의 Enum을 따름"
           type: array
-          format: form
           items:
             type: string
             enum:
@@ -415,7 +413,7 @@ paths:
               - PILATES_YOGA
               - ETC
         - in: "query"
-          name: tradeType
+          name: ticketTradeType
           description: "거래 방식. TicketTradeType의 Enum을 따름"
           type: string
           enum:
@@ -423,7 +421,7 @@ paths:
             - UNTECT
             - BOTH
         - in: "query"
-          name: transferFee
+          name: ticketTransferFee
           description: "양도비 납부를 누가 할 지 나타냄. TicketTransferFee의 Enum을 따름"
           type: string
           enum:
@@ -431,7 +429,7 @@ paths:
             - CONSUMER
             - NONE
         - in: "query"
-          name: state
+          name: ticketState
           description: "거래 상태. TicketState의 Enum을 따름"
           type: string
           enum:
