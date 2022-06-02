@@ -1,3 +1,6 @@
+spring:
+  profiles:
+    active: prod
 server:
   error:
     include-message: always
@@ -5,14 +8,11 @@ server:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
   servlet:
     context-path: /search
     multipart:
       max-file-size: 20MB
       max-request-size: 100MB
-  profiles:
-    active: prod
 cloud:
   aws:
     region:
