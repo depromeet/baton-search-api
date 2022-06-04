@@ -11,6 +11,7 @@ import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,6 +38,7 @@ public class TicketResponseDto {
         private Set<String> tags;
         private Boolean isMembership;
         private Integer remainingNumber;
+        private Long remainingDay;
         private TicketState state;
         private Double latitude;
         private Double longitude;
@@ -67,6 +69,9 @@ public class TicketResponseDto {
                     tags.add(TagEnum.values()[i - 1].getContent());
                 tagHash /= 2;
             }
+
+            if (this.expiryDate != null)
+                this.remainingDay = ChronoUnit.DAYS.between(LocalDate.now(), this.expiryDate);
         }
 
         public static Simple of(Ticket ticket) {
@@ -120,6 +125,7 @@ public class TicketResponseDto {
         private Boolean isMembership;
         private Boolean isHolding;
         private Integer remainingNumber;
+        private Long remainingDay;
         private Double latitude;
         private Double longitude;
         private Double distance;
@@ -161,6 +167,7 @@ public class TicketResponseDto {
                     .isMembership(ticket.getIsMembership())
                     .isHolding(ticket.getIsHolding())
                     .remainingNumber(ticket.getRemainingNumber())
+                    .remainingDay(ticket.getExpiryDate() != null ? ChronoUnit.DAYS.between(LocalDate.now(), ticket.getExpiryDate()) : null)
                     .latitude(ticket.getPoint().getY())
                     .longitude(ticket.getPoint().getX())
                     .expiryDate(ticket.getExpiryDate())
