@@ -21,22 +21,9 @@ security:
   - Basic: []
 paths:
   /bookmarks:
-    get:
-      operationId: bookmarks_list
-      description: "Bookmark instance \uBAA9\uB85D, \uC0DD\uC131"
-      parameters: []
-      responses:
-        '200':
-          description: ''
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Bookmark'
-      tags:
-        - bookmarks
     post:
       operationId: bookmarks_create
-      description: "Bookmark instance \uBAA9\uB85D, \uC0DD\uC131"
+      description: "Bookmark instance \uC0DD\uC131"
       parameters:
         - name: data
           in: body
@@ -79,24 +66,11 @@ paths:
         required: true
         type: integer
   /buys:
-    get:
-      operationId: buys_list
-      description: "\uAD6C\uB9E4/\uC608\uC57D \uBAA9\uB85D"
-      parameters: []
-      responses:
-        '200':
-          description: ''
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/BuyCreate'
-      tags:
-        - buys
     post:
       operationId: buys_create
       description: |-
         Reserve a ticket.
-        Buy instance 생성 (ticket state 0 -> 1)
+        Buy instance 생성 (state 0 -> 1)
       parameters:
         - name: data
           in: body
@@ -175,24 +149,63 @@ paths:
         description: A unique integer value identifying this buy.
         required: true
         type: integer
-  /login/kakao:
+  /users:
     post:
-      operationId: login_kakao_create
-      description: ''
+      operationId: users_create
+      description: "\uC0AC\uC6A9\uC790 \uC0DD\uC131 (\uD68C\uC6D0\uAC00\uC785)"
       parameters:
         - name: data
           in: body
           required: true
           schema:
-            $ref: '#/definitions/KaKaoLogin'
+            $ref: '#/definitions/UserCreate'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserCreate'
+      tags:
+        - users
+    parameters: []
+  /users/{id}:
+    get:
+      operationId: users_read
+      description: "\uB9C8\uC774\uD398\uC774\uC9C0; \uC0AC\uC6A9\uC790ID\uAC00 {id}\uC778\
+        \ \uC0AC\uC6A9\uC790\uC758 \uC0C1\uC138 \uC815\uBCF4"
+      parameters:
+        - name: id
+          in: path
+          description: "\uC0AC\uC6A9\uC790ID"
+          type: integer
+          required: true
       responses:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/JWT'
+            $ref: '#/definitions/UserDetail'
       tags:
-        - login
-    parameters: []
+        - users
+    delete:
+      operationId: users_delete
+      description: "\uD68C\uC6D0\uD0C8\uD1F4; \uC0AC\uC6A9\uC790ID\uAC00 {id}\uC778\
+        \ \uC0AC\uC6A9\uC790 \uC0AD\uC81C"
+      parameters:
+        - name: id
+          in: path
+          description: "\uC0AC\uC6A9\uC790ID"
+          type: integer
+          required: true
+      responses:
+        '204':
+          description: ''
+      tags:
+        - users
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this user.
+        required: true
+        type: integer
   /users/{id}/bookmarks:
     get:
       operationId: users_bookmarks_list
@@ -209,7 +222,7 @@ paths:
           description: "\uC870\uD68C\uD560 \uC591\uB3C4\uAD8C \uC0C1\uD0DC ((blank):\
             \ \uC804\uCCB4, 0: \uD310\uB9E4\uC911, 1: \uC608\uC57D\uC911, 2: \uD310\
             \uB9E4\uC644\uB8CC)"
-          type: integer
+          type: string
           default: ''
       responses:
         '200':
@@ -265,7 +278,7 @@ paths:
           in: query
           description: "\uC870\uD68C\uD560 \uC591\uB3C4\uAD8C \uC0C1\uD0DC (0: \uD310\
             \uB9E4\uC911, 2: \uD310\uB9E4\uC644\uB8CC)"
-          type: integer
+          type: string
           default: 0
       responses:
         '200':
@@ -279,30 +292,6 @@ paths:
     parameters:
       - name: id
         in: path
-        required: true
-        type: string
-  /users/{social_user}:
-    get:
-      operationId: users_read
-      description: "\uB9C8\uC774\uD398\uC774\uC9C0; \uC0AC\uC6A9\uC790ID\uAC00 {social_user}\uC778\
-        \ \uC0AC\uC6A9\uC790\uC758 \uC0C1\uC138 \uC815\uBCF4"
-      parameters:
-        - name: social_user
-          in: path
-          description: "\uC0AC\uC6A9\uC790ID"
-          type: integer
-          required: true
-      responses:
-        '200':
-          description: ''
-          schema:
-            $ref: '#/definitions/User'
-      tags:
-        - users
-    parameters:
-      - name: social_user
-        in: path
-        description: User ID(integer)
         required: true
         type: string
 definitions:
@@ -320,7 +309,7 @@ definitions:
       user:
         title: User
         description: User ID(integer)
-        type: string
+        type: integer
       ticket:
         title: Ticket
         description: Ticket ID
@@ -339,7 +328,7 @@ definitions:
       user:
         title: User
         description: User ID(integer)
-        type: string
+        type: integer
       ticket:
         title: Ticket
         description: Ticket ID
@@ -351,6 +340,8 @@ definitions:
         format: date-time
         x-nullable: true
   BuyDetail:
+    required:
+      - date
     type: object
     properties:
       id:
@@ -360,12 +351,12 @@ definitions:
         readOnly: true
       user:
         title: User
-        description: User ID(integer)
-        type: string
+        description: "User ID(integer); POST\uC694\uCCAD \uC2DC \uBBF8\uD3EC\uD568"
+        type: integer
         readOnly: true
       ticket:
         title: Ticket
-        description: Ticket ID
+        description: "Ticket ID; POST\uC694\uCCAD \uC2DC \uBBF8\uD3EC\uD568"
         type: integer
         readOnly: true
       date:
@@ -374,50 +365,132 @@ definitions:
         type: string
         format: date-time
         x-nullable: true
-  KaKaoLogin:
+  Account:
     required:
-      - access_token
+      - holder
+      - bank
+      - number
     type: object
     properties:
-      access_token:
-        title: Access token
-        description: "Kakao \uC11C\uBC84 \uC778\uC99D\uC744 \uC704\uD55C Access Token"
+      holder:
+        title: Holder
         type: string
+        maxLength: 255
         minLength: 1
-  JWTUser:
+      bank:
+        title: Bank
+        type: string
+        maxLength: 255
+        minLength: 1
+      number:
+        title: Number
+        type: string
+        maxLength: 255
+        minLength: 1
+  UserCreate:
     required:
       - id
+      - name
+      - nickname
+      - phone_number
+      - latitude
+      - longitude
+      - address
+      - check_terms_of_service
+      - check_privacy_policy
     type: object
     properties:
       id:
         title: Id
-        description: User ID
         type: integer
-  JWT:
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
+      nickname:
+        title: Nickname
+        type: string
+        maxLength: 255
+        minLength: 1
+      phone_number:
+        title: Phone number
+        type: string
+        maxLength: 255
+        minLength: 1
+      account:
+        $ref: '#/definitions/Account'
+      latitude:
+        title: Latitude
+        type: number
+      longitude:
+        title: Longitude
+        type: number
+      address:
+        title: Address
+        type: string
+        maxLength: 255
+        minLength: 1
+      detailed_address:
+        title: Detailed address
+        type: string
+        maxLength: 255
+      check_terms_of_service:
+        title: Check terms of service
+        type: boolean
+      check_privacy_policy:
+        title: Check privacy policy
+        type: boolean
+  UserDetail:
     required:
-      - access_token
-      - refresh_token
-      - user
+      - id
+      - name
+      - nickname
+      - phone_number
+      - account
     type: object
     properties:
-      access_token:
-        title: Access token
-        description: "Baton App \uC778\uC99D\uC744 \uC704\uD55C Access Token"
+      id:
+        title: Id
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      name:
+        title: Name
         type: string
+        maxLength: 255
         minLength: 1
-      refresh_token:
-        title: Refresh token
-        description: "Baton App Access Token \uAC31\uC2E0\uC744 \uC704\uD55C Refresh\
-          \ Token"
+      nickname:
+        title: Nickname
         type: string
+        maxLength: 255
         minLength: 1
-      user:
-        $ref: '#/definitions/JWTUser'
+      phone_number:
+        title: Phone number
+        type: string
+        maxLength: 255
+        minLength: 1
+      created_on:
+        title: Created on
+        type: string
+        format: date
+        readOnly: true
+      account:
+        $ref: '#/definitions/Account'
   TicketList:
     required:
-      - state
       - location
+      - address
       - price
+      - mainImage
+      - createAt
+      - state
+      - images
+      - isMembership
+      - remainingNumber
+      - expiryDate
+      - latitude
+      - longitude
     type: object
     properties:
       id:
@@ -425,15 +498,13 @@ definitions:
         description: Ticket ID
         type: integer
         readOnly: true
-      state:
-        title: State
-        description: "\uC591\uB3C4\uAD8C \uC0C1\uD0DC (0: \uD310\uB9E4\uC911, 1: \uC608\
-          \uC57D\uC911, 2: \uD310\uB9E4\uC644\uB8CC)"
-        type: integer
-        maximum: 2147483647
-        minimum: -2147483648
       location:
         title: Location
+        type: string
+        maxLength: 255
+        minLength: 1
+      address:
+        title: Address
         type: string
         maxLength: 255
         minLength: 1
@@ -442,11 +513,48 @@ definitions:
         type: integer
         maximum: 2147483647
         minimum: -2147483648
-      created_at:
-        title: Created at
+      mainImage:
+        title: Mainimage
+        type: string
+        minLength: 1
+      createAt:
+        title: Createat
         type: string
         format: date-time
+      state:
+        title: State
+        description: "\uC591\uB3C4\uAD8C \uC0C1\uD0DC (0: \uD310\uB9E4\uC911, 1: \uC608\
+          \uC57D\uC911, 2: \uD310\uB9E4\uC644\uB8CC)"
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      tags:
+        type: array
+        items:
+          type: integer
         readOnly: true
+        uniqueItems: true
+      images:
+        type: array
+        items:
+          type: integer
+        uniqueItems: true
+      isMembership:
+        title: Ismembership
+        type: boolean
+      remainingNumber:
+        title: Remainingnumber
+        type: integer
+      expiryDate:
+        title: Expirydate
+        type: string
+        format: date
+      latitude:
+        title: Latitude
+        type: number
+      longitude:
+        title: Longitude
+        type: number
   UserBookmark:
     required:
       - ticket
@@ -477,31 +585,3 @@ definitions:
         x-nullable: true
       ticket:
         $ref: '#/definitions/TicketList'
-  User:
-    required:
-      - nickname
-    type: object
-    properties:
-      nickname:
-        title: Nickname
-        type: string
-        maxLength: 255
-        minLength: 1
-      sells:
-        title: Sells
-        description: "\uD310\uB9E4\uB0B4\uC5ED URL"
-        type: string
-        format: uri
-        readOnly: true
-      buys:
-        title: Buys
-        description: "\uAD6C\uB9E4 \uBC0F \uC608\uC57D\uB0B4\uC5ED URL"
-        type: string
-        format: uri
-        readOnly: true
-      bookmarks:
-        title: Bookmarks
-        description: "\uAD00\uC2EC\uC0C1\uD488 URL"
-        type: string
-        format: uri
-        readOnly: true
