@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import depromeet.batonsearch.domain.bookmark.repository.BookmarkRepository;
 import depromeet.batonsearch.domain.tag.TagEnum;
 import depromeet.batonsearch.domain.tag.repository.TagRepository;
 import depromeet.batonsearch.domain.ticket.Ticket;
@@ -50,6 +51,7 @@ public class TicketServiceImpl implements TicketService {
     final private TicketQueryRepository ticketQueryRepository;
     final private UserRepository userRepository;
     final private TagRepository tagRepository;
+    final private BookmarkRepository bookmarkRepository;
     final private TicketTagRepository ticketTagRepository;
     final private HttpServletRequest request;
     final private TicketImageRepository ticketImageRepository;
@@ -153,6 +155,11 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    public TicketResponseDto.Simple modify(Integer id, TicketRequestDto.Info info, Set<String> tags, Set<MultipartFile> images) {
+        return null;
+    }
+
+    @Override
     public String deleteById(Integer id) {
         User user = getUserByUserIdInHeader();
         Ticket ticket = ticketRepository.findById(id).orElseThrow(
@@ -169,12 +176,20 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketResponseDto.Info findById(Integer id, Double latitude, Double longitude) {
-        TicketResponseDto.Info info = TicketResponseDto.Info.of(
-                ticketRepository.findById(id).orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found")
-                )
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found")
         );
+
+        TicketResponseDto.Info info = TicketResponseDto.Info.of(ticket);
         info.setDistance(TicketResponseDto.Info.distance(info.getLatitude(), info.getLongitude(), latitude, longitude));
+
+        try {
+            User user = getUserByUserIdInHeader();
+            info.setIsBookmarked(bookmarkRepository.existsBookmarkByTicketAndUser(ticket, user));
+        } catch (ResponseStatusException e) {
+            log.info("No User");
+        }
+
         return info;
     }
 

@@ -807,6 +807,10 @@ definitions:
         type: boolean
         description: "기간 홀딩 가능 여부"
         example: true
+      isBookmarked:
+        type: boolean
+        description: "해당 티켓에 대한 북마크 등록 여부"
+        example: true
       remainingNumber:
         type: number
         description: "남은 횟수, isMembership이 false면 사용"
