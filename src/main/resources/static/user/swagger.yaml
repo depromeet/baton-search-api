@@ -6,7 +6,7 @@ info:
   contact:
     email: jseoplim@gmail.com
   version: 0.0.1
-host: 127.0.0.1:8000
+host: baton.yonghochoi.com
 schemes:
   - http
 basePath: /user
@@ -203,9 +203,9 @@ paths:
     parameters:
       - name: id
         in: path
-        description: A unique value identifying this user.
+        description: User ID(integer)
         required: true
-        type: integer
+        type: string
   /users/{id}/bookmarks:
     get:
       operationId: users_bookmarks_list
@@ -309,7 +309,7 @@ definitions:
       user:
         title: User
         description: User ID(integer)
-        type: integer
+        type: string
       ticket:
         title: Ticket
         description: Ticket ID
@@ -328,7 +328,7 @@ definitions:
       user:
         title: User
         description: User ID(integer)
-        type: integer
+        type: string
       ticket:
         title: Ticket
         description: Ticket ID
@@ -352,7 +352,7 @@ definitions:
       user:
         title: User
         description: "User ID(integer); POST\uC694\uCCAD \uC2DC \uBBF8\uD3EC\uD568"
-        type: integer
+        type: string
         readOnly: true
       ticket:
         title: Ticket
@@ -453,8 +453,6 @@ definitions:
       id:
         title: Id
         type: integer
-        maximum: 2147483647
-        minimum: -2147483648
       name:
         title: Name
         type: string
