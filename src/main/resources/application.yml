@@ -1,6 +1,10 @@
 spring:
   profiles:
     active: prod
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
 server:
   error:
     include-message: always
