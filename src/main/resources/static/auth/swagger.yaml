@@ -1,11 +1,199 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
-  description: "This is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key `special-key` to test the authorization     filters."
-  version: "1.0.0"
-  title: "Swagger Petstore"
-  termsOfService: "http://swagger.io/terms/"
+  title: Baton Auth Server
+  description: "Baton\uC758 \uB85C\uADF8\uC778, \uD68C\uC6D0\uAC00\uC785 \uAE30\uB2A5\
+    \uC744 \uD3EC\uD568\uD569\uB2C8\uB2E4."
   contact:
-    email: "apiteam@swagger.io"
-  license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+    email: jseoplim@gmail.com
+  version: 0.0.1
+host: 127.0.0.1:8080
+schemes:
+  - http
+basePath: /user
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+  - Basic: []
+paths:
+  /login/kakao:
+    post:
+      operationId: login_kakao_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/KaKaoLogin'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/JWT'
+      tags:
+        - login
+    parameters: []
+  /socialusers/{id}:
+    delete:
+      operationId: socialusers_delete
+      description: "\uD68C\uC6D0\uD0C8\uD1F4"
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - socialusers
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this social user.
+        required: true
+        type: integer
+  /socialusers/{provider}:
+    post:
+      operationId: socialusers_create
+      description: "\uD68C\uC6D0\uAC00\uC785"
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SocialUserCreate'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/JWT'
+      tags:
+        - socialusers
+    parameters:
+      - name: provider
+        in: path
+        required: true
+        type: string
+definitions:
+  KaKaoLogin:
+    required:
+      - access_token
+    type: object
+    properties:
+      access_token:
+        title: Access token
+        description: "Kakao \uC11C\uBC84 \uC778\uC99D\uC744 \uC704\uD55C Access Token"
+        type: string
+        minLength: 1
+  JWTUser:
+    type: object
+    properties:
+      id:
+        title: ID
+        description: User ID
+        type: integer
+        readOnly: true
+  JWT:
+    required:
+      - access_token
+      - refresh_token
+      - user
+    type: object
+    properties:
+      access_token:
+        title: Access token
+        description: "Baton App \uC778\uC99D\uC744 \uC704\uD55C Access Token"
+        type: string
+        minLength: 1
+      refresh_token:
+        title: Refresh token
+        description: "Baton App Access Token \uAC31\uC2E0\uC744 \uC704\uD55C Refresh\
+          \ Token"
+        type: string
+        minLength: 1
+      user:
+        $ref: '#/definitions/JWTUser'
+  Account:
+    required:
+      - holder
+      - bank
+      - number
+    type: object
+    properties:
+      holder:
+        title: Holder
+        description: "\uC608\uAE08\uC8FC"
+        type: string
+        minLength: 1
+      bank:
+        title: Bank
+        description: "\uC740\uD589"
+        type: string
+        minLength: 1
+      number:
+        title: Number
+        description: "\uACC4\uC88C\uBC88\uD638"
+        type: string
+        minLength: 1
+  UserCreate:
+    required:
+      - name
+      - nickname
+      - phone_number
+      - latitude
+      - longitude
+      - address
+      - detailed_address
+      - check_terms_of_service
+      - check_privacy_policy
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        minLength: 1
+      nickname:
+        title: Nickname
+        type: string
+        minLength: 1
+      phone_number:
+        title: Phone number
+        type: string
+        minLength: 1
+      account:
+        $ref: '#/definitions/Account'
+      latitude:
+        title: Latitude
+        type: number
+      longitude:
+        title: Longitude
+        type: number
+      address:
+        title: Address
+        type: string
+        minLength: 1
+      detailed_address:
+        title: Detailed address
+        type: string
+        minLength: 1
+      check_terms_of_service:
+        title: Check terms of service
+        type: boolean
+      check_privacy_policy:
+        title: Check privacy policy
+        type: boolean
+  SocialUserCreate:
+    required:
+      - uid
+      - user
+    type: object
+    properties:
+      uid:
+        title: Uid
+        type: string
+        maxLength: 255
+        minLength: 1
+      user:
+        $ref: '#/definitions/UserCreate'
