@@ -252,9 +252,9 @@ paths:
     parameters:
       - name: id
         in: path
-        description: User ID(integer)
+        description: A unique value identifying this user.
         required: true
-        type: string
+        type: integer
   /users/{id}/address:
     put:
       operationId: users_address_update
@@ -291,9 +291,9 @@ paths:
     parameters:
       - name: id
         in: path
-        description: User ID(integer)
+        description: A unique value identifying this user.
         required: true
-        type: string
+        type: integer
   /users/{id}/bookmarks:
     get:
       operationId: users_bookmarks_list
@@ -315,6 +315,10 @@ paths:
       responses:
         '200':
           description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserBookmark'
       tags:
         - users
     parameters:
@@ -336,6 +340,10 @@ paths:
       responses:
         '200':
           description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserBuy'
       tags:
         - users
     parameters:
@@ -363,6 +371,10 @@ paths:
       responses:
         '200':
           description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TicketList'
       tags:
         - users
     parameters:
@@ -450,7 +462,7 @@ definitions:
       user:
         title: User
         description: User ID(integer)
-        type: string
+        type: integer
       ticket:
         title: Ticket
         description: Ticket ID
@@ -469,7 +481,7 @@ definitions:
       user:
         title: User
         description: User ID(integer)
-        type: string
+        type: integer
       ticket:
         title: Ticket
         description: Ticket ID
@@ -493,7 +505,7 @@ definitions:
       user:
         title: User
         description: "User ID(integer); POST\uC694\uCCAD \uC2DC \uBBF8\uD3EC\uD568"
-        type: string
+        type: integer
         readOnly: true
       ticket:
         title: Ticket
@@ -596,8 +608,9 @@ definitions:
     properties:
       id:
         title: Id
-        description: User ID(integer)
         type: integer
+        maximum: 2147483647
+        minimum: -2147483648
       name:
         title: Name
         type: string
@@ -673,3 +686,115 @@ definitions:
         title: Detailed address
         type: string
         maxLength: 255
+  TicketList:
+    required:
+      - location
+      - address
+      - price
+      - mainImage
+      - createAt
+      - state
+      - images
+      - isMembership
+      - remainingNumber
+      - expiryDate
+      - latitude
+      - longitude
+    type: object
+    properties:
+      id:
+        title: ID
+        description: Ticket ID
+        type: integer
+        readOnly: true
+      location:
+        title: Location
+        type: string
+        maxLength: 255
+        minLength: 1
+      address:
+        title: Address
+        type: string
+        maxLength: 255
+        minLength: 1
+      price:
+        title: Price
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      mainImage:
+        title: Mainimage
+        type: string
+        minLength: 1
+      createAt:
+        title: Createat
+        type: string
+        format: date-time
+      state:
+        title: State
+        description: "\uC591\uB3C4\uAD8C \uC0C1\uD0DC (0: \uD310\uB9E4\uC911, 1: \uC608\
+          \uC57D\uC911, 2: \uD310\uB9E4\uC644\uB8CC)"
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      tags:
+        type: array
+        items:
+          type: integer
+        readOnly: true
+        uniqueItems: true
+      images:
+        type: array
+        items:
+          type: integer
+        uniqueItems: true
+      isMembership:
+        title: Ismembership
+        type: boolean
+      remainingNumber:
+        title: Remainingnumber
+        type: integer
+      expiryDate:
+        title: Expirydate
+        type: string
+        format: date
+      latitude:
+        title: Latitude
+        type: number
+      longitude:
+        title: Longitude
+        type: number
+      distance:
+        title: Distance
+        type: string
+        readOnly: true
+  UserBookmark:
+    required:
+      - ticket
+    type: object
+    properties:
+      id:
+        title: ID
+        description: Bookmark ID
+        type: integer
+        readOnly: true
+      ticket:
+        $ref: '#/definitions/TicketList'
+  UserBuy:
+    required:
+      - ticket
+    type: object
+    properties:
+      id:
+        title: ID
+        description: Buy ID
+        type: integer
+        readOnly: true
+      date:
+        title: Date
+        description: "\uAD6C\uB9E4\uC77C\uC2DC"
+        type: string
+        format: date-time
+        x-nullable: true
+      ticket:
+        $ref: '#/definitions/TicketList'
