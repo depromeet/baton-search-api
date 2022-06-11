@@ -77,7 +77,8 @@ public class TicketQueryRepository {
                         Double.class, "function('calc_distance', {0}, {1})", String.format("point(%f %f)", search.getLatitude(), search.getLongitude()), ticket.point
                 ).as("distance"),
                 ticket.mainImage,
-                ticket.expiryDate
+                ticket.expiryDate,
+                ticket.bookmarkCount
             ))
             .from(ticket)
             .where(
@@ -118,7 +119,8 @@ public class TicketQueryRepository {
                             Double.class, "function('calc_distance', {0}, {1})", String.format("point(%f %f)", search.getLatitude(), search.getLongitude()), ticket.point
                     ).as("distance"),
                     ticket.mainImage,
-                    ticket.expiryDate
+                    ticket.expiryDate,
+                    ticket.bookmarkCount
                 ))
                 .from(ticket)
                 .where(

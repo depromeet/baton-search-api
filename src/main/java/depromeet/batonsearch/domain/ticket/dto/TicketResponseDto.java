@@ -43,10 +43,11 @@ public class TicketResponseDto {
         private Double latitude;
         private Double longitude;
         private Double distance;
+        private Integer bookmarkCount;
 
         @Builder
         @QueryProjection
-        public Simple(Integer id, String location, String address, Integer price, TicketState state, LocalDateTime createAt, Boolean isMembership, Integer remainingNumber, Long tagHash, Point point, Double distance, String mainImage, LocalDate expiryDate) {
+        public Simple(Integer id, String location, String address, Integer price, TicketState state, LocalDateTime createAt, Boolean isMembership, Integer remainingNumber, Long tagHash, Point point, Double distance, String mainImage, LocalDate expiryDate, Integer bookmarkCount) {
             this.id = id;
             this.location = location;
             this.address = address;
@@ -60,6 +61,7 @@ public class TicketResponseDto {
             this.distance = distance;
             this.mainImage = mainImage;
             this.expiryDate = expiryDate;
+            this.bookmarkCount = bookmarkCount;
             this.tags = new HashSet<>();
 
             for (int i = 1; i <= TagEnum.values().length; i++) {
@@ -80,6 +82,7 @@ public class TicketResponseDto {
                 .createAt(ticket.getCreatedAt())
                 .expiryDate(ticket.getExpiryDate())
                 .location(ticket.getLocation())
+                .address(ticket.getAddress())
                 .price(ticket.getPrice())
                 .state(ticket.getState())
                 .point(ticket.getPoint())
@@ -88,6 +91,7 @@ public class TicketResponseDto {
                 .isMembership(ticket.getIsMembership())
                 .remainingNumber(ticket.getRemainingNumber())
                 .mainImage(ticket.getMainImage())
+                .bookmarkCount(ticket.getBookmarkCount())
                 .build();
         }
     }
@@ -130,6 +134,7 @@ public class TicketResponseDto {
         private Double latitude;
         private Double longitude;
         private Double distance;
+        private Integer bookmarkCount;
 
 
         public static Info of(Ticket ticket) {
@@ -172,6 +177,7 @@ public class TicketResponseDto {
                     .latitude(ticket.getPoint().getY())
                     .longitude(ticket.getPoint().getX())
                     .expiryDate(ticket.getExpiryDate())
+                    .bookmarkCount(ticket.getBookmarkCount())
                     .build();
         }
 
