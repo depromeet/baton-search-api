@@ -178,4 +178,6 @@ public class Ticket {
     public void setMainImage(String mainImage) {
         this.mainImage = mainImage;
     }
+
+    public void addViewCount() { this.viewCount++; }
 }

@@ -50,7 +50,7 @@ public class TicketControllerImpl implements TicketController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @GetMapping(value = "/info/{id}")
     public ResponseEntity<TicketResponseDto.Info> findById(@PathVariable("id") Integer id,
                                                            @RequestParam("latitude") Double latitude,
