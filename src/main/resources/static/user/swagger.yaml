@@ -149,6 +149,17 @@ paths:
         description: A unique integer value identifying this buy.
         required: true
         type: integer
+  /health:
+    get:
+      operationId: health_list
+      description: health check
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - health
+    parameters: []
   /users:
     post:
       operationId: users_create
@@ -185,6 +196,44 @@ paths:
             $ref: '#/definitions/UserDetail'
       tags:
         - users
+    put:
+      operationId: users_update
+      description: "\uB9C8\uC774\uD398\uC774\uC9C0 (+\uD68C\uC6D0\uD0C8\uD1F4)"
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserUpdate'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserUpdate'
+      tags:
+        - users
+    patch:
+      operationId: users_partial_update
+      description: "\uC815\uBCF4\uC218\uC815; \uC0AC\uC6A9\uC790ID\uAC00 {id}\uC778\
+        \ \uC0AC\uC6A9\uC790\uC758 \uC815\uBCF4 \uC218\uC815"
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserUpdate'
+        - name: id
+          in: path
+          description: "\uC0AC\uC6A9\uC790ID"
+          type: integer
+          required: true
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserUpdate'
+      tags:
+        - users
     delete:
       operationId: users_delete
       description: "\uD68C\uC6D0\uD0C8\uD1F4; \uC0AC\uC6A9\uC790ID\uAC00 {id}\uC778\
@@ -198,6 +247,45 @@ paths:
       responses:
         '204':
           description: ''
+      tags:
+        - users
+    parameters:
+      - name: id
+        in: path
+        description: User ID(integer)
+        required: true
+        type: string
+  /users/{id}/address:
+    put:
+      operationId: users_address_update
+      description: "\uC0AC\uC6A9\uC790 \uC8FC\uC18C \uC218\uC815"
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserAddressUpdate'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserAddressUpdate'
+      tags:
+        - users
+    patch:
+      operationId: users_address_partial_update
+      description: "\uC0AC\uC6A9\uC790 \uC8FC\uC18C \uC218\uC815"
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserAddressUpdate'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserAddressUpdate'
       tags:
         - users
     parameters:
@@ -227,10 +315,6 @@ paths:
       responses:
         '200':
           description: ''
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/UserBookmark'
       tags:
         - users
     parameters:
@@ -252,10 +336,6 @@ paths:
       responses:
         '200':
           description: ''
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/UserBuy'
       tags:
         - users
     parameters:
@@ -283,14 +363,75 @@ paths:
       responses:
         '200':
           description: ''
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/TicketList'
       tags:
         - users
     parameters:
       - name: id
+        in: path
+        required: true
+        type: string
+  /users/{user}/account:
+    get:
+      operationId: users_account_read
+      description: "\uB9C8\uC774\uD398\uC774\uC9C0 \uACC4\uC88C \uC124\uC815"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Account'
+      tags:
+        - users
+    post:
+      operationId: users_account_create
+      description: "\uB9C8\uC774\uD398\uC774\uC9C0 \uACC4\uC88C \uC124\uC815"
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Account'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Account'
+      tags:
+        - users
+    put:
+      operationId: users_account_update
+      description: "\uB9C8\uC774\uD398\uC774\uC9C0 \uACC4\uC88C \uC124\uC815"
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Account'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Account'
+      tags:
+        - users
+    patch:
+      operationId: users_account_partial_update
+      description: "\uB9C8\uC774\uD398\uC774\uC9C0 \uACC4\uC88C \uC124\uC815"
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Account'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Account'
+      tags:
+        - users
+    parameters:
+      - name: user
         in: path
         required: true
         type: string
@@ -448,10 +589,14 @@ definitions:
       - nickname
       - phone_number
       - account
+      - latitude
+      - longitude
+      - address
     type: object
     properties:
       id:
         title: Id
+        description: User ID(integer)
         type: integer
       name:
         title: Name
@@ -475,111 +620,56 @@ definitions:
         readOnly: true
       account:
         $ref: '#/definitions/Account'
-  TicketList:
-    required:
-      - location
-      - address
-      - price
-      - mainImage
-      - createAt
-      - state
-      - images
-      - isMembership
-      - remainingNumber
-      - expiryDate
-      - latitude
-      - longitude
-    type: object
-    properties:
-      id:
-        title: ID
-        description: Ticket ID
-        type: integer
-        readOnly: true
-      location:
-        title: Location
-        type: string
-        maxLength: 255
-        minLength: 1
-      address:
-        title: Address
-        type: string
-        maxLength: 255
-        minLength: 1
-      price:
-        title: Price
-        type: integer
-        maximum: 2147483647
-        minimum: -2147483648
-      mainImage:
-        title: Mainimage
-        type: string
-        minLength: 1
-      createAt:
-        title: Createat
-        type: string
-        format: date-time
-      state:
-        title: State
-        description: "\uC591\uB3C4\uAD8C \uC0C1\uD0DC (0: \uD310\uB9E4\uC911, 1: \uC608\
-          \uC57D\uC911, 2: \uD310\uB9E4\uC644\uB8CC)"
-        type: integer
-        maximum: 2147483647
-        minimum: -2147483648
-      tags:
-        type: array
-        items:
-          type: integer
-        readOnly: true
-        uniqueItems: true
-      images:
-        type: array
-        items:
-          type: integer
-        uniqueItems: true
-      isMembership:
-        title: Ismembership
-        type: boolean
-      remainingNumber:
-        title: Remainingnumber
-        type: integer
-      expiryDate:
-        title: Expirydate
-        type: string
-        format: date
       latitude:
         title: Latitude
         type: number
       longitude:
         title: Longitude
         type: number
-  UserBookmark:
-    required:
-      - ticket
-    type: object
-    properties:
-      id:
-        title: ID
-        description: Bookmark ID
-        type: integer
-        readOnly: true
-      ticket:
-        $ref: '#/definitions/TicketList'
-  UserBuy:
-    required:
-      - ticket
-    type: object
-    properties:
-      id:
-        title: ID
-        description: Buy ID
-        type: integer
-        readOnly: true
-      date:
-        title: Date
-        description: "\uAD6C\uB9E4\uC77C\uC2DC"
+      address:
+        title: Address
         type: string
-        format: date-time
-        x-nullable: true
-      ticket:
-        $ref: '#/definitions/TicketList'
+        maxLength: 255
+        minLength: 1
+      detailed_address:
+        title: Detailed address
+        type: string
+        maxLength: 255
+  UserUpdate:
+    required:
+      - nickname
+      - phone_number
+    type: object
+    properties:
+      nickname:
+        title: Nickname
+        type: string
+        maxLength: 255
+        minLength: 1
+      phone_number:
+        title: Phone number
+        type: string
+        maxLength: 255
+        minLength: 1
+  UserAddressUpdate:
+    required:
+      - latitude
+      - longitude
+      - address
+    type: object
+    properties:
+      latitude:
+        title: Latitude
+        type: number
+      longitude:
+        title: Longitude
+        type: number
+      address:
+        title: Address
+        type: string
+        maxLength: 255
+        minLength: 1
+      detailed_address:
+        title: Detailed address
+        type: string
+        maxLength: 255
