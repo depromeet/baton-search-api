@@ -49,23 +49,7 @@ paths:
       tags:
         - login
     parameters: []
-  /socialusers/{id}:
-    delete:
-      operationId: socialusers_delete
-      description: "\uD68C\uC6D0\uD0C8\uD1F4"
-      parameters: []
-      responses:
-        '204':
-          description: ''
-      tags:
-        - socialusers
-    parameters:
-      - name: id
-        in: path
-        description: A unique integer value identifying this social user.
-        required: true
-        type: integer
-  /socialusers/{provider}:
+  /socialusers:
     post:
       operationId: socialusers_create
       description: "\uD68C\uC6D0\uAC00\uC785"
@@ -82,11 +66,23 @@ paths:
             $ref: '#/definitions/JWT'
       tags:
         - socialusers
+    parameters: []
+  /socialusers/{id}:
+    delete:
+      operationId: socialusers_delete
+      description: "\uD68C\uC6D0\uD0C8\uD1F4"
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - socialusers
     parameters:
-      - name: provider
+      - name: id
         in: path
+        description: A unique integer value identifying this social user.
         required: true
-        type: string
+        type: integer
 definitions:
   KaKaoLogin:
     required:
@@ -198,11 +194,17 @@ definitions:
   SocialUserCreate:
     required:
       - uid
+      - provider
       - user
     type: object
     properties:
       uid:
         title: Uid
+        type: string
+        maxLength: 255
+        minLength: 1
+      provider:
+        title: Provider
         type: string
         maxLength: 255
         minLength: 1
