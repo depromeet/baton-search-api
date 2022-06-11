@@ -9,7 +9,7 @@ info:
 host: 127.0.0.1:8080
 schemes:
   - http
-basePath: /user
+basePath: /
 consumes:
   - application/json
 produces:
@@ -20,6 +20,17 @@ securityDefinitions:
 security:
   - Basic: []
 paths:
+  /health:
+    get:
+      operationId: health_list
+      description: health check
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - health
+    parameters: []
   /login/kakao:
     post:
       operationId: login_kakao_create
