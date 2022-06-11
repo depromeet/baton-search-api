@@ -97,6 +97,9 @@ public class Ticket {
     @Column(nullable = false, name = "bookmark_count")
     private Integer bookmarkCount;
 
+    @Column(nullable = false, name = "view_count")
+    private Integer viewCount;
+
     @Column(name = "expiry_date")
     private LocalDate expiryDate;
 
@@ -122,7 +125,7 @@ public class Ticket {
 
 
     @Builder
-    public Ticket(User seller, String location, String address, LocalDateTime createdAt, Integer price, TicketState state, TicketType type, Boolean canNego, TicketTradeType tradeType, Boolean hasShower, Boolean hasLocker, Boolean hasClothes, Boolean hasGx, Boolean canResell, Boolean canRefund, String description, TicketTransferFee transferFee, Double latitude, Double longitude, Boolean isMembership, Boolean isHolding, Integer remainingNumber, String mainImage, LocalDate expiryDate, Integer bookmarkCount) {
+    public Ticket(User seller, String location, String address, LocalDateTime createdAt, Integer price, TicketState state, TicketType type, Boolean canNego, TicketTradeType tradeType, Boolean hasShower, Boolean hasLocker, Boolean hasClothes, Boolean hasGx, Boolean canResell, Boolean canRefund, String description, TicketTransferFee transferFee, Double latitude, Double longitude, Boolean isMembership, Boolean isHolding, Integer remainingNumber, String mainImage, LocalDate expiryDate, Integer viewCount, Integer bookmarkCount) {
         this.seller = seller;
         this.location = location;
         this.address = address;
@@ -149,6 +152,7 @@ public class Ticket {
         this.mainImage = mainImage;
         this.expiryDate = expiryDate;
         this.bookmarkCount = bookmarkCount;
+        this.viewCount = viewCount;
     }
 
     public void addTicketTag(TicketTag ticketTag) {

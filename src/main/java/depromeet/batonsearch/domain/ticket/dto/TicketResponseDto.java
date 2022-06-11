@@ -44,10 +44,11 @@ public class TicketResponseDto {
         private Double longitude;
         private Double distance;
         private Integer bookmarkCount;
+        private Integer viewCount;
 
         @Builder
         @QueryProjection
-        public Simple(Integer id, String location, String address, Integer price, TicketState state, LocalDateTime createAt, Boolean isMembership, Integer remainingNumber, Long tagHash, Point point, Double distance, String mainImage, LocalDate expiryDate, Integer bookmarkCount) {
+        public Simple(Integer id, String location, String address, Integer price, TicketState state, LocalDateTime createAt, Boolean isMembership, Integer remainingNumber, Long tagHash, Point point, Double distance, String mainImage, LocalDate expiryDate, Integer viewCount, Integer bookmarkCount) {
             this.id = id;
             this.location = location;
             this.address = address;
@@ -62,6 +63,7 @@ public class TicketResponseDto {
             this.mainImage = mainImage;
             this.expiryDate = expiryDate;
             this.bookmarkCount = bookmarkCount;
+            this.viewCount = viewCount;
             this.tags = new HashSet<>();
 
             for (int i = 1; i <= TagEnum.values().length; i++) {
@@ -92,6 +94,7 @@ public class TicketResponseDto {
                 .remainingNumber(ticket.getRemainingNumber())
                 .mainImage(ticket.getMainImage())
                 .bookmarkCount(ticket.getBookmarkCount())
+                .viewCount(ticket.getViewCount())
                 .build();
         }
     }
@@ -135,6 +138,7 @@ public class TicketResponseDto {
         private Double longitude;
         private Double distance;
         private Integer bookmarkCount;
+        private Integer viewCount;
 
 
         public static Info of(Ticket ticket) {
@@ -178,6 +182,7 @@ public class TicketResponseDto {
                     .longitude(ticket.getPoint().getX())
                     .expiryDate(ticket.getExpiryDate())
                     .bookmarkCount(ticket.getBookmarkCount())
+                    .viewCount(ticket.getViewCount())
                     .build();
         }
 
