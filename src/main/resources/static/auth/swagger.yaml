@@ -6,9 +6,9 @@ info:
   contact:
     email: jseoplim@gmail.com
   version: 0.0.1
-host: 127.0.0.1:8080
+host: baton.yonghochoi.com
 schemes:
-  - http
+  - https
 basePath: /
 consumes:
   - application/json
