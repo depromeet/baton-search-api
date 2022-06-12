@@ -7,6 +7,8 @@ import depromeet.batonsearch.domain.tickettag.TicketTag;
 import depromeet.batonsearch.domain.user.User;
 import depromeet.batonsearch.global.util.GeometryUtil;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.locationtech.jts.geom.Point;
 
 import javax.persistence.*;
@@ -19,6 +21,8 @@ import java.util.Set;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
+@DynamicUpdate
 @Table(name = "Ticket")
 public class Ticket {
 
@@ -94,10 +98,10 @@ public class Ticket {
     @Column(nullable = false, name = "remaining_number")
     private Integer remainingNumber;
 
-    @Column(nullable = false, name = "bookmark_count")
+    @Column(name = "bookmark_count")
     private Integer bookmarkCount;
 
-    @Column(nullable = false, name = "view_count")
+    @Column(name = "view_count")
     private Integer viewCount;
 
     @Column(name = "expiry_date")

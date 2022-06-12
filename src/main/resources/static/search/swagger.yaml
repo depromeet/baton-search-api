@@ -260,7 +260,7 @@ paths:
             - RECENT
             - LOWER_PRICE
             - HIGHER_PRICE
-            - VIEW
+            - VIEWS
             - BOOKMARKED
             - REMAIN_DAY
             - REMAIN_NUMBER
@@ -446,7 +446,7 @@ paths:
             - RECENT
             - LOWER_PRICE
             - HIGHER_PRICE
-            - VIEW
+            - VIEWS
             - REMAIN_DAY
             - DISTANCE
         - in: "query"
@@ -723,7 +723,7 @@ definitions:
       - RECENT
       - LOWER_PRICE
       - HIGHER_PRICE
-      - VIEW
+      - VIEWS
       - BOOKMARKED
       - REMAIN_DAY
       - REMAIN_NUMBER
