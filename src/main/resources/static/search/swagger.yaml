@@ -261,7 +261,9 @@ paths:
             - LOWER_PRICE
             - HIGHER_PRICE
             - VIEW
+            - BOOKMARKED
             - REMAIN_DAY
+            - REMAIN_NUMBER
             - DISTANCE
         - in: "query"
           name: hasClothes
@@ -716,13 +718,15 @@ definitions:
     example: "SELLER"
   TicketSortType:
     type: string
-    description: "정렬 방식을 나타냄. 각각 최신, 가격 낮은 순, 가격 높은 순, 조회수, 남은 일자 순, 거리순"
+    description: "정렬 방식을 나타냄. 각각 최신, 가격 낮은 순, 가격 높은 순, 조회수, 북마크 횟수, 남은 일자 순, 남은 횟수 순, 거리순"
     enum:
       - RECENT
       - LOWER_PRICE
       - HIGHER_PRICE
       - VIEW
+      - BOOKMARKED
       - REMAIN_DAY
+      - REMAIN_NUMBER
       - DISTANCE
     example: "RECENT"
   TicketInfo:
@@ -814,6 +818,10 @@ definitions:
       remainingNumber:
         type: number
         description: "남은 횟수, isMembership이 false면 사용"
+        example: null
+      remainingDay:
+        type: number
+        description: "남은 일자, isMembership이 true면 사용"
         example: 180
       latitude:
         type: number
@@ -830,6 +838,14 @@ definitions:
         description: "현재 위치에서 부터 거리 정보 (m 단위)"
         format: float
         example: 2432.1
+      bookmarkCount:
+        type: number
+        description: "북마크 횟수."
+        example: 3
+      viewCount:
+        type: number
+        description: "조회수."
+        example: 5
   TicketSimpleInfo:
     type: object
     description: "양도권 정보"
@@ -866,11 +882,6 @@ definitions:
         description: "해시 태그 리스트"
         items:
           type: string
-      images:
-        type: array
-        description: "이미지 리스트"
-        items:
-          $ref: "#/definitions/TicketImage"
       isMembership:
         type: boolean
         description: "기간제 여부, true일 시 expiryDate를 사용하고 false일 시 remainingNumber를 사용 한다."
@@ -899,6 +910,18 @@ definitions:
         description: "현재 위치에서 부터 거리 정보 (m 단위)"
         format: float
         example: 2432.1
+      bookmarkCount:
+        type: number
+        description: "북마크 횟수"
+        example: 3
+      viewCount:
+        type: number
+        description: "조회수"
+        example: 36.1234
+      type:
+        type: string
+        description: "양도권 타입"
+        example: "HEALTH"
   TagEnum:
     type: string
     description: "Tag 관련 Enum 입니다. 순서대로 친절한 선생님, 체계적인 수업, 맞춤케어, 넓은 시설, 다양한 기구, 최신 기구, 사람이 많은, 사람이 적은, 쾌적한 환경, 조용한 분위기, 역세권"
@@ -994,7 +1017,7 @@ definitions:
         example: true
       remainingNumber:
         type: number
-        description: "남은 횟수, . isMembership이 False면 필수"
+        description: "남은 횟수, isMembership이 False면 필수"
         example: 180
       latitude:
         type: number
