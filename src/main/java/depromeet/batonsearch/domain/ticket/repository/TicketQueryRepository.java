@@ -43,7 +43,7 @@ public class TicketQueryRepository {
                         likeTown(search.getTown()),
                         priceGoe(search.getMinPrice()),
                         priceLoe(search.getMaxPrice()),
-                        remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinRemainMonth(), search.getMaxRemainMonth()),
+                        remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinRemainMonth(), search.getMaxRemainMonth(), search.getSortType()),
                         ticketStateCheck(search.getState()),
                         ticketTypeCheck(search.getTypes()),
                         ticketTradeTypeCheck(search.getTradeType()),
@@ -77,7 +77,10 @@ public class TicketQueryRepository {
                         Double.class, "function('calc_distance', {0}, {1})", String.format("point(%f %f)", search.getLatitude(), search.getLongitude()), ticket.point
                 ).as("distance"),
                 ticket.mainImage,
-                ticket.expiryDate
+                ticket.expiryDate,
+                ticket.viewCount,
+                ticket.bookmarkCount,
+                ticket.type
             ))
             .from(ticket)
             .where(
@@ -118,7 +121,10 @@ public class TicketQueryRepository {
                             Double.class, "function('calc_distance', {0}, {1})", String.format("point(%f %f)", search.getLatitude(), search.getLongitude()), ticket.point
                     ).as("distance"),
                     ticket.mainImage,
-                    ticket.expiryDate
+                    ticket.expiryDate,
+                    ticket.viewCount,
+                    ticket.bookmarkCount,
+                    ticket.type
                 ))
                 .from(ticket)
                 .where(
@@ -127,7 +133,7 @@ public class TicketQueryRepository {
                     likeTown(search.getTown()),
                     priceGoe(search.getMinPrice()),
                     priceLoe(search.getMaxPrice()),
-                    remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinRemainMonth(), search.getMaxRemainMonth()),
+                    remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinRemainMonth(), search.getMaxRemainMonth(), search.getSortType()),
                     ticketStateCheck(search.getState()),
                     ticketTypeCheck(search.getTypes()),
                     ticketTradeTypeCheck(search.getTradeType()),
@@ -143,7 +149,7 @@ public class TicketQueryRepository {
                     isHoldCheck(search.getIsHold())
                 )
                 .orderBy(
-                        orderSelect(search.getSortType())
+                        orderSelect(search.getSortType()), ticket.id.desc()
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -157,7 +163,7 @@ public class TicketQueryRepository {
                     likeTown(search.getTown()),
                     priceGoe(search.getMinPrice()),
                     priceLoe(search.getMaxPrice()),
-                    remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinRemainMonth(), search.getMaxRemainMonth()),
+                    remainSearch(search.getMinRemainNumber(), search.getMaxRemainNumber(), search.getMinRemainMonth(), search.getMaxRemainMonth(), search.getSortType()),
                     ticketStateCheck(search.getState()),
                     ticketTypeCheck(search.getTypes()),
                     ticketTradeTypeCheck(search.getTradeType()),
@@ -216,16 +222,22 @@ public class TicketQueryRepository {
         return ticket.isMembership.eq(true).and(ticket.expiryDate.between(minDate, maxDate));
     }
 
-    private BooleanExpression remainSearch(Integer minRemainNumber, Integer maxRemainNumber, Integer minRemainMonth, Integer maxRemainMonth) {
+    private BooleanExpression remainSearch(Integer minRemainNumber, Integer maxRemainNumber, Integer minRemainMonth, Integer maxRemainMonth, TicketSortType sortType) {
         BooleanExpression remainNumberExpression = remainNumberSearch(minRemainNumber, maxRemainNumber);
         BooleanExpression expiryDayExpression = remainMonthSearch(minRemainMonth, maxRemainMonth);
 
-        if (remainNumberExpression == null) {
-            return expiryDayExpression;
-        } else if (expiryDayExpression == null) {
+        if (sortType == TicketSortType.REMAIN_NUMBER) {
             return remainNumberExpression;
+        } else if (sortType == TicketSortType.REMAIN_DAY) {
+            return expiryDayExpression;
         } else {
-            return expiryDayExpression.or(remainNumberExpression);
+            if (remainNumberExpression == null) {
+                return expiryDayExpression;
+            } else if (expiryDayExpression == null) {
+                return remainNumberExpression;
+            } else {
+                return expiryDayExpression.or(remainNumberExpression);
+            }
         }
     }
 
@@ -301,19 +313,25 @@ public class TicketQueryRepository {
 
     private OrderSpecifier<? extends Comparable> orderSelect(TicketSortType sortType) {
         if (sortType == null)
-            return ticket.id.desc();
+            return null;
 
         switch (sortType) {
+            case VIEWS:
+                return ticket.viewCount.desc();
+            case BOOKMARKED:
+                return ticket.bookmarkCount.desc();
             case REMAIN_DAY:
-                return ticket.remainingNumber.desc();
+                return ticket.expiryDate.desc();
             case LOWER_PRICE:
                 return ticket.price.asc();
             case HIGHER_PRICE:
                 return ticket.price.desc();
             case DISTANCE:
                 return Expressions.stringTemplate("distance").asc();
+            case REMAIN_NUMBER:
+                return ticket.remainingNumber.desc();
             default:
-                return ticket.id.desc();
+                return null;
         }
     }
 }

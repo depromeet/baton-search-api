@@ -54,11 +54,11 @@ public class TicketRequestDto {
         @PositiveOrZero(message = "남은 일자 혹은 횟수는 0보다 커야 합니다.")
         private final Integer maxRemainNumber;
 
-        @Min(value = 1, message = "남은 개월 수는 1보단 같거나 커야 합니다.")
+        @Min(value = 0, message = "남은 개월 수는 0보단 같거나 커야 합니다.")
         @Max(value = 12, message = "남은 개월 수는 12보단 같거나 작아야 합니다.")
         private final Integer minRemainMonth;
 
-        @Min(value = 1, message = "남은 개월 수는 1보단 같거나 커야 합니다.")
+        @Min(value = 0, message = "남은 개월 수는 0보단 같거나 커야 합니다.")
         @Max(value = 12, message = "남은 개월 수는 12보단 같거나 작아야 합니다.")
         private final Integer maxRemainMonth;
 

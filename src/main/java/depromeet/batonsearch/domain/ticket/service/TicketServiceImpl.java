@@ -180,12 +180,15 @@ public class TicketServiceImpl implements TicketService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found")
         );
 
+        ticket.addViewCount();
+
         TicketResponseDto.Info info = TicketResponseDto.Info.of(ticket);
         info.setDistance(TicketResponseDto.Info.distance(info.getLatitude(), info.getLongitude(), latitude, longitude));
 
         try {
             User user = getUserByUserIdInHeader();
             info.setIsBookmarked(bookmarkRepository.existsBookmarkByTicketAndUser(ticket, user));
+            ticketRepository.save(ticket);
         } catch (ResponseStatusException e) {
             log.info("No User");
         }
