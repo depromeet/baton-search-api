@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -149,7 +150,7 @@ public class TicketQueryRepository {
                     isHoldCheck(search.getIsHold())
                 )
                 .orderBy(
-                        orderSelect(search.getSortType()), ticket.id.desc()
+                        orderSelect(search.getSortType())
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -311,27 +312,32 @@ public class TicketQueryRepository {
         return isHold != null ? ticket.isHolding.eq(isHold) : null;
     }
 
-    private OrderSpecifier<? extends Comparable> orderSelect(TicketSortType sortType) {
-        if (sortType == null)
-            return null;
+    private OrderSpecifier[] orderSelect(TicketSortType sortType) {
+        if (sortType == null) {
+            return new OrderSpecifier[]{ ticket.id.desc() };
+        }
+        List<OrderSpecifier> orderBy = new LinkedList<>();
 
         switch (sortType) {
             case VIEWS:
-                return ticket.viewCount.desc();
+                orderBy.add(ticket.viewCount.desc());
             case BOOKMARKED:
-                return ticket.bookmarkCount.desc();
+                orderBy.add(ticket.bookmarkCount.desc());
             case REMAIN_DAY:
-                return ticket.expiryDate.desc();
+                orderBy.add(ticket.expiryDate.desc());
             case LOWER_PRICE:
-                return ticket.price.asc();
+                orderBy.add(ticket.price.asc());
             case HIGHER_PRICE:
-                return ticket.price.desc();
+                orderBy.add(ticket.price.desc());
             case DISTANCE:
-                return Expressions.stringTemplate("distance").asc();
+                orderBy.add(Expressions.stringTemplate("distance").asc());
             case REMAIN_NUMBER:
-                return ticket.remainingNumber.desc();
+                orderBy.add(ticket.remainingNumber.desc());
             default:
-                return null;
+                break;
         }
+
+        orderBy.add(ticket.id.desc());
+        return orderBy.toArray(OrderSpecifier[]::new);
     }
 }
