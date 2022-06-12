@@ -45,10 +45,11 @@ public class TicketResponseDto {
         private Double distance;
         private Integer bookmarkCount;
         private Integer viewCount;
+        private TicketType type;
 
         @Builder
         @QueryProjection
-        public Simple(Integer id, String location, String address, Integer price, TicketState state, LocalDateTime createAt, Boolean isMembership, Integer remainingNumber, Long tagHash, Point point, Double distance, String mainImage, LocalDate expiryDate, Integer viewCount, Integer bookmarkCount) {
+        public Simple(Integer id, String location, String address, Integer price, TicketState state, LocalDateTime createAt, Boolean isMembership, Integer remainingNumber, Long tagHash, Point point, Double distance, String mainImage, LocalDate expiryDate, Integer viewCount, Integer bookmarkCount, TicketType type) {
             this.id = id;
             this.location = location;
             this.address = address;
@@ -65,6 +66,7 @@ public class TicketResponseDto {
             this.bookmarkCount = bookmarkCount;
             this.viewCount = viewCount;
             this.tags = new HashSet<>();
+            this.type = type;
 
             for (int i = 1; i <= TagEnum.values().length; i++) {
                 if (tagHash == 0)
@@ -95,6 +97,7 @@ public class TicketResponseDto {
                 .mainImage(ticket.getMainImage())
                 .bookmarkCount(ticket.getBookmarkCount())
                 .viewCount(ticket.getViewCount())
+                .type(ticket.getType())
                 .build();
         }
     }
