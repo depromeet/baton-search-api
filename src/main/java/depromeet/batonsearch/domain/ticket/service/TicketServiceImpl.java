@@ -27,6 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
@@ -58,21 +59,25 @@ public class TicketServiceImpl implements TicketService {
     final private AmazonS3 amazonS3;
 
     @Override
+    @Transactional(readOnly = true)
     public Page<TicketResponseDto.Simple> findAll(TicketRequestDto.Search search) {
         return ticketQueryRepository.searchAll(search, PageRequest.of(search.getPage(), search.getSize()));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<TicketResponseDto.Simple> stringSearch(TicketRequestDto.StringSearch search) {
         return ticketQueryRepository.stringSearch(search, PageRequest.of(search.getPage(), search.getSize()));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Long countSearch(TicketRequestDto.Search search) {
         return ticketQueryRepository.countSearch(search);
     }
 
     @Override
+    @Transactional
     public TicketResponseDto.Simple save(TicketRequestDto.Info info, Set<String> tags, Set<MultipartFile> images) {
         // User Check
         User user = getUserByUserIdInHeader();
@@ -160,6 +165,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    @Transactional
     public String deleteById(Integer id) {
         User user = getUserByUserIdInHeader();
         Ticket ticket = ticketRepository.findById(id).orElseThrow(
@@ -175,6 +181,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    @Transactional
     public TicketResponseDto.Info findById(Integer id, Double latitude, Double longitude) {
         Ticket ticket = ticketRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found")

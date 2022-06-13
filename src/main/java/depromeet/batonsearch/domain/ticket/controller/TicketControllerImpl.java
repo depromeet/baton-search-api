@@ -22,25 +22,21 @@ import java.util.Set;
 public class TicketControllerImpl implements TicketController {
     final private TicketService ticketService;
 
-    @Transactional(readOnly = true)
     @GetMapping(value = "/query")
     public ResponseEntity<Page<TicketResponseDto.Simple>> findAll(@Valid TicketRequestDto.Search search) {
         return new ResponseEntity<>(ticketService.findAll(search), HttpStatus.OK);
     }
 
-    @Transactional(readOnly = true)
     @GetMapping(value = "/string_query")
     public ResponseEntity<Page<TicketResponseDto.Simple>> stringSearch(@Valid TicketRequestDto.StringSearch search) {
         return new ResponseEntity<>(ticketService.stringSearch(search), HttpStatus.OK);
     }
 
-    @Transactional(readOnly = true)
     @GetMapping(value = "/count_query")
     public ResponseEntity<Long> countSearch(TicketRequestDto.Search search) {
         return new ResponseEntity<>(ticketService.countSearch(search), HttpStatus.OK);
     }
 
-    @Transactional
     @PostMapping(value = "/post")
     public ResponseEntity<TicketResponseDto.Simple> save(@Valid @ModelAttribute TicketRequestDto.Info info,
                                                          @RequestParam(value = "tags", required = false) Set<String> tags,
@@ -50,7 +46,6 @@ public class TicketControllerImpl implements TicketController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @Transactional
     @GetMapping(value = "/info/{id}")
     public ResponseEntity<TicketResponseDto.Info> findById(@PathVariable("id") Integer id,
                                                            @RequestParam("latitude") Double latitude,
@@ -58,7 +53,6 @@ public class TicketControllerImpl implements TicketController {
         return ResponseEntity.ok(ticketService.findById(id, latitude, longitude));
     }
 
-    @Transactional
     @DeleteMapping(value = "/info/{id}")
     public ResponseEntity<String> deleteById(@PathVariable("id") Integer id) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(ticketService.deleteById(id));
