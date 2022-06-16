@@ -33,6 +33,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -194,22 +195,22 @@ public class TicketServiceImpl implements TicketService {
 
         try {
             User user = getUserByUserIdInHeader();
-            info.setIsBookmarked(bookmarkRepository.existsBookmarkByTicketAndUser(ticket, user));
+            Optional<Integer> bookmarkId = bookmarkRepository.findBookmarkIdByTicketAndUser(ticket, user);
+            info.setBookmarkId((bookmarkId.isEmpty()) ? null : bookmarkId.get());
             ticketRepository.save(ticket);
         } catch (ResponseStatusException e) {
-            log.info("No User");
+            log.debug("No User");
         }
 
         return info;
     }
 
     private User getUserByUserIdInHeader() {
-        String userIdString = request.getHeader("userId");
+        String userIdString = request.getHeader("REMOTE_USER");
         Integer userId;
 
         if (userIdString == null) {
-            userId = 1;
-            // throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         } else {
             try {
                 userId = Integer.parseInt(userIdString);
