@@ -65,4 +65,10 @@ public class TicketControllerImpl implements TicketController {
                                                                         @RequestParam("images") Set<MultipartFile> images) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ticketService.ticketImagePost(id, images));
     }
+
+    @PutMapping(value = "/info/{id}")
+    public ResponseEntity<TicketResponseDto.Info> ticketPut(@PathVariable Integer id,
+                                                            @Valid @RequestBody TicketRequestDto.Put data) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(ticketService.modify(id, data));
+    }
 }

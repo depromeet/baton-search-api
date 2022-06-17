@@ -19,8 +19,9 @@ import java.util.Set;
 public class TicketRequestDto {
 
     @Getter @Setter
-    @Builder
+    @NoArgsConstructor
     @AllArgsConstructor
+    @Builder
     public static class Put {
         private TicketState ticketState;
     }
@@ -161,6 +162,7 @@ public class TicketRequestDto {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     @Builder
     public static class Info {

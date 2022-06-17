@@ -120,7 +120,8 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public TicketResponseDto.Simple modify(Integer id, TicketRequestDto.Put data) {
+    @Transactional
+    public TicketResponseDto.Info modify(Integer id, TicketRequestDto.Put data) {
         Ticket ticket = ticketRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket Not Found")
         );
@@ -130,7 +131,7 @@ public class TicketServiceImpl implements TicketService {
         }
 
         ticket.putData(data);
-        return TicketResponseDto.Simple.of(ticketRepository.save(ticket));
+        return TicketResponseDto.Info.of(ticketRepository.save(ticket));
     }
 
     @Override

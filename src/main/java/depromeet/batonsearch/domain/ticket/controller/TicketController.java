@@ -19,4 +19,5 @@ public interface TicketController {
     ResponseEntity<TicketResponseDto.Info> findById(Integer id, Double latitude, Double longitude);
     ResponseEntity<String> deleteById(Integer id);
     ResponseEntity<List<TicketImageResponseDto>> ticketImagePost(Integer id, Set<MultipartFile> images);
+    ResponseEntity<TicketResponseDto.Info> ticketPut(Integer id, TicketRequestDto.Put data);
 }
