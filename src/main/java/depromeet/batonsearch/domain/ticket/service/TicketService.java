@@ -18,4 +18,5 @@ public interface TicketService {
     TicketResponseDto.Info findById(Integer id, Double latitude, Double longitude);
     List<TicketImageResponseDto> ticketImagePost(Integer id, Set<MultipartFile> images);
     String deleteById(Integer id);
+    String deleteImageById(Integer id);
 }

@@ -60,6 +60,11 @@ public class TicketControllerImpl implements TicketController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(ticketService.deleteById(id));
     }
 
+    @DeleteMapping(value = "/image/{id}")
+    public ResponseEntity<String> deleteImageById(@PathVariable("id") Integer id) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(ticketService.deleteImageById(id));
+    }
+
     @PostMapping(value = "/info/{id}")
     public ResponseEntity<List<TicketImageResponseDto>> ticketImagePost(@PathVariable("id") Integer id,
                                                                         @RequestParam("images") Set<MultipartFile> images) {

@@ -137,13 +137,35 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public String deleteById(Integer id) {
-        User user = getUserByUserIdInHeader();
+        Integer userId = getUserIdInHeader();
         Ticket ticket = ticketRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket Not Found")
         );
 
-        if (ticket.getSeller().getId().equals(user.getId())) {
+        if (ticket.getSeller().getId().equals(userId)) {
             ticketRepository.delete(ticket);
+            return "delete success";
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "user doesn't match");
+        }
+    }
+
+    @Override
+    @Transactional
+    public String deleteImageById(Integer id) {
+        Integer userId = getUserIdInHeader();
+        TicketImage ticketImage = ticketImageRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "TicketImage Not Found")
+        );
+
+        Ticket ticket = ticketImage.getTicket();
+
+        if (ticket.getSeller().getId().equals(userId)) {
+            ticket.getImages().remove(ticketImage);
+
+            if (ticket.getImages().size() == 0)
+                ticket.setMainImage(null);
+
             return "delete success";
         } else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "user doesn't match");

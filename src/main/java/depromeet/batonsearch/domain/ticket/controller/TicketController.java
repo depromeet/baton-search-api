@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +17,7 @@ public interface TicketController {
     ResponseEntity<TicketResponseDto.Simple> save(TicketRequestDto.Info info, Set<String> tags, Set<MultipartFile> images);
     ResponseEntity<TicketResponseDto.Info> findById(Integer id, Double latitude, Double longitude);
     ResponseEntity<String> deleteById(Integer id);
+    ResponseEntity<String> deleteImageById(Integer id);
     ResponseEntity<List<TicketImageResponseDto>> ticketImagePost(Integer id, Set<MultipartFile> images);
     ResponseEntity<TicketResponseDto.Info> ticketPut(Integer id, TicketRequestDto.Put data);
 }
