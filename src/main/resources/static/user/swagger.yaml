@@ -15,10 +15,12 @@ consumes:
 produces:
   - application/json
 securityDefinitions:
-  Basic:
-    type: basic
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
 security:
-  - Basic: []
+  - Bearer: []
 paths:
   /bookmarks:
     post:
@@ -55,8 +57,9 @@ paths:
       description: "Bookmark instance \uC0C1\uC138, \uC0AD\uC81C"
       parameters: []
       responses:
-        '204':
-          description: ''
+        '200':
+          description: "\uC0AD\uC81C\uAC00 \uC644\uB8CC\uB418\uC5C8\uC2B5\uB2C8\uB2E4\
+            ."
       tags:
         - bookmarks
     parameters:
@@ -139,8 +142,9 @@ paths:
         Buy instance 삭제 (ticket state 1,2 -> 0)
       parameters: []
       responses:
-        '204':
-          description: ''
+        '200':
+          description: "\uC0AD\uC81C\uAC00 \uC644\uB8CC\uB418\uC5C8\uC2B5\uB2C8\uB2E4\
+            ."
       tags:
         - buys
     parameters:
@@ -256,6 +260,17 @@ paths:
         required: true
         type: integer
   /users/{id}/address:
+    get:
+      operationId: users_address_read
+      description: "\uC0AC\uC6A9\uC790 \uC8FC\uC18C \uC218\uC815"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserAddress'
+      tags:
+        - users
     put:
       operationId: users_address_update
       description: "\uC0AC\uC6A9\uC790 \uC8FC\uC18C \uC218\uC815"
@@ -264,12 +279,12 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/UserAddressUpdate'
+            $ref: '#/definitions/UserAddress'
       responses:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/UserAddressUpdate'
+            $ref: '#/definitions/UserAddress'
       tags:
         - users
     patch:
@@ -280,12 +295,12 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/UserAddressUpdate'
+            $ref: '#/definitions/UserAddress'
       responses:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/UserAddressUpdate'
+            $ref: '#/definitions/UserAddress'
       tags:
         - users
     parameters:
@@ -664,7 +679,7 @@ definitions:
         type: string
         maxLength: 255
         minLength: 1
-  UserAddressUpdate:
+  UserAddress:
     required:
       - latitude
       - longitude
@@ -693,7 +708,6 @@ definitions:
       - price
       - mainImage
       - createAt
-      - state
       - images
       - isMembership
       - remainingNumber
@@ -732,11 +746,8 @@ definitions:
         format: date-time
       state:
         title: State
-        description: "\uC591\uB3C4\uAD8C \uC0C1\uD0DC (0: \uD310\uB9E4\uC911, 1: \uC608\
-          \uC57D\uC911, 2: \uD310\uB9E4\uC644\uB8CC)"
-        type: integer
-        maximum: 2147483647
-        minimum: -2147483648
+        type: string
+        readOnly: true
       tags:
         type: array
         items:
@@ -751,6 +762,10 @@ definitions:
       isMembership:
         title: Ismembership
         type: boolean
+      remainingDay:
+        title: Remainingday
+        type: string
+        readOnly: true
       remainingNumber:
         title: Remainingnumber
         type: integer
@@ -766,6 +781,14 @@ definitions:
         type: number
       distance:
         title: Distance
+        type: string
+        readOnly: true
+      type:
+        title: Type
+        type: string
+        readOnly: true
+      bookmarkId:
+        title: Bookmarkid
         type: string
         readOnly: true
   UserBookmark:
