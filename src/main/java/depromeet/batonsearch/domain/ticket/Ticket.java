@@ -2,6 +2,7 @@ package depromeet.batonsearch.domain.ticket;
 
 import depromeet.batonsearch.domain.bookmark.Bookmark;
 import depromeet.batonsearch.domain.buy.Buy;
+import depromeet.batonsearch.domain.ticket.dto.TicketRequestDto;
 import depromeet.batonsearch.domain.ticketimage.TicketImage;
 import depromeet.batonsearch.domain.tickettag.TicketTag;
 import depromeet.batonsearch.domain.user.User;
@@ -184,4 +185,8 @@ public class Ticket {
     }
 
     public void addViewCount() { this.viewCount++; }
+
+    public void putData(TicketRequestDto.Put data) {
+        this.state = data.getTicketState();
+    }
 }

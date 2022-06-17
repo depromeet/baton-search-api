@@ -120,8 +120,17 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public TicketResponseDto.Simple modify(Integer id, TicketRequestDto.Info info, Set<String> tags, Set<MultipartFile> images) {
-        return null;
+    public TicketResponseDto.Simple modify(Integer id, TicketRequestDto.Put data) {
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket Not Found")
+        );
+
+        if (ticket.getSeller().getId() != getUserIdInHeader()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인의 글만 수정 할 수 있습니다.");
+        }
+
+        ticket.putData(data);
+        return TicketResponseDto.Simple.of(ticketRepository.save(ticket));
     }
 
     @Override
