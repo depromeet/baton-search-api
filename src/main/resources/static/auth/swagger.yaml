@@ -45,7 +45,7 @@ paths:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/JWT'
+            $ref: '#/definitions/TokenObtainPair'
       tags:
         - login
     parameters: []
@@ -60,10 +60,10 @@ paths:
           schema:
             $ref: '#/definitions/SocialUserCreate'
       responses:
-        '200':
+        '201':
           description: ''
           schema:
-            $ref: '#/definitions/JWT'
+            $ref: '#/definitions/TokenObtainPair'
       tags:
         - socialusers
     parameters: []
@@ -73,8 +73,9 @@ paths:
       description: "\uD68C\uC6D0\uD0C8\uD1F4"
       parameters: []
       responses:
-        '204':
-          description: ''
+        '200':
+          description: "\uC0AD\uC81C\uAC00 \uC644\uB8CC\uB418\uC5C8\uC2B5\uB2C8\uB2E4\
+            ."
       tags:
         - socialusers
     parameters:
@@ -83,6 +84,46 @@ paths:
         description: A unique integer value identifying this social user.
         required: true
         type: integer
+  /token/refresh:
+    post:
+      operationId: token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TokenRefresh'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/TokenRefresh'
+      tags:
+        - token
+    parameters: []
+  /token/verify:
+    post:
+      operationId: token_verify_create
+      description: |-
+        Takes a token and indicates if it is valid.  This view provides no
+        information about a token's fitness for a particular use.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TokenVerify'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/TokenVerify'
+      tags:
+        - token
+    parameters: []
 definitions:
   KaKaoLogin:
     required:
@@ -94,7 +135,7 @@ definitions:
         description: "Kakao \uC11C\uBC84 \uC778\uC99D\uC744 \uC704\uD55C Access Token"
         type: string
         minLength: 1
-  JWTUser:
+  TokenUser:
     type: object
     properties:
       id:
@@ -102,26 +143,43 @@ definitions:
         description: User ID
         type: integer
         readOnly: true
-  JWT:
+  TokenObtainPair:
     required:
-      - access_token
-      - refresh_token
-      - user
+      - id
+      - password
     type: object
     properties:
       access_token:
         title: Access token
         description: "Baton App \uC778\uC99D\uC744 \uC704\uD55C Access Token"
         type: string
+        readOnly: true
         minLength: 1
+      expires_in:
+        title: Expires in
+        type: integer
+        readOnly: true
       refresh_token:
         title: Refresh token
         description: "Baton App Access Token \uAC31\uC2E0\uC744 \uC704\uD55C Refresh\
           \ Token"
         type: string
+        readOnly: true
         minLength: 1
+      refresh_token_expires_in:
+        title: Refresh token expires in
+        type: integer
+        readOnly: true
       user:
-        $ref: '#/definitions/JWTUser'
+        $ref: '#/definitions/TokenUser'
+      id:
+        title: Id
+        type: string
+        minLength: 1
+      password:
+        title: Password
+        type: string
+        minLength: 1
   Account:
     required:
       - holder
@@ -210,3 +268,38 @@ definitions:
         minLength: 1
       user:
         $ref: '#/definitions/UserCreate'
+  TokenRefresh:
+    required:
+      - refresh_token
+    type: object
+    properties:
+      access_token:
+        title: Access token
+        type: string
+        readOnly: true
+        minLength: 1
+      expires_in:
+        title: Expires in
+        type: integer
+        readOnly: true
+      refresh_token:
+        title: Refresh token
+        type: string
+        minLength: 1
+      refresh_token_expires_in:
+        title: Refresh token expires in
+        type: integer
+        readOnly: true
+  TokenVerify:
+    required:
+      - access_token
+    type: object
+    properties:
+      access_token:
+        title: Access token
+        type: string
+        minLength: 1
+      expires_in:
+        title: Expires in
+        type: integer
+        readOnly: true
