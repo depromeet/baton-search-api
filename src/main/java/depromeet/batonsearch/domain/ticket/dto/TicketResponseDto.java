@@ -122,7 +122,7 @@ public class TicketResponseDto {
         private TicketType type;
         private TicketTradeType tradeType;
         private TicketTransferFee transferFee;
-        private Boolean isBookmarked;
+        private Integer bookmarkId;
         private Boolean canNego;
         private Boolean hasShower;
         private Boolean hasLocker;

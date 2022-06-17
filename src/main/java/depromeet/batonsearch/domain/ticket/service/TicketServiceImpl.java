@@ -13,6 +13,7 @@ import depromeet.batonsearch.domain.ticket.dto.TicketResponseDto;
 import depromeet.batonsearch.domain.ticket.repository.TicketQueryRepository;
 import depromeet.batonsearch.domain.ticket.repository.TicketRepository;
 import depromeet.batonsearch.domain.ticketimage.TicketImage;
+import depromeet.batonsearch.domain.ticketimage.dto.TicketImageResponseDto;
 import depromeet.batonsearch.domain.ticketimage.repository.TicketImageRepository;
 import depromeet.batonsearch.domain.tickettag.TicketTag;
 import depromeet.batonsearch.domain.tickettag.repository.TicketTagRepository;
@@ -33,6 +34,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -105,49 +107,7 @@ public class TicketServiceImpl implements TicketService {
 
         // Image add
         if (images != null) {
-            List<TicketImage> ticketImages = images.stream()
-                    .filter(image -> image.getContentType() != null && image.getContentType().startsWith("image/"))
-                    .map(image -> {
-                        String originFileName = createFileName(image.getOriginalFilename());
-                        String fileName = (prefix != null ? prefix : "") + originFileName;
-                        String thumbnailFileName = (prefix != null ? prefix : "") + "s_" + originFileName;
-
-                        // 원본 저장
-                        ObjectMetadata objectMetadata = new ObjectMetadata();
-                        objectMetadata.setContentLength(image.getSize());
-                        objectMetadata.setContentType(image.getContentType());
-
-                        try (InputStream inputStream = image.getInputStream()) {
-                            amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
-                                    .withCannedAcl(CannedAccessControlList.PublicRead));
-                        } catch (IOException e) {
-                            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
-                        }
-
-                        // 썸네일 저장
-                        try (InputStream inputStream = image.getInputStream()) {
-                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                            Thumbnails.of(inputStream)
-                                    .crop(Positions.CENTER)
-                                    .size(512, 512)
-                                    .toOutputStream(outputStream);
-
-                            objectMetadata.setContentLength(outputStream.size());
-
-                            amazonS3.putObject(new PutObjectRequest(bucket, thumbnailFileName, new ByteArrayInputStream(outputStream.toByteArray()), objectMetadata)
-                                    .withCannedAcl(CannedAccessControlList.PublicRead));
-                        } catch (IOException e) {
-                            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
-                        }
-
-                        return TicketImage.builder()
-                                .url(String.format("https://%s.s3.ap-northeast-2.amazonaws.com/%s", bucket, fileName))
-                                .thumbnailUrl(String.format("https://%s.s3.ap-northeast-2.amazonaws.com/%s", bucket, thumbnailFileName))
-                                .isMain(false)
-                                .ticket(ticket)
-                                .build();
-                    })
-                    .collect(Collectors.toList());
+            List<TicketImage> ticketImages = fileToTicketImages(ticket, images);
 
             if (ticketImages.size() == 0) {
                 return TicketResponseDto.Simple.of(ticket);
@@ -160,20 +120,52 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public TicketResponseDto.Simple modify(Integer id, TicketRequestDto.Info info, Set<String> tags, Set<MultipartFile> images) {
-        return null;
+    @Transactional
+    public TicketResponseDto.Info modify(Integer id, TicketRequestDto.Put data) {
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket Not Found")
+        );
+
+        if (ticket.getSeller().getId() != getUserIdInHeader()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인의 글만 수정 할 수 있습니다.");
+        }
+
+        ticket.putData(data);
+        return TicketResponseDto.Info.of(ticketRepository.save(ticket));
     }
 
     @Override
     @Transactional
     public String deleteById(Integer id) {
-        User user = getUserByUserIdInHeader();
+        Integer userId = getUserIdInHeader();
         Ticket ticket = ticketRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket Not Found")
         );
 
-        if (ticket.getSeller().getId().equals(user.getId())) {
+        if (ticket.getSeller().getId().equals(userId)) {
             ticketRepository.delete(ticket);
+            return "delete success";
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "user doesn't match");
+        }
+    }
+
+    @Override
+    @Transactional
+    public String deleteImageById(Integer id) {
+        Integer userId = getUserIdInHeader();
+        TicketImage ticketImage = ticketImageRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "TicketImage Not Found")
+        );
+
+        Ticket ticket = ticketImage.getTicket();
+
+        if (ticket.getSeller().getId().equals(userId)) {
+            ticket.getImages().remove(ticketImage);
+
+            if (ticket.getImages().size() == 0)
+                ticket.setMainImage(null);
+
             return "delete success";
         } else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "user doesn't match");
@@ -184,7 +176,7 @@ public class TicketServiceImpl implements TicketService {
     @Transactional
     public TicketResponseDto.Info findById(Integer id, Double latitude, Double longitude) {
         Ticket ticket = ticketRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket Not Found")
         );
 
         ticket.addViewCount();
@@ -194,30 +186,64 @@ public class TicketServiceImpl implements TicketService {
 
         try {
             User user = getUserByUserIdInHeader();
-            info.setIsBookmarked(bookmarkRepository.existsBookmarkByTicketAndUser(ticket, user));
+            Optional<Integer> bookmarkId = bookmarkRepository.findBookmarkIdByTicketAndUser(ticket, user);
+            info.setBookmarkId((bookmarkId.isEmpty()) ? null : bookmarkId.get());
             ticketRepository.save(ticket);
         } catch (ResponseStatusException e) {
-            log.info("No User");
+            log.debug("No User");
         }
 
         return info;
     }
 
-    private User getUserByUserIdInHeader() {
-        String userIdString = request.getHeader("userId");
-        Integer userId;
+    @Override
+    @Transactional
+    public List<TicketImageResponseDto> ticketImagePost(Integer id, Set<MultipartFile> images) {
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket Not Found")
+        );
 
-        if (userIdString == null) {
-            userId = 1;
-            // throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
-        } else {
-            try {
-                userId = Integer.parseInt(userIdString);
-            } catch (NumberFormatException e) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "userID를 파싱할 수 없습니다.");
-            }
+        if (ticket.getSeller().getId() != getUserIdInHeader()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인의 글에만 이미지를 추가 할 수 있습니다.");
         }
-        return userRepository.getById(userId);
+
+        int ticketImageCount = ticket.getImages().size();
+
+        // 이미지 5개 이상 업로드 막음.
+        if (images.size() + ticketImageCount > 5) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미지가 5개를 초과합니다.");
+        }
+
+        List<TicketImage> ticketImages = fileToTicketImages(ticket, images);
+
+        if (ticketImages.size() == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "업로드 된 이미지가 없습니다. 파일 형식을 확인 해 주세요.");
+        }
+
+        ticketImageRepository.saveAll(ticketImages);
+
+        if (ticket.getMainImage() == null) {
+            ticket.setMainImage(ticketImages.get(0).getThumbnailUrl());
+            ticketRepository.save(ticket);
+        }
+
+        return ticketImages.stream().map(TicketImageResponseDto::of).collect(Collectors.toList());
+    }
+
+    private Integer getUserIdInHeader() {
+        String userIdString = request.getHeader("REMOTE_USER");
+
+        if (userIdString == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        try {
+            return Integer.parseInt(userIdString);
+        } catch (NumberFormatException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "userID를 파싱할 수 없습니다.");
+        }
+    }
+
+    private User getUserByUserIdInHeader() {
+        return userRepository.getById(getUserIdInHeader());
     }
 
     private String createFileName(String fileName) { // 먼저 파일 업로드 시, 파일명을 난수화하기 위해 random으로 돌립니다.
@@ -230,5 +256,51 @@ public class TicketServiceImpl implements TicketService {
         } catch (StringIndexOutOfBoundsException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 형식의 파일(" + fileName + ") 입니다.");
         }
+    }
+
+    private List<TicketImage> fileToTicketImages(Ticket ticket, Set<MultipartFile> images) {
+        return images.stream()
+            .filter(image -> image.getContentType() != null && image.getContentType().startsWith("image/"))
+            .map(image -> {
+                String originFileName = createFileName(image.getOriginalFilename());
+                String fileName = (prefix != null ? prefix : "") + originFileName;
+                String thumbnailFileName = (prefix != null ? prefix : "") + "s_" + originFileName;
+
+                // 원본 저장
+                ObjectMetadata objectMetadata = new ObjectMetadata();
+                objectMetadata.setContentLength(image.getSize());
+                objectMetadata.setContentType(image.getContentType());
+
+                try (InputStream inputStream = image.getInputStream()) {
+                    amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+                            .withCannedAcl(CannedAccessControlList.PublicRead));
+                } catch (IOException e) {
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
+                }
+
+                // 썸네일 저장
+                try (InputStream inputStream = image.getInputStream()) {
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    Thumbnails.of(inputStream)
+                            .crop(Positions.CENTER)
+                            .size(512, 512)
+                            .toOutputStream(outputStream);
+
+                    objectMetadata.setContentLength(outputStream.size());
+
+                    amazonS3.putObject(new PutObjectRequest(bucket, thumbnailFileName, new ByteArrayInputStream(outputStream.toByteArray()), objectMetadata)
+                            .withCannedAcl(CannedAccessControlList.PublicRead));
+                } catch (IOException e) {
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
+                }
+
+                return TicketImage.builder()
+                        .url(String.format("https://%s.s3.ap-northeast-2.amazonaws.com/%s", bucket, fileName))
+                        .thumbnailUrl(String.format("https://%s.s3.ap-northeast-2.amazonaws.com/%s", bucket, thumbnailFileName))
+                        .isMain(false)
+                        .ticket(ticket)
+                        .build();
+            })
+            .collect(Collectors.toList());
     }
 }

@@ -18,6 +18,14 @@ import java.util.Set;
 @Slf4j
 public class TicketRequestDto {
 
+    @Getter @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class Put {
+        private TicketState ticketState;
+    }
+
     @Getter
     public static class Search {
         @NotNull(message = "페이지 수를 입력 해 주세요.")
@@ -154,6 +162,7 @@ public class TicketRequestDto {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     @Builder
     public static class Info {
