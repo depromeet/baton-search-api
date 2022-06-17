@@ -3,6 +3,7 @@ package depromeet.batonsearch.domain.ticket.controller;
 import depromeet.batonsearch.domain.ticket.dto.TicketRequestDto;
 import depromeet.batonsearch.domain.ticket.dto.TicketResponseDto;
 import depromeet.batonsearch.domain.ticket.service.TicketService;
+import depromeet.batonsearch.domain.ticketimage.dto.TicketImageResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -56,5 +58,11 @@ public class TicketControllerImpl implements TicketController {
     @DeleteMapping(value = "/info/{id}")
     public ResponseEntity<String> deleteById(@PathVariable("id") Integer id) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(ticketService.deleteById(id));
+    }
+
+    @PostMapping(value = "/info/{id}")
+    public ResponseEntity<List<TicketImageResponseDto>> ticketImagePost(@PathVariable("id") Integer id,
+                                                                        @RequestParam("images") Set<MultipartFile> images) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ticketService.ticketImagePost(id, images));
     }
 }
