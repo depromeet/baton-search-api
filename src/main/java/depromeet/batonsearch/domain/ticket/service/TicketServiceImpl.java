@@ -231,7 +231,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     private Integer getUserIdInHeader() {
-        String userIdString = request.getHeader("REMOTE_USER");
+        String userIdString = request.getHeader("Remote-User");
 
         if (userIdString == null)
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
