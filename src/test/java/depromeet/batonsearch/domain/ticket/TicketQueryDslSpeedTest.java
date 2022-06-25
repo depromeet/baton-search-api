@@ -44,7 +44,6 @@ public class TicketQueryDslSpeedTest {
         User user = User.builder()
                 .id(1)
                 .nickname("유저")
-                .gender(true)
                 .build();
 
         userRepository.save(user);

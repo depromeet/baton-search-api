@@ -17,7 +17,6 @@ public class AllDtoTest {
     void TicketResponseDto_테스트() {
         User user = User.builder()
                 .nickname("유저")
-                .gender(true)
                 .build();
 
         Tag tag1 = Tag.builder().subject("태그1").content("태그1").build();
