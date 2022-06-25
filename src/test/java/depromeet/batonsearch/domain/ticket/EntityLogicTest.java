@@ -40,7 +40,7 @@ public class EntityLogicTest {
     @Order(1)
     @Transactional
     void 태그_수정_테스트() {
-        User user = userRepository.save(User.builder().id(1234567890).nickname("유저").gender(true).build());
+        User user = userRepository.save(User.builder().id(1234567890).nickname("유저").build());
 
         Tag tag1 = tagRepository.save(Tag.builder().subject("태그1").content("태그1").build());
         Tag tag2 = tagRepository.save(Tag.builder().subject("태그2").content("태그2").build());

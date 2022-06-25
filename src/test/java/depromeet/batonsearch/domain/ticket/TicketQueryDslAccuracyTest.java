@@ -45,7 +45,7 @@ public class TicketQueryDslAccuracyTest {
     @Order(1)
     void DB_초기화() {
         User user = userRepository.save(
-                User.builder().id(1234567890).nickname("유저").gender(true).build()
+                User.builder().id(1234567890).nickname("유저").build()
         );
 
         Ticket ticket1 = ticketRepository.save(Ticket.builder().seller(user).location("안녕 헬스장 1호점").address("강남동").price(10000)
