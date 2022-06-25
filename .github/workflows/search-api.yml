@@ -36,6 +36,8 @@ jobs:
         --build-arg s3_secret_key=${{ secrets.AWS_S3_SECRET_KEY }}
         --build-arg aws_bucket=${{ secrets.AWS_BUCKET }}
         --build-arg aws_folder=${{ secrets.AWS_FOLDER }}
+        --build-arg fcm_url=${{ secrets.FCM_URL }}
+        --build-arg fcm_key=${{ secrets.FCM_KEY }}
         -t justkode/spring-boot .
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -52,7 +54,7 @@ jobs:
         ECR_REPOSITORY: baton-search-api
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build --build-arg db_url=${{ secrets.DB_URL }} --build-arg db_user=${{ secrets.DB_USER }} --build-arg db_password=${{ secrets.DB_PASSWORD }} --build-arg s3_access_key=${{ secrets.AWS_S3_ACCESS_KEY }} --build-arg s3_secret_key=${{ secrets.AWS_S3_SECRET_KEY }} --build-arg aws_bucket=${{ secrets.AWS_BUCKET }} --build-arg aws_folder=${{ secrets.AWS_FOLDER }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker build --build-arg db_url=${{ secrets.DB_URL }} --build-arg db_user=${{ secrets.DB_USER }} --build-arg db_password=${{ secrets.DB_PASSWORD }} --build-arg s3_access_key=${{ secrets.AWS_S3_ACCESS_KEY }} --build-arg s3_secret_key=${{ secrets.AWS_S3_SECRET_KEY }} --build-arg aws_bucket=${{ secrets.AWS_BUCKET }} --build-arg aws_folder=${{ secrets.AWS_FOLDER }} --build-arg fcm_url=${{ secrets.FCM_URL }} --build-arg fcm_key=${{ secrets.FCM_KEY }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         docker image tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
