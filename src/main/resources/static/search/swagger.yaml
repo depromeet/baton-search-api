@@ -10,6 +10,10 @@ basePath: "/search"
 tags:
   - name: "Ticket"
     description: "티켓 검색, 조회 및 등록 관련 API 입니다."
+  - name: "Report"
+    description: "신고 관련 API 입니다."
+  - name: "FCM"
+    description: "FCM 메시징 API 입니다."
 schemes:
   - "https"
   - "http"
@@ -19,6 +23,99 @@ securityDefinitions:
     name: REMOTE_USER
     in: header
 paths:
+  /fcm:
+    post:
+      tags:
+        - "FCM"
+      summary: "해당하는 TargetToken을 가진 기기에 메시지를 날립니다."
+      description: "해당하는 TargetToken을 가진 기기에 메시지를 날립니다."
+      operationId: "Token"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: body
+          schema:
+            type: object
+            properties:
+              targetToken:
+                type: string
+                description: "토큰"
+              title:
+                type: string
+                description: "제목"
+              body:
+                type: string
+                description: "내용"
+      responses:
+        200:
+          description: "성공"
+        401:
+          description: "로그인 안되어 있음."
+        500:
+          description: "터짐."
+  /report/ticket:
+    post:
+      tags:
+        - "Report"
+      summary: "양도권에 대한 신고를 수행 합니다."
+      description: "양도권에 대한 신고를 수행 합니다."
+      operationId: "reportTicket"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: body
+          schema:
+            type: object
+            properties:
+              ticketId:
+                type: number
+                description: "양도권 ID"
+              content:
+                type: string
+                description: "신고 내용"
+      responses:
+        201:
+          description: "성공"
+        401:
+          description: "로그인 안되어 있음."
+        404:
+          description: "티켓 찾을 수 없음."
+  /report/user:
+    post:
+      tags:
+        - "Report"
+      summary: "유저에 대한 신고를 수행 합니다."
+      description: "유저에 대한 신고를 수행 합니다."
+      operationId: "reportUser"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: body
+          schema:
+            type: object
+            properties:
+              userId:
+                type: number
+                description: "유저 ID"
+              content:
+                type: string
+                description: "신고 내용"
+      responses:
+        201:
+          description: "성공"
+        401:
+          description: "로그인 안되어 있음."
+        404:
+          description: "티켓 찾을 수 없음."
   /ticket/info/{ID}:
     get:
       tags:
