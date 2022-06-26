@@ -3,16 +3,21 @@ package depromeet.batonsearch.domain.fcm.service;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.common.net.HttpHeaders;
 import depromeet.batonsearch.domain.fcm.FCMMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class FCMService {
 
@@ -41,7 +46,7 @@ public class FCMService {
         Response response = client.newCall(request).execute();
     }
 
-    private String makeMessage(String targetToken, String title, String body) throws JsonParseException, JsonProcessingException {
+    private String makeMessage(String targetToken, String title, String body) throws JsonProcessingException {
         FCMMessage fcmMessage = FCMMessage.builder()
                 .message(FCMMessage.Message.builder()
                         .token(targetToken)
@@ -55,7 +60,15 @@ public class FCMService {
         return objectMapper.writeValueAsString(fcmMessage);
     }
 
-    private String getAccessToken() {
-        return "key=" + API_KEY;
+    private String getAccessToken() throws IOException {
+
+        String firebaseConfigPath = "firebaseKey.json";
+
+        GoogleCredentials googleCredentials = GoogleCredentials
+                .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
+                .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
+
+        googleCredentials.refreshIfExpired();
+        return "Bearer " + googleCredentials.getAccessToken().getTokenValue();
     }
 }
