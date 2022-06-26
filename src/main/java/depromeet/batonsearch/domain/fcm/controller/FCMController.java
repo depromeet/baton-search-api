@@ -18,9 +18,6 @@ public class FCMController {
 
     @PostMapping("/fcm")
     public ResponseEntity pushMessage(@RequestBody FCMRequestDto requestDTO) throws IOException {
-        System.out.println(requestDTO.getTargetToken() + " "
-                +requestDTO.getTitle() + " " + requestDTO.getBody());
-
         fcmService.sendMessageTo(
                 requestDTO.getTargetToken(),
                 requestDTO.getTitle(),
