@@ -8,7 +8,7 @@ info:
   version: 0.0.1
 host: baton.yonghochoi.com
 schemes:
-  - http
+  - https
 basePath: /
 consumes:
   - application/json
