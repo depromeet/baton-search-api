@@ -477,22 +477,6 @@ paths:
             $ref: '#/definitions/Account'
       tags:
         - users
-    post:
-      operationId: users_account_create
-      description: "\uB9C8\uC774\uD398\uC774\uC9C0 \uACC4\uC88C \uC124\uC815"
-      parameters:
-        - name: data
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/Account'
-      responses:
-        '201':
-          description: ''
-          schema:
-            $ref: '#/definitions/Account'
-      tags:
-        - users
     put:
       operationId: users_account_update
       description: "\uB9C8\uC774\uD398\uC774\uC9C0 \uACC4\uC88C \uC124\uC815"
@@ -509,20 +493,14 @@ paths:
             $ref: '#/definitions/Account'
       tags:
         - users
-    patch:
-      operationId: users_account_partial_update
+    delete:
+      operationId: users_account_delete
       description: "\uB9C8\uC774\uD398\uC774\uC9C0 \uACC4\uC88C \uC124\uC815"
-      parameters:
-        - name: data
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/Account'
+      parameters: []
       responses:
         '200':
-          description: ''
-          schema:
-            $ref: '#/definitions/Account'
+          description: "\uC0AD\uC81C\uAC00 \uC644\uB8CC\uB418\uC5C8\uC2B5\uB2C8\uB2E4\
+            ."
       tags:
         - users
     parameters:
