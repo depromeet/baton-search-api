@@ -16,6 +16,7 @@ public class UserResponseDto {
     private Integer id;
     private String name;
     private String nickname;
+    private String image;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate createdOn;
@@ -25,6 +26,7 @@ public class UserResponseDto {
                 .id(user.getId())
                 .nickname(user.getNickname())
                 .createdOn(user.getCreatedOn())
+                .image(user.getImage())
                 .build();
     }
 }

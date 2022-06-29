@@ -1,6 +1,5 @@
 package depromeet.batonsearch.domain.fcm.service;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -11,7 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,6 +45,17 @@ public class FCMService {
                 .build();
 
         Response response = client.newCall(request).execute();
+        switch (response.code()) {
+            case 200:
+                return;
+            case 400:
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 요청 매개변수입니다.");
+            case 404:
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 토큰을 가진 유저를 찾을 수 없습니다.");
+            default:
+                log.error(response.message());
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러입니다.");
+        }
     }
 
     private String makeMessage(String targetToken, String title, String body) throws JsonProcessingException {
