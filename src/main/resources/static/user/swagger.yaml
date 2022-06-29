@@ -358,15 +358,41 @@ paths:
       responses:
         '200':
           description: ''
+          schema:
+            $ref: '#/definitions/UserImageFile'
       tags:
         - users
     put:
       operationId: users_image_update
       description: "\uD504\uB85C\uD544 \uC774\uBBF8\uC9C0"
-      parameters: []
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserImageURL'
       responses:
         '200':
           description: ''
+          schema:
+            $ref: '#/definitions/UserImageFile'
+      tags:
+        - users
+    patch:
+      operationId: users_image_partial_update
+      description: "\uD504\uB85C\uD544 \uC774\uBBF8\uC9C0"
+      parameters:
+        - name: image
+          in: formData
+          required: true
+          type: file
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserImageFile'
+      consumes:
+        - multipart/form-data
       tags:
         - users
     delete:
@@ -830,3 +856,21 @@ definitions:
         x-nullable: true
       ticket:
         $ref: '#/definitions/TicketList'
+  UserImageFile:
+    type: object
+    properties:
+      image:
+        title: Image
+        type: string
+        readOnly: true
+        format: uri
+  UserImageURL:
+    required:
+      - image
+    type: object
+    properties:
+      image:
+        title: Image
+        type: string
+        format: uri
+        minLength: 1
