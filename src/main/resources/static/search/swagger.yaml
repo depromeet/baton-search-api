@@ -842,14 +842,22 @@ definitions:
         type: number
         example: 1
         description: "유저 ID"
+      name:
+        type: string
+        example: "박민재"
+        description: "유저 이름"
       nickname:
         type: string
-        example: "nickname"
+        example: "justkode"
         description: "유저 닉네임"
-      gender:
-        type: boolean
-        example: true
-        description: "남성인지 아닌지 여부"
+      createdOn:
+        type: string
+        example: "2022-01-01"
+        description: "유저 생성일자"
+      image:
+        type: string
+        example: "https://depromeet11th.s3.ap-northeast-2.amazonaws.com/6team/18ee9e14-ceec-41a3-a458-97ec0d1099b1.jpeg"
+        description: "이미지 링크"
   TicketImage:
     type: object
     description: "양도권 관련 이미지"
