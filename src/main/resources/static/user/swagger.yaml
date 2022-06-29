@@ -200,22 +200,6 @@ paths:
             $ref: '#/definitions/UserDetail'
       tags:
         - users
-    put:
-      operationId: users_update
-      description: "\uB9C8\uC774\uD398\uC774\uC9C0 (+\uD68C\uC6D0\uD0C8\uD1F4)"
-      parameters:
-        - name: data
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/UserUpdate'
-      responses:
-        '200':
-          description: ''
-          schema:
-            $ref: '#/definitions/UserUpdate'
-      tags:
-        - users
     patch:
       operationId: users_partial_update
       description: "\uC815\uBCF4\uC218\uC815; \uC0AC\uC6A9\uC790ID\uAC00 {id}\uC778\
@@ -374,46 +358,15 @@ paths:
       responses:
         '200':
           description: ''
-          schema:
-            $ref: '#/definitions/UserImage'
-      consumes:
-        - multipart/form-data
       tags:
         - users
     put:
       operationId: users_image_update
       description: "\uD504\uB85C\uD544 \uC774\uBBF8\uC9C0"
-      parameters:
-        - name: image
-          in: formData
-          required: true
-          type: file
-          x-nullable: true
+      parameters: []
       responses:
         '200':
           description: ''
-          schema:
-            $ref: '#/definitions/UserImage'
-      consumes:
-        - multipart/form-data
-      tags:
-        - users
-    patch:
-      operationId: users_image_partial_update
-      description: "\uD504\uB85C\uD544 \uC774\uBBF8\uC9C0"
-      parameters:
-        - name: image
-          in: formData
-          required: true
-          type: file
-          x-nullable: true
-      responses:
-        '200':
-          description: ''
-          schema:
-            $ref: '#/definitions/UserImage'
-      consumes:
-        - multipart/form-data
       tags:
         - users
     delete:
@@ -424,8 +377,12 @@ paths:
         '200':
           description: "\uC0AD\uC81C\uAC00 \uC644\uB8CC\uB418\uC5C8\uC2B5\uB2C8\uB2E4\
             ."
-      consumes:
-        - multipart/form-data
+        '401':
+          description: "\uC790\uACA9 \uC778\uC99D\uB370\uC774\uD130(authentication\
+            \ credentials)\uAC00 \uC81C\uACF5\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\
+            \uB2E4."
+        '404':
+          description: "\uCC3E\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4."
       tags:
         - users
     parameters:
@@ -873,12 +830,3 @@ definitions:
         x-nullable: true
       ticket:
         $ref: '#/definitions/TicketList'
-  UserImage:
-    type: object
-    properties:
-      image:
-        title: Image
-        type: string
-        readOnly: true
-        x-nullable: true
-        format: uri
