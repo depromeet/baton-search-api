@@ -32,6 +32,9 @@ public class User {
     @Column(nullable = false, name = "created_on")
     private LocalDate createdOn;
 
+    @Column
+    private String image;
+
     @OneToMany(mappedBy = "id")
     private Set<Bookmark> bookmarks;
 
