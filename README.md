@@ -4,7 +4,7 @@
 
 ![banner](https://user-images.githubusercontent.com/86508420/176690477-a0d002fc-ce84-4820-a3a9-daaba24d9eb6.png)
 
-디프만 11기 6조 바통 어플리의 검색, 양도권 등록 및 FCM API Server 입니다.
+디프만 11기 6조 바통 어플리케이션의 검색, 양도권 등록 및 FCM API Server 입니다.
 
 ## Background
 
@@ -37,6 +37,15 @@
 ![AWS S3](https://img.shields.io/badge/-AWS%20S3-569A31?logo=Amazon%20S3&logoColor=white&style=flat)
 
 </div>
+
+## Main Feature
+- **실제 유저들이 자주 사용하는 조건을 인덱싱** 하여 개선한 SQL 쿼리 실행계획.
+- 위를 바탕으로, **QueryDSL**을 이용 한, **양도권 다중 검색** 기능 구현.
+- **Custom Dialect**를 이용, JPA 단에서 **MySQL만의 특수한 함수를 사용**.
+- 양도권 검색 시 **JOIN문 없는 빠른 쿼리**를 위해 **테이블 비정규화** 실시.
+- S3에 이미지 저장 시, 원본 이미지와, 이를 **썸네일 화** 시킨 이미지를 저장, 모바일 환경 최적화.
+- **Firebase Message API** 구현
+- 협업을 위해, **Swagger**를 사용
 
 ## See more
 
