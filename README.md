@@ -50,8 +50,8 @@
 ## See more
 
 * [Baton](https://github.com/depromeet/Baton) (Android)
-* [baton-user-api](https://github.com/depromeet/baton-user-api)
-* [baton-chat-server](https://github.com/depromeet/baton-chat-server)
+* [baton-user-api](https://github.com/depromeet/baton-user-api) (Django)
+* [baton-chat-server](https://github.com/depromeet/baton-chat-server) (Go)
 * [baton-infra](https://github.com/depromeet/baton-infra)
 
 ### Download at
