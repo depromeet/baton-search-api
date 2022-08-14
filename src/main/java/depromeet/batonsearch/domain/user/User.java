@@ -43,4 +43,8 @@ public class User {
 
     @OneToMany(mappedBy = "id")
     private Set<Buy> buys;
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
 }
