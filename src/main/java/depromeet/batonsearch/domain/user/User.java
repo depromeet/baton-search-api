@@ -35,6 +35,9 @@ public class User {
     @Column
     private String image;
 
+    @Column(name = "fcm_token")
+    private String fcmToken;
+
     @OneToMany(mappedBy = "id")
     private Set<Bookmark> bookmarks;
 
