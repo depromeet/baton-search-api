@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "Ticket")
+@AllArgsConstructor
+@Table(name = "Inquiry")
 public class Inquiry {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
