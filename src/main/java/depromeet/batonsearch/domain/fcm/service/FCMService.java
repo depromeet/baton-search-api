@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.common.net.HttpHeaders;
 import depromeet.batonsearch.domain.fcm.FCMMessage;
+import depromeet.batonsearch.domain.user.User;
+import depromeet.batonsearch.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -14,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 
@@ -28,7 +31,29 @@ public class FCMService {
     @Value("${firebase.key}")
     private String API_KEY;
 
+    private final UserRepository userRepository;
+    final private HttpServletRequest request;
     private final ObjectMapper objectMapper;
+
+    public void setFcmMessage(String string) {
+        User user = userRepository.findById(getUserIdInHeader()).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유저를 찾을 수 없습니다.")
+        );
+        user.setFcmToken(string);
+        userRepository.save(user);
+    }
+
+    private Integer getUserIdInHeader() {
+        String userIdString = request.getHeader("Remote-User");
+
+        if (userIdString == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        try {
+            return Integer.parseInt(userIdString);
+        } catch (NumberFormatException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "userID를 파싱할 수 없습니다.");
+        }
+    }
 
     public void sendMessageTo(String targetToken, String title, String body) throws IOException {
         String message = makeMessage(targetToken, title, body);

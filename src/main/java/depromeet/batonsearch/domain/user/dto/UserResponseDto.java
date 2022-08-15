@@ -21,12 +21,33 @@ public class UserResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate createdOn;
 
-    static public UserResponseDto of(User user) {
+    public static UserResponseDto of(User user) {
         return UserResponseDto.builder()
                 .id(user.getId())
                 .nickname(user.getNickname())
                 .createdOn(user.getCreatedOn())
                 .image(user.getImage())
                 .build();
+    }
+
+    @Builder
+    @AllArgsConstructor
+    @Getter @Setter
+    public static class Inquiry {
+        private Integer id;
+        private String name;
+        private String nickname;
+        private String image;
+        private String phoneNumber;
+
+        public static Inquiry of(User user) {
+            return Inquiry.builder()
+                    .id(user.getId())
+                    .name(user.getName())
+                    .nickname(user.getNickname())
+                    .image(user.getImage())
+                    .phoneNumber(user.getPhoneNumber())
+                    .build();
+        }
     }
 }

@@ -76,4 +76,9 @@ public class TicketControllerImpl implements TicketController {
                                                             @Valid @RequestBody TicketRequestDto.Put data) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(ticketService.modify(id, data));
     }
+
+    @GetMapping(value = "/{ticketId}/inquiries_count")
+    public ResponseEntity<Integer> getInquiriesCount(@PathVariable Integer ticketId) {
+        return ResponseEntity.ok(ticketService.countInquiries(ticketId));
+    }
 }

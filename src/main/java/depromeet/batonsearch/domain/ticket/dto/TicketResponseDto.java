@@ -18,6 +18,31 @@ import java.util.stream.Collectors;
 
 
 public class TicketResponseDto {
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Inquiry {
+        private Integer id;
+        private String location;
+        private TicketType type;
+        private Integer price;
+        private Boolean canNego;
+        private TicketTradeType tradeType;
+
+        public static Inquiry of(Ticket ticket) {
+            return Inquiry.builder()
+                    .id(ticket.getId())
+                    .location(ticket.getLocation())
+                    .type(ticket.getType())
+                    .price(ticket.getPrice())
+                    .canNego(ticket.getCanNego())
+                    .tradeType(ticket.getTradeType())
+                    .build();
+        }
+    }
+
     @Getter
     @Setter
     @NoArgsConstructor
