@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import depromeet.batonsearch.domain.bookmark.repository.BookmarkRepository;
+import depromeet.batonsearch.domain.inquiry.repository.InquiryRepository;
 import depromeet.batonsearch.domain.tag.TagEnum;
 import depromeet.batonsearch.domain.tag.repository.TagRepository;
 import depromeet.batonsearch.domain.ticket.Ticket;
@@ -58,6 +59,16 @@ public class TicketServiceImpl implements TicketService {
     final private TicketTagRepository ticketTagRepository;
     final private HttpServletRequest request;
     final private TicketImageRepository ticketImageRepository;
+    final private InquiryRepository inquiryRepository;
+
+    @Override
+    public Integer countInquiries(Integer ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "티켓을 찾을 수 없습니다.")
+        );
+        return inquiryRepository.countByTicketEquals(ticket);
+    }
+
     final private AmazonS3 amazonS3;
 
     @Override
