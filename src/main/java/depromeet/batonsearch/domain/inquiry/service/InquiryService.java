@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,6 +53,7 @@ public class InquiryService {
                 Inquiry.builder()
                         .user(getUserByUserIdInHeader())
                         .ticket(ticket)
+                        .createdAt(LocalDateTime.now())
                         .content(data.getContent())
                         .isRead(false)
                         .build()

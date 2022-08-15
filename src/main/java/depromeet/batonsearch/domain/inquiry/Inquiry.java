@@ -22,21 +22,21 @@ public class Inquiry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "is_read")
     private Boolean isRead;
 
-    @Column(name = "create_at")
+    @Column(name = "created_at")
     @CreatedDate
     private LocalDateTime createdAt;
 }

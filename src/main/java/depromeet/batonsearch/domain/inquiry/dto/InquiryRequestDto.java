@@ -12,7 +12,6 @@ public class InquiryRequestDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Post {
-        private Integer userId;
         private Integer ticketId;
         private String content;
     }
