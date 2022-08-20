@@ -1,5 +1,6 @@
 package depromeet.batonsearch.domain.ticket.controller;
 
+import depromeet.batonsearch.domain.inquiry.dto.InquiryResponseDto;
 import depromeet.batonsearch.domain.ticket.dto.TicketRequestDto;
 import depromeet.batonsearch.domain.ticket.dto.TicketResponseDto;
 import depromeet.batonsearch.domain.ticket.service.TicketService;
@@ -80,5 +81,10 @@ public class TicketControllerImpl implements TicketController {
     @GetMapping(value = "/{ticketId}/inquiries_count")
     public ResponseEntity<Integer> getInquiriesCount(@PathVariable Integer ticketId) {
         return ResponseEntity.ok(ticketService.countInquiries(ticketId));
+    }
+
+    @GetMapping(value = "/{ticketId}/inquiries")
+    public ResponseEntity<List<InquiryResponseDto.Simple>> getticketInquiries(@PathVariable Integer ticketId) {
+        return ResponseEntity.ok(ticketService.ticketInquiries(ticketId));
     }
 }
