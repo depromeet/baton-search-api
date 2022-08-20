@@ -14,5 +14,6 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Integer> {
 
     @Query("select i from Inquiry i where i.ticket in (select t from Ticket t where t.seller = :user)")
     List<Inquiry> findByReceivedUser(@Param("user") User user);
+    List<Inquiry> findByTicket(Ticket ticket);
     Integer countByTicketEquals(Ticket ticket);
 }

@@ -1,5 +1,6 @@
 package depromeet.batonsearch.domain.ticket.service;
 
+import depromeet.batonsearch.domain.inquiry.dto.InquiryResponseDto;
 import depromeet.batonsearch.domain.ticket.dto.TicketRequestDto;
 import depromeet.batonsearch.domain.ticket.dto.TicketResponseDto;
 import depromeet.batonsearch.domain.ticketimage.dto.TicketImageResponseDto;
@@ -17,6 +18,7 @@ public interface TicketService {
     TicketResponseDto.Info modify(Integer id, TicketRequestDto.Put data);
     TicketResponseDto.Info findById(Integer id, Double latitude, Double longitude);
     List<TicketImageResponseDto> ticketImagePost(Integer id, Set<MultipartFile> images);
+    List<InquiryResponseDto.Simple> ticketInquiries(Integer ticketId);
     Integer countInquiries(Integer ticketId);
     String deleteById(Integer id);
     String deleteImageById(Integer id);

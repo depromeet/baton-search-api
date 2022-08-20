@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import depromeet.batonsearch.domain.bookmark.repository.BookmarkRepository;
+import depromeet.batonsearch.domain.inquiry.dto.InquiryResponseDto;
 import depromeet.batonsearch.domain.inquiry.repository.InquiryRepository;
 import depromeet.batonsearch.domain.tag.TagEnum;
 import depromeet.batonsearch.domain.tag.repository.TagRepository;
@@ -34,10 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -60,6 +58,14 @@ public class TicketServiceImpl implements TicketService {
     final private HttpServletRequest request;
     final private TicketImageRepository ticketImageRepository;
     final private InquiryRepository inquiryRepository;
+
+    @Override
+    public List<InquiryResponseDto.Simple> ticketInquiries(Integer ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "티켓을 찾을 수 없습니다.")
+        );
+        return new ArrayList<>(InquiryResponseDto.Simple.of(inquiryRepository.findByTicket(ticket)));
+    }
 
     @Override
     public Integer countInquiries(Integer ticketId) {

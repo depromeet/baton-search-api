@@ -14,6 +14,8 @@ tags:
     description: "신고 관련 API 입니다."
   - name: "FCM"
     description: "FCM 메시징 API 입니다."
+  - name: "Inquiry"
+    description: "문의 관련 API 입니다."
 schemes:
   - "https"
   - "http"
@@ -832,7 +834,118 @@ paths:
           description: "Created"
           schema:
             $ref: "#/definitions/TicketSimpleInfo"
-
+  /ticket/{ticket_id}/inquiries:
+    get:
+      tags:
+        - "Ticket"
+        - "Inquiry"
+      summary: "티켓에 들어온 문의 요청을 반환 합니다."
+      description: "티켓에 들어온 문의 요청을 반환 합니다."
+      produces:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "ticket_id"
+          description: "티켓 ID"
+          type: number
+          required: true
+      responses:
+        "200":
+          description: "문의 목록"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/InquirySimple"
+  /ticket/{ticket_id}/inquiries_count:
+    get:
+      tags:
+        - "Ticket"
+        - "Inquiry"
+      summary: "티켓에 들어온 문의 요청을 반환 합니다."
+      description: "티켓에 들어온 문의 요청을 반환 합니다."
+      parameters:
+        - in: "path"
+          name: "ticket_id"
+          description: "티켓 ID"
+          type: number
+          required: true
+      responses:
+        "200":
+          description: "반환 성공"
+          schema:
+            type: number
+            description: "문의 갯수"
+            example: 3
+  /inquiries:
+    post:
+      tags:
+        - "Inquiry"
+      summary: "문의 요청을 보냅니다."
+      description: "문의 요청을 보냅니다."
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: data
+          description: "문의 데이터"
+          schema:
+            $ref: "#/definitions/InquiryRequest"
+      responses:
+        "201":
+          description: "문의 요청 성공"
+          schema:
+            $ref: "#/definitions/InquirySimple"
+  /inquiries/send:
+    get:
+      tags:
+        - "Inquiry"
+      summary: "보낸 문의 목록을 확인 합니다. 로그인 상태여야 합니다."
+      description: "보낸 문의 목록을 확인 합니다. 로그인 상태여야 합니다."
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "문의 데이터"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/InquirySimple"
+  /inquiries/receive:
+    get:
+      tags:
+        - "Inquiry"
+      summary: "받은 문의 목록을 확인 합니다. 로그인 상태여야 합니다."
+      description: "받은 문의 목록을 확인 합니다. 로그인 상태여야 합니다."
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "받은 데이터"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/InquirySimple"
+  /inquiries/{inquiry_id}:
+    get:
+      tags:
+        - "Inquiry"
+      summary: "문의를 확인 합니다."
+      description: "문의를 확인 합니다."
+      produces:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "inquiry_id"
+          description: "문의 ID"
+          type: number
+          required: true
+      responses:
+        "200":
+          description: "문의 데이터"
+          schema:
+            $ref: "#/definitions/InquiryInfo"
 definitions:
   User:
     type: object
@@ -858,6 +971,30 @@ definitions:
         type: string
         example: "https://depromeet11th.s3.ap-northeast-2.amazonaws.com/6team/18ee9e14-ceec-41a3-a458-97ec0d1099b1.jpeg"
         description: "이미지 링크"
+  UserInquiry:
+    type: object
+    description: "유저 정보"
+    properties:
+      id:
+        type: number
+        example: 1
+        description: "유저 ID"
+      name:
+        type: string
+        example: "박민재"
+        description: "유저 이름"
+      nickname:
+        type: string
+        example: "justkode"
+        description: "유저 닉네임"
+      createdOn:
+        type: string
+        example: "2022-01-01"
+        description: "유저 생성일자"
+      phoneNumber:
+        type: string
+        example: "010-1234-1234"
+        description: "전화 번호"
   TicketImage:
     type: object
     description: "양도권 관련 이미지"
@@ -926,6 +1063,29 @@ definitions:
       - REMAIN_NUMBER
       - DISTANCE
     example: "RECENT"
+  TicketInquiry:
+    type: object
+    description: "양도권 정보 (문의 하기에서 사용)"
+    properties:
+      id:
+        type: number
+        example: 1
+        description: "양도권 ID"
+      location:
+        type: string
+        example: "휴메이크 휘트니스 석촌점"
+        description: "헬스장 이름"
+      type:
+        $ref: "#/definitions/TicketType"
+      tradeType:
+        $ref: "#/definitions/TicketTradeType"
+      price:
+        type: number
+        example: 200000
+        description: "가격 정보"
+      canNego:
+        type: boolean
+        description: "네고 가능 여부"
   TicketInfo:
     type: object
     description: "양도권 정보"
@@ -1232,3 +1392,39 @@ definitions:
     properties:
       ticketState:
         $ref: "#/definitions/TicketState"
+  InquiryRequest:
+    type: object
+    description: "문의 등록"
+    properties:
+      ticketId:
+        type: number
+        description: "티켓 ID"
+      content:
+        type: string
+        description: "문의 내용"
+  InquirySimple:
+    type: object
+    description: "문의 요약 정보"
+    properties:
+      user:
+        $ref: "#/definitions/User"
+      ticket:
+        $ref: "#/definitions/TicketInquiry"
+      content:
+        type: string
+        description: "문의 내용"
+      isRead:
+        type: boolean
+        description: "읽음 여부"
+        example: false
+  InquiryInfo:
+    type: object
+    description: "문의 정보"
+    properties:
+      user:
+        $ref: "#/definitions/UserInquiry"
+      ticket:
+        $ref: "#/definitions/TicketInquiry"
+      content:
+        type: string
+        description: "알림 내용"
