@@ -64,17 +64,17 @@ public class InquiryService {
 
     @Transactional(readOnly = true)
     public List<InquiryResponseDto.Simple> getReceivedInquiries() {
-        return inquiryRepository.findByUser(getUserByUserIdInHeader())
-                .stream().map(InquiryResponseDto.Simple::of).collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<InquiryResponseDto.Simple> getSendInquiries() {
         return inquiryRepository.findByReceivedUser(getUserByUserIdInHeader())
                 .stream().map(InquiryResponseDto.Simple::of).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
+    public List<InquiryResponseDto.Simple> getSendInquiries() {
+        return inquiryRepository.findByUser(getUserByUserIdInHeader())
+                .stream().map(InquiryResponseDto.Simple::of).collect(Collectors.toList());
+    }
+
+    @Transactional
     public InquiryResponseDto.Info findInquiryById(Integer id) {
         Inquiry inquiry = inquiryRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "문의를 찾지 못했습니다.")
@@ -83,6 +83,11 @@ public class InquiryService {
 
         if (userId != inquiry.getUser().getId() && userId != inquiry.getTicket().getSeller().getId()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
+        }
+
+        if (!inquiry.getIsRead()) {
+            inquiry.setRead(true);
+            inquiryRepository.save(inquiry);
         }
         return InquiryResponseDto.Info.of(inquiry);
     }

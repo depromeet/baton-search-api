@@ -39,4 +39,8 @@ public class Inquiry {
     @Column(name = "created_at")
     @CreatedDate
     private LocalDateTime createdAt;
+
+    public void setRead(Boolean read) {
+        isRead = read;
+    }
 }
