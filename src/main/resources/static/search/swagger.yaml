@@ -1075,6 +1075,16 @@ definitions:
         type: string
         example: "휴메이크 휘트니스 석촌점"
         description: "헬스장 이름"
+      mainImage:
+        type: string
+        example: "https://depromeet11th.s3.ap-northeast-2.amazonaws.com/6team/18ee9e14-ceec-41a3-a458-97ec0d1099b1.jpeg"
+        description: "메인 이미지 썸네일"
+      address:
+        type: string
+        example: "광진구 중곡동 텍스트 1234번지"
+        description: "주소"
+      state:
+        $ref: "#/definitions/TicketState"
       type:
         $ref: "#/definitions/TicketType"
       tradeType:
