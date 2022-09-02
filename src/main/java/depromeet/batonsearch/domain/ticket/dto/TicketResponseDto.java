@@ -26,6 +26,9 @@ public class TicketResponseDto {
     public static class Inquiry {
         private Integer id;
         private String location;
+        private String mainImage;
+        private TicketState state;
+        private String address;
         private TicketType type;
         private Integer price;
         private Boolean canNego;
@@ -34,6 +37,9 @@ public class TicketResponseDto {
         public static Inquiry of(Ticket ticket) {
             return Inquiry.builder()
                     .id(ticket.getId())
+                    .mainImage(ticket.getMainImage())
+                    .state(ticket.getState())
+                    .address(ticket.getAddress())
                     .location(ticket.getLocation())
                     .type(ticket.getType())
                     .price(ticket.getPrice())
