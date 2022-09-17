@@ -42,9 +42,10 @@ paths:
           schema:
             type: object
             properties:
-              targetToken:
-                type: string
-                description: "토큰"
+              userId:
+                type: number
+                description: "유저 ID"
+                example: 1
               title:
                 type: string
                 description: "제목"

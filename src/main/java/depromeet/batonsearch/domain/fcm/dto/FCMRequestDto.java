@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class FCMRequestDto {
-    private String targetToken;
+    private Integer userId;
     private String title;
     private String body;
 }

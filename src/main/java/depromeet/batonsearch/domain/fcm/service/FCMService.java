@@ -55,8 +55,16 @@ public class FCMService {
         }
     }
 
-    public void sendMessageTo(String targetToken, String title, String body) throws IOException {
-        String message = makeMessage(targetToken, title, body);
+    public void sendMessageTo(Integer userId, String title, String body) throws IOException {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 유저가 존재 하지 않습니다.")
+        );
+
+        if (user.getFcmToken() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "유저의 FCM 토큰이 존재하지 않습니다.");
+        }
+
+        String message = makeMessage(user.getFcmToken(), title, body);
 
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = RequestBody.create(message,
