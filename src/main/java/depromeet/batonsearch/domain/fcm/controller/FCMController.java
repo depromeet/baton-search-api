@@ -22,7 +22,7 @@ public class FCMController {
     @PostMapping("")
     public ResponseEntity pushMessage(@RequestBody FCMRequestDto requestDTO) throws IOException {
         fcmService.sendMessageTo(
-                requestDTO.getTargetToken(),
+                requestDTO.getUserId(),
                 requestDTO.getTitle(),
                 requestDTO.getBody());
         return ResponseEntity.ok().build();
