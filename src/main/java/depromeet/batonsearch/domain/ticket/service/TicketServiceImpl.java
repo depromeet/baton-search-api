@@ -58,6 +58,7 @@ public class TicketServiceImpl implements TicketService {
     final private HttpServletRequest request;
     final private TicketImageRepository ticketImageRepository;
     final private InquiryRepository inquiryRepository;
+    final private AmazonS3 amazonS3;
 
     @Override
     public List<InquiryResponseDto.Simple> ticketInquiries(Integer ticketId) {
@@ -74,8 +75,6 @@ public class TicketServiceImpl implements TicketService {
         );
         return inquiryRepository.countByTicketEquals(ticket);
     }
-
-    final private AmazonS3 amazonS3;
 
     @Override
     @Transactional(readOnly = true)
@@ -148,7 +147,9 @@ public class TicketServiceImpl implements TicketService {
         }
 
         ticket.putData(data);
-        return TicketResponseDto.Info.of(ticketRepository.save(ticket));
+        TicketResponseDto.Info info = TicketResponseDto.Info.of(ticketRepository.save(ticket));
+        info.setIsInquired(false);
+        return info;
     }
 
     @Override
@@ -206,6 +207,8 @@ public class TicketServiceImpl implements TicketService {
             Optional<Integer> bookmarkId = bookmarkRepository.findBookmarkIdByTicketAndUser(ticket, user);
             info.setBookmarkId((bookmarkId.isEmpty()) ? null : bookmarkId.get());
             ticketRepository.save(ticket);
+
+            info.setIsInquired(inquiryRepository.existsByUserAndTicket(user, ticket));
         } catch (ResponseStatusException e) {
             log.debug("No User");
         }

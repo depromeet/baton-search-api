@@ -166,6 +166,7 @@ public class TicketResponseDto {
         private Set<TicketImageResponseDto> images;
         private Boolean isMembership;
         private Boolean isHolding;
+        private Boolean isInquired;
         private Integer remainingNumber;
         private Long remainingDay;
         private Double latitude;
