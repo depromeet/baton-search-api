@@ -16,5 +16,6 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Integer> {
     List<Inquiry> findByReceivedUser(@Param("user") User user);
 
     List<Inquiry> findByTicket(Ticket ticket);
+    Boolean existsByUserAndTicket(User user, Ticket ticker);
     Integer countByTicketEquals(Ticket ticket);
 }
