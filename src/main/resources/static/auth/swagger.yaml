@@ -292,15 +292,10 @@ definitions:
         readOnly: true
   TokenVerify:
     required:
-      - access_token
+      - token
     type: object
     properties:
-      access_token:
-        title: Access token
+      token:
+        title: Token
         type: string
         minLength: 1
-      expires_in:
-        title: Expires in
-        type: integer
-        readOnly: true
-
